@@ -1,15 +1,15 @@
 from django.db import models
 
 
-class Todo(models.Model):
-    title = models.CharField(max_length=200)
-    completed = models.BooleanField(default=False)
-
-
 # model for activities
 class Activity(models.Model):
     pass
 
 
-class User(models.Model):
+class Item(models.Model):
+    name = models.CharField(max_length=200)
+    price = models.FloatField(max_length=10)
+
+
+class itemColor(models.Model):
     pass
