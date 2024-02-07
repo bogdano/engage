@@ -1,6 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models import Sum
 
-############## BOGDAN ###################################
 # model for activities
 class Activity(models.Model):
     # title string
@@ -24,16 +25,38 @@ class Activity(models.Model):
 class ActivityType(models.Model):
     pass
 
+class Item(models.Model):
+    name = models.CharField(max_length=200)
+    price = models.FloatField(max_length=10)
+
+
+class itemColor(models.Model):
+    pass
+  
 class UserParticipates(models.Model):
     # user_id fk to custom user model
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     # activity_id fk to activity model
     activity_id = models.ForeignKey('Activity', on_delete=models.CASCADE)
 
+
+# model for teams
+class Team(models.Model):
+    name = models.CharField(max_length=200)
+    leader = models.OneToOneField(User, on_delete=models.PROTECT, primary_key = True)
+
+    def total_points(self):
+        # Calculate the total points of all users in this team
+        return self.userprofile_set.aggregate(total_points=Sum('points'))['total_points'] or 0
+    
+# model that extends User model
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    points = models.IntegerField(default=0)
+    
 class UserInterested(models.Model):
     # user_id fk to custom user model
     user_id = models.ForeignKey('User', on_delete=models.CASCADE)
     # activity_id fk to activity model
     activity_id = models.ForeignKey('Activity', on_delete=models.CASCADE)
-
-#########################################################
