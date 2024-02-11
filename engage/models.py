@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models import Sum
 
 
 # model for activities
@@ -24,7 +26,6 @@ class Activity(models.Model):
 class ActivityType(models.Model):
     pass
 
-
 # stores all basic item info
 class Item(models.Model):
     name = models.CharField(max_length=200)
@@ -49,16 +50,30 @@ class ItemVariant(models.Model):
     item_color = models.ForeignKey("ItemColors", on_delete=models.CASCADE)
     item_size = models.ForeignKey("ItemSizes", on_delete=models.CASCADE)
 
-
 class UserParticipates(models.Model):
     # user_id fk to custom user model
     user_id = models.ForeignKey("User", on_delete=models.CASCADE)
     # activity_id fk to activity model
     activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
 
-
 class UserInterested(models.Model):
     # user_id fk to custom user model
     user_id = models.ForeignKey("User", on_delete=models.CASCADE)
     # activity_id fk to activity model
     activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
+ 
+# model for teams
+class Team(models.Model):
+    name = models.CharField(max_length=200)
+    leader = models.OneToOneField(User, on_delete=models.PROTECT, primary_key = True)
+
+    def total_points(self):
+        # Calculate the total points of all users in this team
+        return self.userprofile_set.aggregate(total_points=Sum('points'))['total_points'] or 0
+    
+    
+# model that extends User model
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    points = models.IntegerField(default=0)
