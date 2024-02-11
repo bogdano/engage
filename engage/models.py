@@ -25,17 +25,29 @@ class ActivityType(models.Model):
     pass
 
 
+# stores all basic item info
 class Item(models.Model):
     name = models.CharField(max_length=200)
-    price = models.FloatField(max_length=10)
+    price = models.FloatField()
+    description = models.CharField(max_length=200)
+    created_at = models.DateField(auto_now_add=True)
 
 
+# stores all item color values
 class ItemColors(models.Model):
     color = models.CharField(max_length=200)
 
 
+# stores all item size values
 class ItemSizes(models.Model):
     size = models.CharField(max_length=200)
+
+
+# stores combinations of separate info from other item tables
+class ItemVariant(models.Model):
+    item_type = models.ForeignKey("Item", on_delete=models.CASCADE)
+    item_color = models.ForeignKey("ItemColors", on_delete=models.CASCADE)
+    item_size = models.ForeignKey("ItemSizes", on_delete=models.CASCADE)
 
 
 class UserParticipates(models.Model):
