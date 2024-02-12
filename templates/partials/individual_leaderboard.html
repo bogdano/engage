@@ -1,0 +1,5 @@
+<ul>
+    {% for user in users %}
+    <li>{{ user.user.username }} - {{ user.total_points }} Points</li>
+    {% endfor %}
+</ul>
