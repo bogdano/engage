@@ -7,6 +7,8 @@ from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from .models import UserProfile, Team
+from django.db.models import Sum
 
 User = get_user_model()
 
@@ -54,3 +56,17 @@ def login_with_link(request, uidb64, token):
 def user_email(request):
     email = request.user.email
     return render(request, 'user.html', {'email': email})
+
+def leaderboard(request):
+    # renders the initial page
+    return render(request, 'leaderboard.html')
+
+def individual_leaderboard(request):
+    # Fetch users and their points
+    users = UserProfile.objects.annotate(total_points=Sum('points')).order_by('-total_points')
+    return render(request, 'partials/individual_leaderboard.html', {'users': users})
+
+def team_leaderboard(request):
+    # Fetch teams and their points
+    teams = Team.objects.annotate(total_points=Sum('userprofile__points')).order_by('-total_points')
+    return render(request, 'partials/team_leaderboard.html', {'teams': teams})
