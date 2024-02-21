@@ -11,6 +11,19 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import environ
+
+env = environ.Env()
+environ.Env.read_env(env_file='.env')
+
+cloudinary.config(
+    cloud_name = env('CLOUDINARY_CLOUD_NAME'),
+    api_key = env('CLOUDINARY_API_KEY'),
+    api_secret = env('CLOUDINARY_API_SECRET')
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,13 +49,17 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',  # new
     'django.contrib.staticfiles',
+    'cloudinary', # maybe not needed
     'accounts',  # new
+    'engage',  # new
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # new
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -75,10 +92,7 @@ WSGI_APPLICATION = 'engage.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": env.db_url("DATABASE_URL", default="sqlite:///db.sqlite3"),
 }
 
 
@@ -106,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Denver'
 
 USE_I18N = True
 
@@ -117,6 +131,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']  # new
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # new
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    }
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -137,3 +161,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Print emails
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'your-smtp-username'
 # EMAIL_HOST_PASSWORD = 'your-smtp-password'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'  # new
+
+LOGIN_REDIRECT_URL = 'home'  # new
+LOGOUT_REDIRECT_URL = 'home'  # new

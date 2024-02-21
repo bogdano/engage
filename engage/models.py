@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models import Sum
 
 
@@ -10,7 +9,7 @@ class Activity(models.Model):
     # description string
     description = models.TextField()
     # creator_id foreign key to custom user model
-    creator_id = models.ForeignKey("User", on_delete=models.CASCADE)
+    creator_id = models.ForeignKey("accounts.CustomUser", on_delete=models.CASCADE)
     # location string
     location = models.CharField(max_length=200)
     # event_date date
@@ -21,10 +20,14 @@ class Activity(models.Model):
     activity_type = models.ForeignKey("ActivityType", on_delete=models.CASCADE)
     # photo field string
     photo = models.CharField(max_length=200)
+    # points value
+    points = models.IntegerField()
 
 
 class ActivityType(models.Model):
-    pass
+    activity_type_name = models.CharField(max_length=200)
+    activity_type_logo = models.CharField(max_length=200)
+
 
 # stores all basic item info
 class Item(models.Model):
@@ -52,28 +55,21 @@ class ItemVariant(models.Model):
 
 class UserParticipates(models.Model):
     # user_id fk to custom user model
-    user_id = models.ForeignKey("User", on_delete=models.CASCADE)
+    user_id = models.ForeignKey("accounts.CustomUser", on_delete=models.CASCADE)
     # activity_id fk to activity model
     activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
+    # date
+    date_participated = models.DateField()
     
 class UserInterested(models.Model):
     # user_id fk to custom user model
-    user_id = models.ForeignKey("User", on_delete=models.CASCADE)
+    user_id = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
     # activity_id fk to activity model
     activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
  
 class Team(models.Model):
     name = models.CharField(max_length=200)
-    leader = models.ForeignKey(User, on_delete=models.PROTECT, related_name='led_team', null=True, blank=True)
-
-    def total_points(self):
-        # Calculate the total points of all users in this team
-        return self.userprofile_set.aggregate(total_points=Sum('points'))['total_points'] or 0
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
-    points = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.user.username
+    leader = models.ForeignKey('accounts.CustomUser', on_delete=models.PROTECT, null=True, blank=True, related_name='team_leader')
+    member = models.ManyToManyField('accounts.CustomUser', related_name='team_member')
+    # team points will be calculated by summing the points of all users in the team, 
+    # queries by time can be done by filtering the UserParticipates model by date for the team members
