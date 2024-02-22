@@ -1,6 +1,14 @@
-<!-- send_login_link.html -->
-<form method="post">
+<!-- load tailwind -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" action="{% url 'send_login_link' %}">
     {% csrf_token %}
     <input type="email" name="email" placeholder="Enter your email" required>
     <button type="submit">Send Login Link</button>
-  </form>
+</form>
+
+<a href="{% url 'register' %}">register</a> 
+{% endblock %}
+
