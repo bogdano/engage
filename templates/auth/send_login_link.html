@@ -1,5 +1,5 @@
 <!-- send_login_link.html -->
-<form method="post">
+<form method="post" action="{% url 'send_login_link' %}">
     {% csrf_token %}
     <input type="email" name="email" placeholder="Enter your email" required>
     <button type="submit">Send Login Link</button>

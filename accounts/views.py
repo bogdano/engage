@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
@@ -26,7 +26,7 @@ def send_login_link(request):
             # Create a unique link for the user to log in
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             domain = get_current_site(request).domain
-            login_link = f'http://{domain}/login/{uid}/{token.token}/'  # Use the token's string representation
+            login_link = f'http://{domain}/accounts/login/{uid}/{token.token}/'  # Use the token's string representation
             
             # Send the login link via email
             subject = 'Your Login Link'
@@ -99,3 +99,7 @@ def register(request):
         form = UserRegistrationForm()
     
     return render(request, 'auth/register.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('homepage')  # Replace 'home' with the URL to redirect after logout
