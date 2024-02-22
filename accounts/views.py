@@ -58,7 +58,7 @@ def login_with_link(request, uidb64, token):
     # Mark the token as used or delete it
     token_record.delete()
 
-    return redirect('home')  # Replace 'home' with the URL to redirect after login
+    return render(request, 'home.html')  # Replace 'home' with the URL to redirect after login
 
 def register(request):
     if request.method == 'POST':
@@ -85,7 +85,7 @@ def register(request):
             # Create a unique link for the user to log in
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             domain = get_current_site(request).domain
-            login_link = f'http://{domain}/login/{uid}/{token.token}/'
+            login_link = f'http://{domain}/accounts/login/{uid}/{token.token}/'
             
             # Send the login link via email
             subject = 'Welcome! Use this link to log in'
@@ -94,8 +94,8 @@ def register(request):
             send_mail(subject, message, from_email, [user.email])
             
             # Redirect or return a success message
-            return redirect('login')  # Adjust as necessary
+            return render(request, 'auth/email_sent.html')  # Adjust as necessary
     else:
         form = UserRegistrationForm()
     
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'auth/register.html', {'form': form})

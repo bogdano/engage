@@ -53,13 +53,13 @@ class ItemVariant(models.Model):
     item_color = models.ForeignKey("ItemColors", on_delete=models.CASCADE)
     item_size = models.ForeignKey("ItemSizes", on_delete=models.CASCADE)
 
-class UserParticipates(models.Model):
+class UserParticipated(models.Model):
     # user_id fk to custom user model
     user_id = models.ForeignKey("accounts.CustomUser", on_delete=models.CASCADE)
     # activity_id fk to activity model
     activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
-    # date
-    date_participated = models.DateField()
+    # date created
+    date_participated = models.DateField(auto_now_add=True)
     
 class UserInterested(models.Model):
     # user_id fk to custom user model

@@ -4,13 +4,29 @@ import uuid
 from django.utils import timezone
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, **extra_fields):
+    def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
+        user.set_password(password)  # Set the user's password
         user.save(using=self._db)
         return user
+    
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_admin', True)  # Depending on your model, you might or might not need this
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        if 'is_admin' in extra_fields and extra_fields.get('is_admin') is not True:  # This check depends on your usage
+            raise ValueError('Superuser must have is_admin=True.')  # Adjust based on your model's fields
+
+        return self.create_user(email, password, **extra_fields)
+
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
@@ -45,13 +61,14 @@ class LoginToken(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    expiration_date = models.DateTimeField()
+    expiration_date = models.DateTimeField(null=True)
     # delete token after usage, or if it is accessed and expired
 
     def __str__(self):
-        return self.token
-    
-    # set expiration date to 15 minutes after creation
+        return str(self.token)
+
     def save(self, *args, **kwargs):
-        self.expiration_date = self.date_created + timezone.timedelta(minutes=15)
-        super().save(*args, **kwargs)
+        # Set expiration_date for new records only
+        if not self.pk:  # Check if the instance is new (has no primary key yet)
+            self.expiration_date = timezone.now() + timezone.timedelta(minutes=15)
+        super(LoginToken, self).save(*args, **kwargs)

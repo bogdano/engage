@@ -1,4 +1,4 @@
 <p>
     Sorry, the login link is invalid. Please request a new one.<br>
-    <a href="{{ url_for('auth.login') }}">Login</a>
+    <a href="{% url 'send_login_link' %}">Send a new login link</a>
 </p>

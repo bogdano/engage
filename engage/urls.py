@@ -20,6 +20,8 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.homepage, name='homepage'),
+    path('accounts/', include('accounts.urls')),  # new
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('leaderboard/individual/', views.individual_leaderboard, name='individual_leaderboard'),
     path('leaderboard/team/', views.team_leaderboard, name='team_leaderboard'),

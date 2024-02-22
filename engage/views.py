@@ -1,6 +1,12 @@
 from .models import Team
 from django.db.models import Sum
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+def homepage(request):
+    if not request.user.is_authenticated:
+        return render(request, 'auth/send_login_link.html')
+    else:
+        return render(request, 'home.html')
 
 def leaderboard(request):
     # renders the initial page
