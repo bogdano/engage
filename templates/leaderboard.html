@@ -2,38 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
-    <script src="https://unpkg.com/htmx.org"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4">
-        <h1 class="text-3xl font-bold text-center my-8">Leaderboard</h1>
-
-        <div class="flex justify-center mb-6">
-            <button class="mx-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Individual</button>
-            <button class="mx-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition duration-300">Team</button>
+        <div class="my-6">
+            <input type="date" id="start_date" class="border-2 border-gray-300 rounded-lg p-2">
+            <input type="date" id="end_date" class="border-2 border-gray-300 rounded-lg p-2">
+            <button onclick="fetchLeaderboard()" hx-get="/leaderboard/" hx-target="#leaderboard" hx-include="#start_date, #end_date" hx-params="val(start_date)=#start_date&val(end_date)=#end_date" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Show Leaderboard
+            </button>
         </div>
-
-        <div class="bg-white shadow-md rounded my-6">
-            <div class="leaderboard-individual">
-                <h2 class="text-xl font-semibold p-4 border-b">Individual Leaderboard</h2>
-                <ul class="divide-y divide-gray-200">
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">User 1 - 100 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">User 2 - 90 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">User 3 - 85 Points</li>
-                </ul>
-            </div>
-
-            <div class="leaderboard-team hidden">
-                <h2 class="text-xl font-semibold p-4 border-b">Team Leaderboard</h2>
-                <ul class="divide-y divide-gray-200">
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">Team A - 300 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">Team B - 250 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">Team C - 200 Points</li>
-                </ul>
-            </div>
-        </div>
+        <div id="leaderboard" class="mt-8"></div>
     </div>
+
+    <script>
+        function fetchLeaderboard() {
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const url = `/leaderboard/?start_date=${startDate}&end_date=${endDate}`;
+        
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const leaderboard = document.getElementById('leaderboard');
+                    leaderboard.innerHTML = ''; // Clear previous results
+                    data.forEach(user => {
+                        leaderboard.innerHTML += `<p>${user.user__email}: ${user.total_points} points</p>`;
+                    });
+                });
+        }
+        </script>
 </body>
 </html>
+
