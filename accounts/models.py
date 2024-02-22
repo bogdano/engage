@@ -40,7 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     # custom fields
-    is_admin = models.BooleanField(default=False)
+    is_mod = models.BooleanField(default=False)
     is_on_team = models.BooleanField(default=False)
     is_teamlead = models.BooleanField(default=False)
 
