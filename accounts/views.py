@@ -46,7 +46,7 @@ def login_with_link(request, uidb64, token):
         # Check if the token is expired
         if timezone.now() > token_record.expiration_date:
             token_record.delete()
-            return render(request, 'auth/login_link_invalid.html')
+            return render(request, 'auth/login_link_expired.html')
 
     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist, LoginToken.DoesNotExist):
         return render(request, 'auth/login_link_invalid.html')
