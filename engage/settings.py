@@ -53,7 +53,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary', # maybe not needed
     'accounts',  # new
-    'engage',  # new
+    'engage',
+    'tailwind',  # new
+    'theme',
+    'django_browser_reload',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware', # this may need to be moved up
 ]
 
 ROOT_URLCONF = 'engage.urls'
@@ -166,3 +170,9 @@ AUTH_USER_MODEL = 'accounts.CustomUser'  # new
 
 LOGIN_REDIRECT_URL = 'home'  # new
 LOGOUT_REDIRECT_URL = 'home'  # new
+
+TAILWIND_APP_NAME = 'theme'  # new
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
