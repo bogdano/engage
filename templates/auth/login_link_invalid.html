@@ -1,4 +1,11 @@
-<p>
-    Sorry, the login link is invalid. Please request a new one.<br>
-    <a href="{% url 'send_login_link' %}">Send a new login link</a>
-</p>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex flex-col justify-center items-center h-screen">
+    <p>
+        Sorry, the login link is invalid. Please request a new one.<br>
+        <a href="{% url 'send_login_link' %}">Send a new login link</a>
+    </p>
+</div>
+
+{% endblock %}
