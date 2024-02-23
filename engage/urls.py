@@ -26,4 +26,5 @@ urlpatterns = [
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('leaderboard/individual/', views.individual_leaderboard, name='individual_leaderboard'),
     path('leaderboard/team/', views.team_leaderboard, name='team_leaderboard'),
+    path('store/', views.store, name='store'),
 ]
