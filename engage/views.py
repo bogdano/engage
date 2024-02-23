@@ -26,3 +26,6 @@ def leaderboard_view(request):
     # Fetch the top 10 users by points
     top_users = UserProfile.objects.order_by('-points')[:10]
     return render(request, 'partials/leaderboard_partial.html', {'top_users': top_users})
+
+def store(request):
+    return render(request, 'store.html')
