@@ -1,6 +1,9 @@
-from .models import Team
+from .models import Team, CustomUser, Activity
+from accounts.models import CustomUser
 from django.db.models import Sum
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.utils.dateparse import parse_date
 
 def homepage(request):
     if not request.user.is_authenticated:
@@ -9,8 +12,22 @@ def homepage(request):
         return render(request, 'home.html')
 
 def leaderboard(request):
-    # renders the initial page
-    return render(request, 'leaderboard.html')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    start_date_parsed = parse_date(start_date) if start_date else None
+    end_date_parsed = parse_date(end_date) if end_date else None
+
+    queryset = Activity.objects.all()
+
+    if start_date_parsed:
+        queryset = queryset.filter(date_completed__gte=start_date_parsed)
+    if end_date_parsed:
+        queryset = queryset.filter(date_completed__lte=end_date_parsed)
+
+    leaderboard_data = queryset.values('user__id', 'user__email').annotate(total_points=Sum('points')).order_by('-total_points')
+
+    data = list(leaderboard_data)
+    return JsonResponse(data, safe=False)
 
 def individual_leaderboard(request):
     # Fetch users and their points
@@ -29,3 +46,6 @@ def leaderboard_view(request):
 
 def store(request):
     return render(request, 'store.html')
+
+def notifications(request):
+    return render(request, 'notifications.html')
