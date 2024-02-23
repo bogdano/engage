@@ -7,9 +7,9 @@ from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from .models import LoginToken, CustomUser
-from .forms import UserRegistrationForm
 import cloudinary.uploader
 import uuid
+from django.http import HttpResponse
 
 def send_login_link(request):
     if request.method == 'POST':
@@ -62,43 +62,49 @@ def login_with_link(request, uidb64, token):
 
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST, request.FILES)
-        if form.is_valid():
-            # Upload the profile picture to Cloudinary
-            uploaded_image = None
-            if 'profile_picture' in request.FILES:
-                uploaded_image = cloudinary.uploader.upload(request.FILES['profile_picture'])
-            
-            # Create the user
-            user = CustomUser.objects.create(
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name'],
-                email=form.cleaned_data['email'],
-                position=form.cleaned_data.get('position', ''),
-                profile_picture=uploaded_image['url'] if uploaded_image else '',
-                description=form.cleaned_data.get('description', ''),
-            )
-            
-            # Generate a login token for the new user
-            token = LoginToken.objects.create(user=user, token=uuid.uuid4())
-            
-            # Create a unique link for the user to log in
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            domain = get_current_site(request).domain
-            login_link = f'http://{domain}/accounts/login/{uid}/{token.token}/'
-            
-            # Send the login link via email
-            subject = 'Welcome! Use this link to log in'
-            message = render_to_string('auth/login_link.html', {'login_link': login_link})
-            from_email = 'noreply@example.com'
-            send_mail(subject, message, from_email, [user.email])
-            
-            # Redirect or return a success message
-            return render(request, 'auth/email_sent.html')  # Adjust as necessary
+        # Extract form data
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        position = request.POST.get('position', '')
+        description = request.POST.get('description', '')
+
+        # Basic validation (you can add more according to your needs)
+        if not email or not first_name or not last_name:
+            return HttpResponse('Missing fields', status=400)
+
+        uploaded_image_url = ''
+        if 'profile_picture' in request.FILES:
+            uploaded_image = cloudinary.uploader.upload(request.FILES['profile_picture'])
+            uploaded_image_url = uploaded_image['url']
+
+        # Create the user
+        user = CustomUser.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            position=position,
+            profile_picture=uploaded_image_url,
+            description=description,
+        )
+
+        # Generate a login token for the new user
+        token = LoginToken.objects.create(user=user, token=uuid.uuid4())
+
+        # Create a unique link for the user to log in
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        domain = get_current_site(request).domain
+        login_link = f'http://{domain}/accounts/login/{uid}/{token.token}/'
+
+        # Send the login link via email
+        subject = 'Welcome! Use this link to log in'
+        message = render_to_string('auth/login_link.html', {'login_link': login_link})
+        send_mail(subject, message, 'noreply@example.com', [email])
+
+        # Redirect or return a success message
+        return render(request, 'auth/email_sent.html')
     else:
-        form = UserRegistrationForm()
-    
-    return render(request, 'auth/register.html', {'form': form})
+        return render(request, 'auth/register.html')
 
 def logout_view(request):
     logout(request)
