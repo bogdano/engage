@@ -850,6 +850,10 @@ select {
   margin-top: 2rem;
 }
 
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+
 .block {
   display: block;
 }
@@ -934,6 +938,14 @@ select {
   flex-shrink: 0;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.resize-y {
+  resize: vertical;
+}
+
 .grid-cols-\[repeat\(auto-fill\2c 10rem\)\] {
   grid-template-columns: repeat(auto-fill,10rem);
 }
@@ -966,6 +978,12 @@ select {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .divide-y > :not([hidden]) ~ :not([hidden]) {
@@ -1278,6 +1296,11 @@ select {
 .text-purple-800 {
   --tw-text-opacity: 1;
   color: rgb(107 33 168 / var(--tw-text-opacity));
+}
+
+.text-amber-500 {
+  --tw-text-opacity: 1;
+  color: rgb(245 158 11 / var(--tw-text-opacity));
 }
 
 .underline {
