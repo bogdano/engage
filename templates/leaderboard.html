@@ -1,32 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org"></script>
+    <style>
+        .bg-gold { background-color: #ffd700; }
+        .bg-silver { background-color: #c0c0c0; }
+        .bg-bronze { background-color: #cd7f32; }
+    </style>
+</head>
+<body class="bg-gray-100">
 {% extends 'base.html' %}
 
 {% block content %}
     <div class="container mx-auto px-4">
-        <h1 class="text-3xl font-bold text-center my-8">Leaderboard</h1>
-
-        <div class="flex justify-center mb-6">
-            <button class="mx-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Individual</button>
-            <button class="mx-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition duration-300">Team</button>
+        <div class="my-6">
+            <input type="date" id="start_date" class="border-2 border-gray-300 rounded-lg p-2">
+            <input type="date" id="end_date" class="border-2 border-gray-300 rounded-lg p-2">
+            <button onclick="fetchLeaderboard()" hx-get="/leaderboard/" hx-target="#leaderboard" hx-include="#start_date, #end_date" hx-params="val(start_date)=#start_date&val(end_date)=#end_date" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Show Leaderboard
+            </button>
         </div>
-
-        <div class="bg-white shadow-md rounded my-6">
-            <div class="leaderboard-individual">
-                <h2 class="text-xl font-semibold p-4 border-b">Individual Leaderboard</h2>
-                <ul class="divide-y divide-gray-200">
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">User 1 - 100 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">User 2 - 90 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">User 3 - 85 Points</li>
-                </ul>
+        <div id="leaderboard" class="mt-8"></div>
+    </div>
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold text-center mb-6">Leaderboard</h1>
+        <div class="flex flex-col items-center space-y-4 md:flex-row md:justify-center md:space-x-2 mt-8">
+            <div class="bg-bronze p-4 rounded-lg shadow-md w-5/6 md:w-3/4 order-3 md:order-3">
+                <h3 class="text-lg font-semibold">3. Alex Johnson - 75 points</h3>
             </div>
-
-            <div class="leaderboard-team hidden">
-                <h2 class="text-xl font-semibold p-4 border-b">Team Leaderboard</h2>
-                <ul class="divide-y divide-gray-200">
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">Team A - 300 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">Team B - 250 Points</li>
-                    <li class="p-4 hover:bg-gray-50 transition duration-150">Team C - 200 Points</li>
-                </ul>
+            <div class="bg-silver p-4 rounded-lg shadow-md w-3/4 md:w-2/3 mb-4 md:mb-0 order-2 md:order-1">
+                <h3 class="text-lg font-semibold">2. Jane Doe - 85 points</h3>
             </div>
+            <div class="bg-gold p-4 rounded-lg shadow-md w-2/3 md:w-1/2 order-1 md:order-2">
+                <h3 class="text-lg font-semibold">1. John Smith - 120 points</h3>
+            </div>
+        </div>
+        <div class="mt-8 grid gap-4">
+            <div class="bg-white p-4 shadow rounded-lg">4. Chris Evans - 70 points</div>
+            <div class="bg-white p-4 shadow rounded-lg">5. Mark Ruffalo - 65 points</div>
+            <div class="bg-white p-4 shadow rounded-lg">6. Scarlett Johansson - 60 points</div>
+            <div class="bg-white p-4 shadow rounded-lg">7. Robert Downey Jr. - 55 points</div>
+            <div class="bg-white p-4 shadow rounded-lg">8. Jeremy Renner - 50 points</div>
+            <div class="bg-white p-4 shadow rounded-lg">9. Tom Holland - 45 points</div>
+            <div class="bg-white p-4 shadow rounded-lg">10. Brie Larson - 40 points</div>
         </div>
     </div>
 {% endblock %}
