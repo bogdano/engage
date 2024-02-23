@@ -26,7 +26,7 @@
                 <a href="{% url 'store' %}" class="px-2 py-2 mx-1 rounded hover:bg-lime-200 {% if request.path == '/store/' %} bg-lime-100 {% endif %}">
                     <img src="{% static 'icons/store.svg' %}" alt="Store" class="w-10 h-10"> 
                 </a>
-                <a href="#" class="px-2 py-2 mx-1 rounded hover:bg-violet-200 {% if request.path == '/notifications/' %} bg-violet-100 {% endif %}">
+                <a href="{% url 'notifications' %}" class="px-2 py-2 mx-1 rounded hover:bg-violet-200 {% if request.path == '/notifications/' %} bg-violet-100 {% endif %}">
                     <img src="{% static 'icons/notifications.svg' %}" alt="Notifications" class="w-10 h-10">
                 </a>
             </div>
