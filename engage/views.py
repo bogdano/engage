@@ -46,3 +46,6 @@ def leaderboard_view(request):
 
 def store(request):
     return render(request, 'store.html')
+
+def notifications(request):
+    return render(request, 'notifications.html')
