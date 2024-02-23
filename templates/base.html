@@ -10,6 +10,7 @@
 <body hx-boost="true">
     {% block content %}
     {% endblock %}
+    {% if user.is_authenticated %}
     <nav class="flex justify-center items-center h-screen">
         <div class="w-full fixed bottom-0 px-1 py-1 bg-white bg-opacity-25 backdrop-filter backdrop-blur-sm border-t border-gray-200 md:max-w-md md:rounded-xl md:border md:shadow-lg">
             <div class="flex justify-between max-w-xs mx-auto">
@@ -31,5 +32,6 @@
             </div>
         </div>
     </nav>
+    {% endif %}
 </body>
 </html>
