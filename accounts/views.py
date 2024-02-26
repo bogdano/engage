@@ -58,7 +58,7 @@ def login_with_link(request, uidb64, token):
     # Mark the token as used or delete it
     token_record.delete()
 
-    return render(request, 'home.html')  # Replace 'home' with the URL to redirect after login
+    return redirect('homepage')  
 
 def register(request):
     if request.method == 'POST':

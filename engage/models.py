@@ -9,19 +9,30 @@ class Activity(models.Model):
     # description string
     description = models.TextField()
     # creator_id foreign key to custom user model
-    creator_id = models.ForeignKey("accounts.CustomUser", on_delete=models.CASCADE)
-    # location string
-    location = models.CharField(max_length=200)
+    creator = models.ForeignKey("accounts.CustomUser", on_delete=models.CASCADE)
+    # location details
+    address = models.CharField(max_length=200)
+    # latitude and longitude
+    latitude = models.FloatField()
+    longitude = models.FloatField()
     # event_date date
     event_date = models.DateField()
     # created_at date
     created_at = models.DateField(auto_now_add=True)
+    # duration
+    duration = models.IntegerField()
+    # is a competition
+    is_competition = models.BooleanField(default=False)
     # activity_type fk to activity type model
     activity_type = models.ForeignKey("ActivityType", on_delete=models.CASCADE)
     # photo field string
     photo = models.CharField(max_length=200)
     # points value
     points = models.IntegerField()
+    # is_active boolean
+    is_active = models.BooleanField(default=True)
+    # is approved or not, used for mods to see activities suggested by regular users
+    is_approved = models.BooleanField(default=False)
 
 
 class ActivityType(models.Model):
@@ -60,6 +71,8 @@ class UserParticipated(models.Model):
     activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
     # date created
     date_participated = models.DateField(auto_now_add=True)
+    # whether points were awarded
+    points_awarded = models.BooleanField(default=False)
     
 class UserInterested(models.Model):
     # user_id fk to custom user model
