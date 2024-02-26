@@ -28,4 +28,6 @@ urlpatterns = [
     path('leaderboard/team/', views.team_leaderboard, name='team_leaderboard'),
     path('store/', views.store, name='store'),
     path('notifications/', views.notifications, name='notifications'),
+    path('add_activity/', views.add_activity, name='add_activity'),
+    path('activity/', views.activity, name='activity'),
 ]

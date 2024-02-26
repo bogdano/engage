@@ -38,12 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # default fields - use is_active instead of deleting, is_staff allows user to access admin interface
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
-    # custom fields
-    is_mod = models.BooleanField(default=False)
-    is_on_team = models.BooleanField(default=False)
-    is_teamlead = models.BooleanField(default=False)
-
+    
     balance = models.IntegerField(default=0)
     lifetime_points = models.IntegerField(default=0)
     position = models.CharField(max_length=50, default="", blank=True)
@@ -55,7 +50,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __str__(self):
-        return self.first_name + " " + self.last_name + " (" + self.email + ")"
+        return self.first_name + " " + self.last_name
 
 class LoginToken(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -63,9 +58,6 @@ class LoginToken(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField(null=True)
     # delete token after usage, or if it is accessed and expired
-
-    def __str__(self):
-        return str(self.token)
 
     def save(self, *args, **kwargs):
         # Set expiration_date for new records only

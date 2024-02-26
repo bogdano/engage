@@ -7,7 +7,7 @@
     <a href="{% url 'send_login_link' %}" class="mb-5 text-slate-500 hover:underline">or, <span class="underline">login</span> here</a> 
     <form method="post" action="{% url 'register' %}" enctype="multipart/form-data" class="w-full max-w-xs space-y-4">
         {% csrf_token %}
-        <input type="email" name="email" placeholder="sample@email.com" required class="w-full p-2 border border-gray-300 rounded">
+        <input type="email" name="email" placeholder="your@email.com" required class="w-full p-2 border border-gray-300 rounded" autofocus>
         
         <div class="flex justify-between space-x-2">
             <input type="text" name="first_name" placeholder="First Name" required class="w-full p-2 border border-gray-300 rounded">
@@ -15,7 +15,7 @@
         </div>
     
         <input type="text" name="position" placeholder="Position" class="w-full p-2 border border-gray-300 rounded">
-        <textarea name="description" placeholder="Description" class="w-full p-2 border border-gray-300 rounded resize-y"></textarea>
+        <textarea name="description" placeholder="Bio" class="w-full p-2 border border-gray-300 rounded resize-y"></textarea>
         
         <label class="w-full flex justify-center p-2 border border-gray-300 rounded cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="profile_picture" id="fileInput" class="hidden">

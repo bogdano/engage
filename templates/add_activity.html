@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Add Search Box to a Web Map</title>
+<!-- Default styling. Feel free to remove! -->
+<link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+<script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.18/web.js"></script>
+</head>
+<body>
+<!-- Load Mapbox GL JS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+<div id="map" style="position: absolute; top: 0; bottom: 0; width: 100%;"></div>
+<script>
+const ACCESS_TOKEN = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w'
+
+    mapboxgl.accessToken = ACCESS_TOKEN;
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [-114.01, 46.872],
+        zoom: 15,
+        scrollZoom: {around: 'center'},
+        touchZoomRotate: {around: 'center'}
+    })
+
+    let markerLocation = map.getCenter()
+    const marker = new mapboxgl.Marker()
+        .setLngLat(markerLocation)
+        .addTo(map)
+    map.on(`move`, (e) => {
+        if (map.isZooming()) {
+            return;
+        }
+        markerLocation = map.getCenter();
+        
+        marker.setLngLat(markerLocation);
+    })
+    const searchJS = document.getElementById('search-js')
+    searchJS.onload = function () {
+        const searchBox = new MapboxSearchBox()
+        searchBox.accessToken = ACCESS_TOKEN
+        searchBox.options = {
+            types: 'address,poi',
+            proximity: [-73.99209, 40.68933]
+        }
+        searchBox.marker = true
+        searchBox.mapboxgl = mapboxgl
+        map.addControl(searchBox)
+    };
+</script>
+
+</body>
+</html>
+
+{% endblock %}
