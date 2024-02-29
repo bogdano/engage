@@ -11,14 +11,24 @@
 {% block title %}Add Activity{% endblock %}
 
 {% block content %}
+    <style>
+        .ts-control {
+            padding: 0;
+            border: none;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+    </style>
     <h1 class="text-5xl font-bold text-center m-8">Add Activity</h1>
     <form action="{% url 'add_activity' %}" method="post">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">
-            <input type="text" name="title" placeholder="Title" required autofocus class="px-4 py-2 my-2 border border-gray-300 rounded-md text-4xl w-full md:w-auto md:flex-grow">
-            <input type="number" name="points" placeholder="Points" required class="px-4 py-2 my-2 border border-gray-300 rounded-md md:w-auto">
+            <input type="text" name="title" placeholder="Title" required autofocus class="px-4 py-2 my-2 border border-gray-300 rounded-2xl text-4xl w-full md:w-auto md:flex-grow">
+            <input type="number" name="points" placeholder="0" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl text-4xl md:w-48">
         </div>
-        <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-md w-full h-24"></textarea>
+        
+        <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-24"></textarea>
+        
         <div class="flex items-center justify-center h-72 my-2">
             <mapbox-search-box id="searchBox"></mapbox-search-box>
             <div id="map" class="w-full h-full rounded-2xl"></div>
@@ -30,31 +40,35 @@
 
         <div class="flex space-x-4 justify-center px-4 py-2 my-2">
             <div>
-                <label for="event_date" class="block text-sm font-medium text-gray-700">Event Date</label>
-                <input type="datetime-local" id="event_date" name="event_date" class="px-4 py-2 my-2 border border-gray-300 rounded-md">
+                <label for="event_date" class="block text-sm font-medium text-gray-700 text-center">Event Date</label>
+                <input type="datetime-local" id="event_date" name="event_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl">
             </div>
             <div>
-                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
-                <input type="datetime-local" id="end_date" name="end_date" class="px-4 py-2 my-2 border border-gray-300 rounded-md">
+                <label for="end_date" class="block text-sm font-medium text-gray-700 text-center">End Date</label>
+                <input type="datetime-local" id="end_date" name="end_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl">
             </div>
-        </div>        <label class="w-full flex justify-center px-4 py-2 my-2 border border-gray-300 rounded cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+        </div>     
+
+        <label class="flex justify-center px-4 py-2 my-2 border border-gray-300 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="photo" class="hidden">
             <span>Upload image for activity</span>
         </label>
+
         <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
-        <select id="select-leaderboard" name="leaderboards" multiple placeholder="should points go to a leaderboard?" autocomplete="on">
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="should points go to a leaderboard?" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full">
             {% for leaderboard in leaderboards %}
                 <option value="{{ leaderboard.id }}">{{ leaderboard.name }}</option>
             {% endfor %}
         </select>
+
         {% if request.user.is_staff %}
         <label>
-            <input type="checkbox" name="alert" class="px-4 py-2 my-2 border border-gray-300 rounded-md">
+            <input type="checkbox" name="alert" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl">
             Alert
         </label>
         {% endif %}
         <div class="flex justify-center">
-            <button type="submit" class="w-full md:w-96 px-4 py-2 my-6 bg-blue-500 text-white rounded-md">Add activity</button>
+            <button type="submit" class="w-full md:w-96 px-4 py-2 my-6 bg-blue-500 text-white rounded-2xl">Add activity</button>
         </div>
     </form>
 {% endblock %}
