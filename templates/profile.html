@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- Profile Page with nav bar at bottom -->
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profile</title>
+</head>
+
+<body class="flex flex-col min-h-screen bg-yellow-100">
+    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
+        <button class="p-3 rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile</button>
+        <div class="flex items-center">
+            <div class="relative">
+                <img src="your_image_url.jpg" alt=" " class="rounded-full h-12 w-12">
+                <p class="absolute bottom-0 left-0 right-0 text-center text-black py-1">
+                    Name Placeholder</p>
+            </div>
+        </div>
+        <p>Balance:</p>
+    </nav>
+
+    <!-- I only want this to appear like this when the Edit Profile button is pressed -->
+
+    <div class="flex justify-between items-center">
+        <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
+    </div>
+
+
+
+    <div class="flex-grow">
+        <!-- this is the content of the page-->
+    </div>
+
+    <div class="bg-yellow-300 text-black p-4">
+
+        <div class="flex justify-around">
+            <a href="home_page.html" class="hover:text-blue-300">Home Page</a>
+            <a href="profile.html" class="hover:text-blue-300">Profile</a>
+            <a href="leaderboard.html" class="hover:text-blue-300">Leaderboard</a>
+            <a href="store.html" class="hover:text-blue-300">Store</a>
+            <a href="notifications.html" class="hover:text-blue-300">Notifications</a>
+        </div>
+    </div>
+    </div>
+
+
+    <!--
+    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
+        <div class="flex justify-around">
+            <a href="home_page.html" class="hover:text-blue-300">Home Page</a>
+            <a href="profile.html" class="hover:text-blue-300">Profile</a>
+            <a href="leaderboard.html" class="hover:text-blue-300">Leaderboard</a>
+            <a href="store.html" class="hover:text-blue-300">Store</a>
+            <a href="notifications.html" class="hover:text-blue-300">Notifications</a>
+        </div>
+    </nav>
+
+-->
+    <!--
+    <div class="w-5/6 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
+        <div class="w-5/6 my-6 mx-auto p-2 lg:p-10 bg-gray-200 rounded-xl">
+            <div>
+                <div class="grid grid-cols-[repeat(auto-fill,10rem)] gap-2 justify-between ">
+                    <div class="w-40 h-40 bg-blue-500 p-4">1</div>
+                    <div class="w-40 h-40 bg-blue-500 p-4">2</div>
+                    <div class="w-40 h-40 bg-blue-500 p-4">3</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    -->
+</body>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</html>
