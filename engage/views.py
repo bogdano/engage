@@ -1,14 +1,15 @@
-from .models import Team, Activity
+from .models import Team, Activity, Leaderboard
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.utils.dateparse import parse_date
+import cloudinary.uploader
 
 def homepage(request):
     if not request.user.is_authenticated:
         return render(request, 'auth/send_login_link.html')
     else:
-        return render(request, 'home.html')
+        activities = Activity.objects.filter(is_approved=True, is_active=True).order_by('event_date')
+        return render(request, 'home.html', {'activities': activities})
 
 def add_activity(request):
     return render(request, 'add_activity.html')
@@ -16,32 +17,40 @@ def add_activity(request):
 def new_activity(request):
     if request.method == 'POST':
         title = request.POST.get('title')
+        points = request.POST.get('points')
         description = request.POST.get('description')
         creator = request.user
         address = request.POST.get('address')
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
         event_date = request.POST.get('event_date')
-        duration = request.POST.get('duration')
-        is_competition = request.POST.get('is_competition')
-        activity_type = request.POST.get('activity_type')
-        photo = request.POST.get('photo')
-        points = request.POST.get('points')
+        end_date = request.POST.get('end_date')
+        # upload photo to cloudinary and store URL in database
+        uploaded_image_url = ''
+        if 'photo' in request.FILES:
+            uploaded_image = cloudinary.uploader.upload(request.FILES['photo'])
+            uploaded_image_url = uploaded_image['url']
+
+        leaderboard_names = request.POST.getlist('leaderboards')
+
+        # Create new Leaderboard instances if necessary
+        leaderboards = [Leaderboard.objects.get_or_create(name=name)[0] for name in leaderboard_names]
 
         activity = Activity.objects.create(
             title=title,
+            points=points,
             description=description,
             creator=creator,
             address=address,
             latitude=latitude,
             longitude=longitude,
             event_date=event_date,
-            duration=duration,
-            is_competition=is_competition,
-            activity_type=activity_type,
-            photo=photo,
-            points=points,
+            end_date=end_date,
+            photo=uploaded_image_url,
         )
+
+        # Link the Leaderboard instances to the Activity instance
+        activity.leaderboards.add(*leaderboards)
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()

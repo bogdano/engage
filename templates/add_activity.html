@@ -1,61 +1,122 @@
 {% extends "base.html" %}
 
+{% block head %}
+    <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.18/web.js" defer></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+{% endblock %}
+
+{% block title %}Add Activity{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Add Search Box to a Web Map</title>
-<!-- Default styling. Feel free to remove! -->
-<link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
-<script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.18/web.js"></script>
-</head>
-<body>
-<!-- Load Mapbox GL JS -->
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <h1 class="text-5xl font-bold text-center m-8">Add Activity</h1>
+    <form action="{% url 'add_activity' %}" method="post">
+        {% csrf_token %}
+        <div class="flex flex-col md:flex-row md:space-x-4">
+            <input type="text" name="title" placeholder="Title" required autofocus class="px-4 py-2 my-2 border border-gray-300 rounded-md text-4xl w-full md:w-auto md:flex-grow">
+            <input type="number" name="points" placeholder="Points" required class="px-4 py-2 my-2 border border-gray-300 rounded-md md:w-auto">
+        </div>
+        <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-md w-full h-24"></textarea>
+        <div class="flex items-center justify-center h-72 my-2">
+            <mapbox-search-box id="searchBox"></mapbox-search-box>
+            <div id="map" class="w-full h-full rounded-2xl"></div>
+        </div>
 
-<div id="map" style="position: absolute; top: 0; bottom: 0; width: 100%;"></div>
+        <input type="hidden" name="address" id="addressField">
+        <input type="hidden" name="latitude" id="latitudeField">
+        <input type="hidden" name="longitude" id="longitudeField">
+
+        <div class="flex space-x-4 justify-center px-4 py-2 my-2">
+            <div>
+                <label for="event_date" class="block text-sm font-medium text-gray-700">Event Date</label>
+                <input type="datetime-local" id="event_date" name="event_date" class="px-4 py-2 my-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+                <input type="datetime-local" id="end_date" name="end_date" class="px-4 py-2 my-2 border border-gray-300 rounded-md">
+            </div>
+        </div>        <label class="w-full flex justify-center px-4 py-2 my-2 border border-gray-300 rounded cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+            <input type="file" name="photo" class="hidden">
+            <span>Upload image for activity</span>
+        </label>
+        <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="should points go to a leaderboard?" autocomplete="on">
+            {% for leaderboard in leaderboards %}
+                <option value="{{ leaderboard.id }}">{{ leaderboard.name }}</option>
+            {% endfor %}
+        </select>
+        {% if request.user.is_staff %}
+        <label>
+            <input type="checkbox" name="alert" class="px-4 py-2 my-2 border border-gray-300 rounded-md">
+            Alert
+        </label>
+        {% endif %}
+        <div class="flex justify-center">
+            <button type="submit" class="w-full md:w-96 px-4 py-2 my-6 bg-blue-500 text-white rounded-md">Add activity</button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
 <script>
-const ACCESS_TOKEN = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w'
+    var unique = new TomSelect('#select-leaderboard',{
+        create: true,
+        createFilter: function(input) {
+            input = input.toLowerCase();
+            return !(input in this.options);
+        }
+    });
 
-    mapboxgl.accessToken = ACCESS_TOKEN;
+    const ACCESS_TOKEN = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w'
+    mapboxgl.accessToken = ACCESS_TOKEN
+
     const map = new mapboxgl.Map({
+        cooperativeGestures: true,
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12',
         center: [-114.01, 46.872],
-        zoom: 15,
+        zoom: 15.2,
         scrollZoom: {around: 'center'},
         touchZoomRotate: {around: 'center'}
     })
 
     let markerLocation = map.getCenter()
-    const marker = new mapboxgl.Marker()
+
+    const marker = new mapboxgl.Marker({ "color": "#e85151" })
         .setLngLat(markerLocation)
         .addTo(map)
+
     map.on(`move`, (e) => {
-        if (map.isZooming()) {
-            return;
-        }
-        markerLocation = map.getCenter();
-        
-        marker.setLngLat(markerLocation);
+        markerLocation = map.getCenter()
+        marker.setLngLat(markerLocation)
     })
+
+    map.on(`moveend`, (e) => {
+        markerLocation = map.getCenter()
+        console.log(markerLocation)
+        console.log(searchBox.value)
+
+        // Set the values of the hidden fields
+        document.getElementById('addressField').value = searchBox.value;
+        document.getElementById('longitudeField').value = markerLocation.lng;
+        document.getElementById('latitudeField').value = markerLocation.lat;
+    })
+
     const searchJS = document.getElementById('search-js')
     searchJS.onload = function () {
-        const searchBox = new MapboxSearchBox()
+        const searchBox = document.getElementById('searchBox')
+        searchBox.setAttribute('placeholder', "Where's it happening?")
         searchBox.accessToken = ACCESS_TOKEN
         searchBox.options = {
             types: 'address,poi',
-            proximity: [-73.99209, 40.68933]
+            proximity: [-114.01, 46.872],
         }
-        searchBox.marker = true
+        searchBox.marker = false
         searchBox.mapboxgl = mapboxgl
-        map.addControl(searchBox)
-    };
+        searchBox.value = 'ATG Office'
+        map.addControl(new mapboxgl.FullscreenControl())
+        map.addControl(searchBox, 'top-left', 0)
+    }
 </script>
-
-</body>
-</html>
-
 {% endblock %}
