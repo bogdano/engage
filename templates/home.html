@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
-
+{% block title %}Home{% endblock %}
 {% block content %}
 <div class="flex justify-center items-center h-screen">
+    {% for a in activities %}
+    <a href="#" class="p-4 m-4 bg-gray-200 rounded-xl">{{ a.name }}</a>
+    {% endfor %}
     <a href="{% url 'logout' %}">logout</a>
 </div>
 {% endblock %}

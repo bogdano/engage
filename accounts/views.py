@@ -33,8 +33,9 @@ def send_login_link(request):
             message = render_to_string('auth/login_link.html', {'login_link': login_link})
             from_email = 'noreply@example.com'
             send_mail(subject, message, from_email, [email])
-        
-        return render(request, 'auth/email_sent.html')
+            return render(request, 'auth/email_sent.html')
+        else:
+            return render(request, 'auth/register.html', {'error': 'User not found'})
     return render(request, 'auth/send_login_link.html')
 
 def login_with_link(request, uidb64, token):
