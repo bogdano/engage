@@ -29,6 +29,7 @@ urlpatterns = [
     path('store/', views.store, name='store'),
     path('notifications/', views.notifications, name='notifications'),
     path('add_activity/', views.add_activity, name='add_activity'),
+    path('profile/', views.profile, name='profile'),
     path('activity/<int:pk>/', views.activity, name='activity'),
     path('new_activity/', views.new_activity, name='new_activity'),
 ]

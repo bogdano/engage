@@ -102,3 +102,6 @@ def store(request):
 
 def notifications(request):
     return render(request, 'notifications.html')
+
+def profile(request):
+    return render(request, 'profile.html')
