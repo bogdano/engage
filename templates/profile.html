@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<!-- Profile Page with nav bar at bottom -->
+{% extends 'base.html' %}
 
-<html>
+{% block content %}
 
 <head>
     <meta charset="utf-8">
@@ -11,30 +10,51 @@
 
 <body class="flex flex-col min-h-screen bg-yellow-100">
     <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
-        <button class="p-3 rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile</button>
+        <button class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile</button>
         <div class="flex items-center">
             <div class="relative">
                 <img src="your_image_url.jpg" alt=" " class="rounded-full h-12 w-12">
-                <p class="absolute bottom-0 left-0 right-0 text-center text-black py-1">
+                <p class="absolute bottom-0 left-0 right-0 text-center px-6 font-medium">
                     Name Placeholder</p>
             </div>
         </div>
-        <p>Balance:</p>
+        <p class=" px-6 font-medium text-black">Balance:</p>
     </nav>
+
 
     <!-- I only want this to appear like this when the Edit Profile button is pressed -->
 
-    <div class="flex justify-between items-center">
-        <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
-    </div>
 
+    <!--
+    <div class="flex py-3 rounded-xl bg-grey-100">
+        <div class="w-4/5">
+            <p class="px-6 text-xs font-medium text-gray-500 uppercase">Title</p>
+        </div>
+
+        <div class="hidden md:block w-1/5 px-6 text-right">
+            <p class="text-xs font-medium text-gray-500 uppercase">Actions</p>
+        </div>
+    </div>
+-->
 
 
     <div class="flex-grow">
         <!-- this is the content of the page-->
+        <div class="w-4/5">
+            <p class="px-6 font-medium text-black uppercase">Team</p>
+        </div>
+        <img src="your_image_url.jpg" alt=" " class="rounded-full h-12 w-12">
+
     </div>
 
-    <div class="bg-yellow-300 text-black p-4">
+
+    <div class="flex-grow">
+        <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
+
+    </div>
+
+
+    <!--<div class="bg-yellow-300 text-black p-4">
 
         <div class="flex justify-around">
             <a href="home_page.html" class="hover:text-blue-300">Home Page</a>
@@ -46,7 +66,7 @@
     </div>
     </div>
 
-
+-->
     <!--
     <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
         <div class="flex justify-around">
@@ -73,8 +93,10 @@
         </div>
     </div>
     -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org"></script>
+
 </body>
 
-<script src="https://cdn.tailwindcss.com"></script>
-
-</html>
+{% endblock %}
