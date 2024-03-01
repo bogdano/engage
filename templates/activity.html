@@ -1,37 +1,62 @@
 {% extends "base.html" %}
 
-{% block head %}
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js"></script>
-    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
-{% endblock %}
-
-{% block title %}Activity{% endblock %}
+{% block title %}{{ activity.title }}{% endblock %}
 
 {% block content %}
+<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
+
+<h1 class="text-5xl font-bold text-center mt-12 mb-5">{{ activity.title }}</h1>
+<div class="flex justify-center space-x-1">
+    {% for leaderboard in activity.leaderboards.all %}
+        <a href="#" class="py-1 px-3 text-xs bg-amber-500 text-white font-extrabold rounded-xl">{{ leaderboard.leaderboard_name }}</a>
+    {% endfor %}
+</div>
+<p class="text-md text-center mt-8">
+    {{ activity.description }}
+</p>
 <div class="flex items-center justify-center h-72 mt-4">
     <div id="map" class="w-full h-full rounded-2xl cursor-pointer"></div>
-</div>
+</div>  
 {% endblock %}
 
 {% block scripts %}
-<script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
-    const map = new mapboxgl.Map({
-        container: 'map',
-        center: [-114.01, 46.872], // Use your coordinates here
-        zoom: 15,
-        interactive: false,
-    });
+<script defer>
+// Check if Mapbox GL JS is already loaded
+if (typeof mapboxgl === 'undefined') {
+    // Create a new script element to load Mapbox GL JS
+    var script = document.createElement('script');
+    script.onload = function() {
+        // Once loaded, set the access token and initialize the map
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
+        initializeMap();
+    };
+    script.src = 'https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js';
+    document.head.appendChild(script);
+} else {
+    // Mapbox GL JS is already loaded, just initialize the map
+    initializeMap();
+}
+function initializeMap() {
+    // Ensuring mapboxgl is defined and the map container exists
+    console.log("initializeMap called")
+    if (typeof mapboxgl !== 'undefined' && document.getElementById('map')) {
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            center: ["{{ activity.longitude }}", "{{ activity.latitude }}"],
+            zoom: 15,
+            interactive: false,
+        });
 
-    // Add a marker to the map
-    new mapboxgl.Marker({ "color": "#e85151" })
-        .setLngLat([-114.01, 46.872]) // Use your coordinates here
-        .addTo(map);
+        new mapboxgl.Marker({ "color": "#e85151" })
+            .setLngLat(["{{ activity.longitude }}", "{{ activity.latitude }}"])
+            .addTo(map);
 
-    // Redirect to Google Maps upon clicking the map
-    map.on('click', function() {
-        window.location.href = `https://www.google.com/maps/search/?api=1&query=46.872%2C-114.01`; // Use your coordinates here
-    });
-</script>
+        map.on('click', function() {
+            window.location.href = `https://www.google.com/maps/search/?api=1&query={{ activity.latitude }},{{ activity.longitude }}`;
+        });
+    }
+}
+</script>  
 {% endblock %}
     

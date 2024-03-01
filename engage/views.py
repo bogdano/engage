@@ -12,7 +12,8 @@ def homepage(request):
         return render(request, 'home.html', {'activities': activities})
 
 def add_activity(request):
-    return render(request, 'add_activity.html')
+    leaderboards = Leaderboard.objects.all()
+    return render(request, 'add_activity.html', {'leaderboards': leaderboards})
     
 def new_activity(request):
     if request.method == 'POST':
@@ -32,9 +33,8 @@ def new_activity(request):
             uploaded_image_url = uploaded_image['url']
 
         leaderboard_names = request.POST.getlist('leaderboards')
-
         # Create new Leaderboard instances if necessary
-        leaderboards = [Leaderboard.objects.get_or_create(name=name)[0] for name in leaderboard_names]
+        leaderboards = [Leaderboard.objects.get_or_create(leaderboard_name=name)[0] for name in leaderboard_names]
 
         activity = Activity.objects.create(
             title=title,
@@ -48,7 +48,6 @@ def new_activity(request):
             end_date=end_date,
             photo=uploaded_image_url,
         )
-
         # Link the Leaderboard instances to the Activity instance
         activity.leaderboards.add(*leaderboards)
         if request.user.is_staff:
@@ -60,9 +59,9 @@ def new_activity(request):
     else:
         return JsonResponse({'error': 'Invalid request method'})
         
-def activity(request):
-    # activity = Activity.objects.get(pk=pk)
-    return render(request, 'activity.html')
+def activity(request, pk):
+    activity = Activity.objects.get(pk=pk)
+    return render(request, 'activity.html', {'activity': activity})
 
 def leaderboard(request):
     # start_date = request.GET.get('start_date')
