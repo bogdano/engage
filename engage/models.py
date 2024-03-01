@@ -16,12 +16,12 @@ class Activity(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     # event_date date
-    event_date = models.DateField()
-    end_date = models.DateField()
+    event_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     # created_at date
     created_at = models.DateField(auto_now_add=True)
     # photo field string
-    photo = models.CharField(max_length=200)
+    photo = models.CharField(max_length=100, default="", blank=True)
     # points value
     points = models.IntegerField()
     # is_active boolean
@@ -43,7 +43,7 @@ class Activity(models.Model):
     # leaderboard, it will be added to the Leaderboard model (will have to add a form somewhere to set logo and color values)
 
 class Leaderboard(models.Model):
-    leaderboard_name = models.CharField(max_length=200, null=False, blank=False)
+    leaderboard_name = models.CharField(max_length=200, null=False, blank=False, unique=True)
     leaderboard_logo = models.CharField(max_length=200)
     leaderboard_color = models.CharField(max_length=200)
 
