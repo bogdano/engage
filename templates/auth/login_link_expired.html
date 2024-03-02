@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Login Link Expired{% endblock %}
+{% block content %}
+<div class="flex flex-col justify-center items-center h-screen">
+    <p>
+        Sorry, the login link HAS EXPIRED. Please request a new one.<br>
+        <a href="{% url 'send_login_link' %}">Send a new login link</a>
+    </p>
+</div>
+{% endblock %}
+    

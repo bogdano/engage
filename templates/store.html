@@ -1,23 +1,10 @@
-<!DOCTYPE html>
-<!-- main store page-->
+{% extends 'base.html' %}
 
-<html>
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Store</title>
-</head>
-
-<body class="bg-green-100">
+{% block content %}
     <nav class="flex py-6 justify-between text-center px-4 py-6 bg-green-300">
         <a href="./home.html" class="text-xl text-black">Back</a>
         <p class="text-3xl">Store</p>
         <p>Balance:</p>
-    </nav>
-
-    <nav class="flex items-center justify-between px-4 py-6 text-center bg-green-300 fixed bottom-0 left-0 z-50 w-full">
-        <a href="/" class="text-2xl text-black">Placeholder Navbar</a>
     </nav>
 
     <div class="w-5/6 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
@@ -32,8 +19,4 @@
 
         </div>
     </div>
-</body>
-
-<script src="https://cdn.tailwindcss.com"></script>
-
-</html>
+{% endblock %}

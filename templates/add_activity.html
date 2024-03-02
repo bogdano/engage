@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Add Activity{% endblock %}
+
+{% block content %}
+<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
+
+    <h1 class="text-5xl font-bold text-center pt-12 mb-5">Add Activity</h1>
+    <form action="{% url 'new_activity' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="flex flex-col md:flex-row md:space-x-4">
+            <input type="text" name="title" placeholder="Title" required autofocus class="px-4 py-2 my-2 border border-gray-300 rounded-2xl text-4xl w-full md:w-auto md:flex-grow">
+            <input type="number" name="points" placeholder="0" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl text-4xl md:w-48">
+        </div>
+        
+        <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-16"></textarea>
+        
+        <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="should points go to a leaderboard?" autocomplete="on" class="px-4 py-2 mt-2 mb-6 border border-gray-300 rounded-2xl w-full">
+            {% for leaderboard in leaderboards %}
+                <option value="{{ leaderboard.id }}">{{ leaderboard.leaderboard_name }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="flex items-center justify-center h-72 my-2 rounded-2xl bg-slate-100">
+            <div id="map" class="w-full h-full rounded-2xl"></div>
+        </div>
+
+        <input type="hidden" name="address" id="addressField" value="ATG Office">
+        <input type="hidden" name="latitude" id="latitudeField">
+        <input type="hidden" name="longitude" id="longitudeField">
+
+        <div class="flex space-x-4 justify-center px-4 py-2 my-2">
+            <div>
+                <label for="event_date" class="block text-sm font-medium text-gray-700 text-center">Event Date</label>
+                <input type="datetime-local" id="event_date" name="event_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl">
+            </div>
+            <div>
+                <label for="end_date" class="block text-sm font-medium text-gray-700 text-center">End Date</label>
+                <input type="datetime-local" id="end_date" name="end_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl">
+            </div>
+        </div>     
+
+        <label class="drag-drop flex justify-center px-4 py-8 my-4 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+            <input type="file" name="photo" id="fileInput" class="hidden">
+            <span id="imageDropped">Upload image for activity</span>
+        </label>
+
+        {% if request.user.is_staff %}
+        <div class="flex items-center justify-center">
+            <label class="bg-amber-100 px-4 py-2 rounded-2xl">
+                <input type="checkbox" name="alert" class="px-2 py-2 my-2 mr-2 border border-gray-300 rounded-md">
+                Alert
+            </label>
+        </div>
+        {% endif %}
+        <div class="flex justify-center">
+            <button type="submit" class="w-full md:w-96 px-4 py-2 my-6 bg-blue-500 text-white rounded-2xl">Add activity</button>
+        </div>
+    </form>
+
+    <style>
+        .ts-control {
+            padding: 0;
+            border: none;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        } .ts-control input {
+            font-size: 1rem;
+        }
+        .ts-dropdown {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            margin-top: 0.5rem;
+        }
+        .drag-over {
+            background-color: #ecfce7; 
+            border-color: #2a4800; 
+        }
+    </style>
+{% endblock %}
+
+{% block scripts %}
+<script defer>
+if (typeof mapboxgl === 'undefined' || typeof MapboxGeocoder === 'undefined') {
+    var maboxglScript = document.createElement('script');
+    maboxglScript.onload = function() {
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
+        initializeMap();
+    };
+    maboxglScript.src = 'https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js';
+    document.head.appendChild(maboxglScript);
+
+    let searchJS = document.createElement('script')
+    searchJS.src = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js'
+    document.head.appendChild(searchJS)
+} else {
+    // Mapbox GL JS is already loaded, just initialize the map
+    initializeMap();
+}
+
+if (typeof TomSelect === 'undefined') {
+    var tomSelectScript = document.createElement('script');
+    tomSelectScript.onload = function() {
+        var tomSelectInstance = new TomSelect('#select-leaderboard', {
+            create: true,
+            createFilter: function (input) {
+                input = input.toLowerCase();
+                return !(input in this.options);
+            }
+        });
+    };
+    tomSelectScript.src = 'https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js';
+    document.head.appendChild(tomSelectScript);
+} else {
+    var tomSelectInstance = new TomSelect('#select-leaderboard', {
+        create: true,
+        createFilter: function (input) {
+            input = input.toLowerCase();
+            return !(input in this.options);
+        }
+    });
+}
+
+function initializeMap() {
+    const map = new mapboxgl.Map({
+        cooperativeGestures: true,
+        container: 'map',
+        center: [-114.01, 46.872],
+        zoom: 15.2,
+        scrollZoom: {around: 'center'},
+        touchZoomRotate: {around: 'center'}
+    })
+
+    // Add the control to the map.
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            marker: false,
+            proximity: {
+                longitude: -114.01,
+                latitude: 46.872
+            },
+            placeholder: "Where's it happening?",
+        }), 'top-left'
+    );
+    geocoder = document.querySelector('.mapboxgl-ctrl-geocoder--input')
+    geocoder.value = "ATG Office"
+    map.addControl(new mapboxgl.FullscreenControl())
+
+    
+    let markerLocation = map.getCenter()
+    const marker = new mapboxgl.Marker({ "color": "#e85151" })
+        .setLngLat(markerLocation)
+        .addTo(map)
+
+    map.on(`move`, (e) => {
+        markerLocation = map.getCenter()
+        marker.setLngLat(markerLocation)
+    })
+
+    map.on(`load`, (e) => {
+        markerLocation = map.getCenter()
+        document.getElementById('longitudeField').value = markerLocation.lng
+        document.getElementById('latitudeField').value = markerLocation.lat
+    })
+
+    map.on(`moveend`, (e) => {
+        markerLocation = map.getCenter()
+        console.log(markerLocation)
+        searchBox = document.querySelector('.mapboxgl-ctrl-geocoder--input')
+        console.log(searchBox.value.split(',')[0])
+
+        // Set the values of the hidden fields
+        document.getElementById('addressField').value = searchBox.value.split(',')[0]
+        document.getElementById('longitudeField').value = markerLocation.lng;
+        document.getElementById('latitudeField').value = markerLocation.lat;
+    })
+} 
+    
+function formatDateTime(date) {
+    const formattedDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
+    return formattedDate.substring(0, 16); // Trim to match the datetime-local format (YYYY-MM-DDTHH:MM)
+}
+
+// if this is the add_activity page:
+document.addEventListener('htmx:afterSettle', function() {
+    if (document.getElementById('imageDropped') === null) {
+        return;
+    }
+    // Get current date and time
+    const now = new Date();
+    // Format current date/time for datetime-local input
+    const currentDateTime = formatDateTime(now);
+
+    // Calculate tomorrow's date by adding one day to the current date
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    // Format tomorrow's date/time for datetime-local input
+    const tomorrowDateTime = formatDateTime(tomorrow);
+
+    // Set the values of the input fields
+    document.getElementById('event_date').value = currentDateTime;
+    document.getElementById('end_date').value = tomorrowDateTime;
+
+    // Drag and drop file upload
+    const dropArea = document.querySelector('.drag-drop');
+    const fileLabel = document.getElementById('imageDropped');
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', function() {
+        // Check if files were selected
+        if (fileInput.files.length > 0) {
+            // Update the label with the name of the first selected file
+            fileLabel.textContent = fileInput.files[0].name;
+        }
+    });
+
+    // Highlight drop area when file is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    // Unhighlight drop area when dragging leaves it or drops
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Prevent default behavior (prevent file from being opened)
+    dropArea.addEventListener('dragover', preventDefaults, false);
+    dropArea.addEventListener('dragenter', preventDefaults, false);
+    dropArea.addEventListener('dragleave', preventDefaults, false);
+    dropArea.addEventListener('drop', preventDefaults, false);
+
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        dropArea.classList.add('drag-over');
+    }
+
+    function unhighlight(e) {
+        dropArea.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        // Call a function to handle the files
+        // For this example, we'll just pass it to the input
+        document.getElementById('fileInput').files = files;
+
+        // Optionally, you can emit a change event on the input
+        // if you need to trigger any 'change' event listeners
+        const event = new Event('change', { bubbles: true });
+        document.getElementById('fileInput').dispatchEvent(event);
+        document.getElementById('imageDropped').innerText = files[0].name;
+        document.querySelector('.drag-drop').classList.add('drag-over');
+    }
+});
+</script>
+{% endblock %}
