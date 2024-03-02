@@ -102,52 +102,6 @@ class ItemSizes(models.Model):
 
 # stores combinations of separate info from other item tables
 class ItemVariant(models.Model):
-    item_type = models.ForeignKey(
-        "Item", on_delete=models.CASCADE, null=True, blank=True
-    )
-    item_color = models.ForeignKey(
-        "ItemColors", on_delete=models.CASCADE, null=True, blank=True
-    )
-    item_size = models.ForeignKey(
-        "ItemSizes", on_delete=models.CASCADE, null=True, blank=True
-    )
-    image1 = models.CharField(max_length=200)
-    image2 = models.CharField(max_length=200, null=True, blank=True)
-    image3 = models.CharField(max_length=200, null=True, blank=True)
-
-
-class UserParticipates(models.Model):
-    # user_id fk to custom user model
-    user_id = models.ForeignKey("User", on_delete=models.CASCADE)
-    # activity_id fk to activity model
-    activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
-
-
-class UserInterested(models.Model):
-    # user_id fk to custom user model
-    user_id = models.ForeignKey("User", on_delete=models.CASCADE)
-    # activity_id fk to activity model
-    activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
-
-
-class Team(models.Model):
-    name = models.CharField(max_length=200)
-    leader = models.ForeignKey(
-        User, on_delete=models.PROTECT, related_name="led_team", null=True, blank=True
-    )
-
-    def total_points(self):
-        # Calculate the total points of all users in this team
-        return (
-            self.userprofile_set.aggregate(total_points=Sum("points"))["total_points"]
-            or 0
-        )
-
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
-    points = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.user.username
+    item_type = models.ForeignKey("Item", on_delete=models.CASCADE)
+    item_color = models.ForeignKey("ItemColors", on_delete=models.CASCADE)
+    item_size = models.ForeignKey("ItemSizes", on_delete=models.CASCADE)
