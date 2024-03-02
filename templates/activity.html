@@ -23,10 +23,6 @@
 </div>
 {% endif %}
 
-<p class="text-md text-center mt-5">
-    {{ activity.description }}
-</p>
-
 <div class="flex justify-center mt-5">
     <div class="flex items-center py-2 px-6 rounded-2xl bg-amber-50 space-x-5 border border-amber-200">
         <div class="text-center">
@@ -43,12 +39,16 @@
     </div>
 </div>
 
-<div class="flex items-center justify-center h-72 mt-5 rounded-2xl bg-slate-100 relative">
-    <div id="map" class="w-full h-full rounded-2xl cursor-pointer"></div>
-    <span class="absolute bottom-1.5 right-1.5 text-white bg-amber-500 font-bold z-10 px-4 py-2 rounded-2xl">
-        {{ activity.address }}
+<div class="flex items-center justify-center h-72 mt-5 md:rounded-2xl bg-slate-100 relative">
+    <div id="map" class="w-full h-full md:rounded-2xl cursor-pointer "></div>
+    <span class="absolute bottom-1.5 right-1.5 text-zinc-600 bg-amber-300 font-bold z-10 px-4 py-2 rounded-2xl">
+        @ {{ activity.address }}
     </span>
 </div>  
+
+<p class="text-md text-center mt-5">
+    {{ activity.description }}
+</p>
 
 {% if activity.photo %}
 <div class="flex justify-center items-center mt-5 rounded-2xl">
