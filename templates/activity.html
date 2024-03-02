@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ activity.title }}{% endblock %}
+
+{% block content %}
+<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
+
+<h1 class="text-5xl font-bold text-center mt-12 mb-5">{{ activity.title }}</h1>
+<div class="flex justify-center items-center mb-5">
+    <div class="mr-2"> 
+        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
+    </div>
+    <p class="text-2xl font-bold text-center text-yellow-500">
+        {{ activity.points }}
+    </p>
+</div>
+
+{% if activity.leaderboards.all %}
+<div class="flex justify-center space-x-1">
+    {% for leaderboard in activity.leaderboards.all %}
+        <a href="#" class="py-1 px-3 text-xs bg-amber-500 text-white font-extrabold rounded-xl hover:bg-amber-600">{{ leaderboard.leaderboard_name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="flex justify-center mt-5">
+    <div class="flex items-center py-2 px-6 rounded-2xl bg-amber-50 space-x-5 border border-amber-200">
+        <div class="text-center">
+            <p class="text-xl font-semibold">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
+            <p class="text-sm">{{ activity.event_date | date:"h:m a" }}</p> <!-- Format time -->
+        </div>
+        <div class="self-center">
+            <p>-</p>
+        </div>
+        <div class="text-center">
+            <p class="text-xl font-semibold">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
+            <p class="text-sm">{{ activity.end_date | date:"h:m a" }}</p> <!-- Format time -->
+        </div>
+    </div>
+</div>
+
+<div class="flex items-center justify-center h-72 mt-5 md:rounded-2xl bg-slate-100 relative">
+    <div id="map" class="w-full h-full md:rounded-2xl cursor-pointer "></div>
+    <span class="absolute bottom-1.5 right-1.5 text-zinc-600 bg-amber-300 font-bold z-10 px-4 py-2 rounded-2xl">
+        @ {{ activity.address }}
+    </span>
+</div>  
+
+<p class="text-md text-center mt-5">
+    {{ activity.description }}
+</p>
+
+{% if activity.photo %}
+<div class="flex justify-center items-center mt-5 rounded-2xl">
+    <img src="{{ activity.photo }}" alt="Activity Image" class="w-96 h-96 rounded-2xl">
+</div>
+{% endif %}
+
+<div class="flex justify-center items-center mt-36">
+    <p class="text-xs text-slate-400"><i>Created by:</i> {{ user.email }} at {{ activity.created_at }}</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script defer>
+// Check if Mapbox GL JS is already loaded
+if (typeof mapboxgl === 'undefined') {
+    // Create a new script element to load Mapbox GL JS
+    var script = document.createElement('script');
+    script.onload = function() {
+        // Once loaded, set the access token and initialize the map
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
+        initializeMap();
+    };
+    script.src = 'https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js';
+    document.head.appendChild(script);
+} else {
+    // Mapbox GL JS is already loaded, just initialize the map
+    initializeMap();
+}
+function initializeMap() {
+    // Ensuring mapboxgl is defined and the map container exists
+    console.log("initializeMap called")
+    if (typeof mapboxgl !== 'undefined' && document.getElementById('map')) {
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            center: ["{{ activity.longitude }}", "{{ activity.latitude }}"],
+            zoom: 15,
+            interactive: false,
+        });
+
+        new mapboxgl.Marker({ "color": "#e85151" })
+            .setLngLat(["{{ activity.longitude }}", "{{ activity.latitude }}"])
+            .addTo(map);
+
+        map.on('click', function() {
+            window.location.href = `https://www.google.com/maps/search/?api=1&query={{ activity.latitude }},{{ activity.longitude }}`;
+        });
+    }
+}
+</script>  
+{% endblock %}
+    
