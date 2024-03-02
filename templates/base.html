@@ -15,7 +15,7 @@
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body hx-boost="true" class="htmx-body">
+<body hx-boost="true" class="htmx-body" hx-swap="transition:true">
     <div class="max-w-6xl mx-auto w-full">
         {% block content %}
         {% endblock %}
