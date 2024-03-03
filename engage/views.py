@@ -104,4 +104,6 @@ def notifications(request):
     return render(request, 'notifications.html')
 
 def profile(request):
-    return render(request, 'profile.html')
+# if statement checking if user is logged in
+    user=request.user
+    return render(request, 'profile.html', {'user': user})
