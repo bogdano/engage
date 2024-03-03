@@ -1,4 +1,5 @@
 from .models import Team, Activity, Leaderboard, Item
+from accounts.models import CustomUser
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
@@ -150,4 +151,5 @@ def notifications(request):
 
 
 def profile(request):
-    return render(request, "profile.html")
+    user = CustomUser.objects.all()
+    return render(request, 'profile.html', {"user": user})
