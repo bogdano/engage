@@ -11,7 +11,8 @@
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-2xl font-bold mb-6">Add Item to Store</h1>
-        <form class="space-y-4" action="#" method="POST" enctype="multipart/form-data">
+        <form class="space-y-4" action="{% url 'new_item' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
             <div>
                 <label class="block font-medium" for="itemName">Item Name</label>
                 <input class="w-full p-2 border rounded" type="text" id="itemName" name="itemName" required>
@@ -26,7 +27,7 @@
                 <input class="w-full p-2 border rounded" type="number" id="pointCost" name="pointCost" required>
             </div>
             <div>
-                <p class="block font-medium" for="fav_language">Sizes Offered (Optional)</p>
+                <p class="block font-medium" for="sizes">Sizes Offered (Optional)</p>
                 <input type="checkbox" id="small" name="sizes" value="Small">
                 <label for="small">Small</label><br>
                 <input type="checkbox" id="medium" name="sizes" value="Medium">
@@ -37,16 +38,8 @@
                 <label for="XL">Extra-Large</label>
             </div>
             <div>
-                <label class="block font-medium" for="photo1">Photo 1 </label>
-                <input class="w-full p-2 border rounded" type="file" id="photo1" name="photo1" required>
-            </div>
-            <div>
-                <label class="block font-medium" for="photo2">Photo 2 (Optional)</label>
-                <input class="w-full p-2 border rounded" type="file" id="photo2" name="photo2">
-            </div>
-            <div>
-                <label class="block font-medium" for="photo3">Photo 3 (Optional)</label>
-                <input class="w-full p-2 border rounded" type="file" id="photo3" name="photo3">
+                <label class="block font-medium" for="photo">Photo</label>
+                <input class="w-full p-2 border rounded" type="file" id="photo" name="photo" required>
             </div>
             <button type="submit"
                 class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Add

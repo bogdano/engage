@@ -88,6 +88,7 @@ class Item(models.Model):
     price = models.FloatField()
     description = models.CharField(max_length=200)
     created_at = models.DateField(auto_now_add=True)
+    image = models.CharField(max_length=100, default="", blank=True)
 
 
 # stores all item color values
@@ -103,5 +104,4 @@ class ItemSizes(models.Model):
 # stores combinations of separate info from other item tables
 class ItemVariant(models.Model):
     item_type = models.ForeignKey("Item", on_delete=models.CASCADE)
-    item_color = models.ForeignKey("ItemColors", on_delete=models.CASCADE)
     item_size = models.ForeignKey("ItemSizes", on_delete=models.CASCADE)
