@@ -1,22 +1,38 @@
 {% extends 'base.html' %}
 
+
+
 {% block content %}
+
+<a href="{% url 'add_item' %}"
+    class="fixed bottom-24 right-4 md:right-72 md:bottom-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center z-50">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+
     <nav class="flex py-6 justify-between text-center px-4 py-6 bg-green-300">
         <a href="./home.html" class="text-xl text-black">Back</a>
         <p class="text-3xl">Store</p>
         <p>Balance:</p>
     </nav>
 
-    <div class="w-5/6 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
-        <div class="w-5/6 my-6 mx-auto p-2 lg:p-10 bg-gray-200 rounded-xl">
+
+    <div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
+        <div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-gray-200 rounded-xl">
             <div>
                 <div class="grid grid-cols-[repeat(auto-fill,10rem)] gap-2 justify-between ">
-                    <div class="w-40 h-40 bg-blue-500 p-4">1</div>
-                    <div class="w-40 h-40 bg-blue-500 p-4">2</div>
-                    <div class="w-40 h-40 bg-blue-500 p-4">3</div>
+                    {% for item in items %}
+                    {% include 'partials/item_card.html' %}
+                    {% endfor %}
                 </div>
             </div>
 
         </div>
+
+
+
     </div>
-{% endblock %}
+
+
+
+    {% endblock %}

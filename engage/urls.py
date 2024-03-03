@@ -14,22 +14,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.homepage, name='homepage'),
-    path('accounts/', include('accounts.urls')),  # new
+    path("admin/", admin.site.urls),
+    path("", views.homepage, name="homepage"),
+    path("accounts/", include("accounts.urls")),  # new
     path("__reload__/", include("django_browser_reload.urls")),
-    path('leaderboard/', views.leaderboard, name='leaderboard'),
-    path('leaderboard/individual/', views.individual_leaderboard, name='individual_leaderboard'),
-    path('leaderboard/team/', views.team_leaderboard, name='team_leaderboard'),
-    path('store/', views.store, name='store'),
-    path('notifications/', views.notifications, name='notifications'),
-    path('add_activity/', views.add_activity, name='add_activity'),
-    path('profile/', views.profile, name='profile'),
-    path('activity/<int:pk>/', views.activity, name='activity'),
-    path('new_activity/', views.new_activity, name='new_activity'),
+    path("leaderboard/", views.leaderboard, name="leaderboard"),
+    path(
+        "leaderboard/individual/",
+        views.individual_leaderboard,
+        name="individual_leaderboard",
+    ),
+    path("leaderboard/team/", views.team_leaderboard, name="team_leaderboard"),
+    path("store/", views.store, name="store"),
+    path("notifications/", views.notifications, name="notifications"),
+    path("add_activity/", views.add_activity, name="add_activity"),
+    path("profile/", views.profile, name="profile"),
+    path("activity/<int:pk>/", views.activity, name="activity"),
+    path("new_activity/", views.new_activity, name="new_activity"),
+    path("new_item/", views.new_item, name="new_item"),
+    path("add_item/", views.add_item, name="add_item"),
+    path("item/<int:pk>/", views.item, name="item"),
 ]

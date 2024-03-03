@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-6">Add Item to Store</h1>
+        <form class="space-y-4" action="{% url 'new_item' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <label class="block font-medium" for="itemName">Item Name</label>
+                <input class="w-full p-2 border rounded" type="text" id="itemName" name="itemName" required>
+            </div>
+            <div>
+                <label class="block font-medium" for="itemDescription">Description</label>
+                <input class="w-full p-2 border rounded" type="text" id="itemDescription" name="itemDescription"
+                    required>
+            </div>
+            <div>
+                <label class="block font-medium" for="pointCost">Point Cost</label>
+                <input class="w-full p-2 border rounded" type="number" id="pointCost" name="pointCost" required>
+            </div>
+            <div>
+                <p class="block font-medium" for="sizes">Sizes Offered (Optional)</p>
+                <input type="checkbox" id="small" name="sizes" value="Small">
+                <label for="small">Small</label><br>
+                <input type="checkbox" id="medium" name="sizes" value="Medium">
+                <label for="medium">Medium</label><br>
+                <input type="checkbox" id="large" name="sizes" value="Large">
+                <label for="large">Large</label><br>
+                <input type="checkbox" id="XL" name="sizes" value="Extra-Large">
+                <label for="XL">Extra-Large</label>
+            </div>
+            <div>
+                <label class="block font-medium" for="photo">Photo</label>
+                <input class="w-full p-2 border rounded" type="file" id="photo" name="photo" required>
+            </div>
+            <button type="submit"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Add
+                Item</button>
+        </form>
+    </div>
+</body>
+
+</html>
