@@ -7,13 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org"></script>
-    <script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
+    <!-- <script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script> -->
     {% block head %}
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body hx-boost="true" hx-ext="debug" class="htmx-body">
+<body hx-boost="true" class="htmx-body">
     <div class="max-w-6xl mx-auto w-full">
         {% block content %}
         {% endblock %}
@@ -21,26 +25,26 @@
     {% if user.is_authenticated %}
     <nav class="flex justify-center items-center h-20">
         <div
-            class="w-full fixed bottom-0 px-1 py-1 bg-white bg-opacity-65 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-xl md:border md:shadow-lg">
-            <div class="flex justify-between max-w-xs mx-auto">
+            class="w-full fixed bottom-0 px-1 py-1  z-50 bg-white bg-opacity-65 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-xl md:border md:shadow-lg">
+            <div class="flex justify-between max-w-sm mx-auto">
                 <a href="{% url 'homepage' %}"
-                    class="px-2 py-2 mx-1 rounded hover:bg-amber-200 {% if current_section == 'home' %} bg-amber-100 {% endif %}">
+                    class="px-2 py-2 mx-1 rounded-xl hover:bg-amber-200 {% if current_section == 'home' %} bg-amber-100 bg-opacity-85{% endif %}">
                     <img src="{% static 'icons/home.svg' %}" alt="Home" class="w-10 h-10">
                 </a>
                 <a href="{% url 'leaderboard' %}"
-                    class="px-2 py-2 mx-1 rounded hover:bg-cyan-200 {% if current_section == 'leaderboard' %} bg-cyan-100 {% endif %}">
+                    class="px-2 py-2 mx-1 rounded-xl hover:bg-cyan-200 {% if current_section == 'leaderboard' %} bg-cyan-100 bg-opacity-85{% endif %}">
                     <img src="{% static 'icons/leaderboard.svg' %}" alt="Leaderboards" class="w-10 h-10">
                 </a>
                 <a href="{% url 'profile' %}"
-                    class="px-2 py-2 mx-1 rounded hover:bg-rose-200 {% if current_section == 'profile' %} bg-rose-100 {% endif %}">
+                    class="px-2 py-2 mx-1 rounded-xl hover:bg-rose-200 {% if current_section == 'profile' %} bg-rose-100 bg-opacity-85{% endif %}">
                     <img src="{% static 'icons/profile.svg' %}" alt="Profile" class="w-10 h-10">
                 </a>
                 <a href="{% url 'store' %}"
-                    class="px-2 py-2 mx-1 rounded hover:bg-lime-200 {% if current_section == 'store' %} bg-lime-100 {% endif %}">
+                    class="px-2 py-2 mx-1 rounded-xl hover:bg-lime-200 {% if current_section == 'store' %} bg-lime-100 bg-opacity-85{% endif %}">
                     <img src="{% static 'icons/store.svg' %}" alt="Store" class="w-10 h-10">
                 </a>
                 <a href="{% url 'notifications' %}"
-                    class="px-2 py-2 mx-1 rounded hover:bg-violet-200 {% if current_section == 'notifications' %} bg-violet-100 {% endif %}">
+                    class="px-2 py-2 mx-1 rounded-xl hover:bg-violet-200 {% if current_section == 'notifications' %} bg-violet-100 bg-opacity-85{% endif %}">
                     <img src="{% static 'icons/notifications.svg' %}" alt="Notifications" class="w-10 h-10">
                 </a>
             </div>
