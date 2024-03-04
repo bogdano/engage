@@ -1,6 +1,7 @@
 from .models import Team, Activity, Leaderboard, Item
 from accounts.models import CustomUser
-from django.db.models import Sum
+from django.db.models import Sum, Prefetch
+from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import cloudinary.uploader
@@ -125,20 +126,28 @@ def individual_leaderboard(request):
     return render(request, "partials/individual_leaderboard.html", {"users": users})
 
 
-def team_leaderboard(request):
-    # Fetch teams and their points
-    teams = Team.objects.annotate(total_points=Sum("userprofile__points")).order_by(
-        "-total_points"
-    )
-    return render(request, "partials/team_leaderboard.html", {"teams": teams})
+def team_leaderboard_view(request):
+    teams = Team.objects.prefetch_related(
+        Prefetch(
+            'member',
+            queryset=CustomUser.objects.annotate(total_points=Sum('lifetime_points'))
+        )
+    ).annotate(team_points=Sum('member__lifetime_points')).order_by('-team_points')
+
+    return render(request, 'partials/team_leaderboard.html', {'teams': teams})
 
 
-def leaderboard_view(request):
-    # Fetch the top 10 users by points
-    top_users = UserProfile.objects.order_by("-points")[:10]
-    return render(
-        request, "partials/leaderboard_partial.html", {"top_users": top_users}
-    )
+def leaderboard_view(request: HttpRequest):
+    # Order users by lifetime points in descending order directly
+    users = CustomUser.objects.all().order_by('-lifetime_points')
+    
+    if request.headers.get('HX-Request', False):
+        # This is an HTMX request; return only the partial content
+        return render(request, 'partials/individual_leaderboard.html', {'users': users})
+    else:
+        # This is a full page request; return the entire page
+        return render(request, 'leaderboard.html', {'users': users})
+
 
 
 def store(request):

@@ -24,13 +24,13 @@ urlpatterns = [
     path("", views.homepage, name="homepage"),
     path("accounts/", include("accounts.urls")),  # new
     path("__reload__/", include("django_browser_reload.urls")),
-    path("leaderboard/", views.leaderboard, name="leaderboard"),
+    path('leaderboard/', views.leaderboard_view, name='leaderboard'),
     path(
         "leaderboard/individual/",
         views.individual_leaderboard,
         name="individual_leaderboard",
     ),
-    path("leaderboard/team/", views.team_leaderboard, name="team_leaderboard"),
+    path('team_leaderboard/', views.team_leaderboard_view, name='team_leaderboard'),
     path("store/", views.store, name="store"),
     path("notifications/", views.notifications, name="notifications"),
     path("add_activity/", views.add_activity, name="add_activity"),
