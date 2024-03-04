@@ -7,7 +7,7 @@ from django.http import JsonResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
 
-def homepage(request, query_date=None):
+def homepage(request):
     if not request.user.is_authenticated:
         return render(request, "auth/send_login_link.html")
     else:
@@ -35,7 +35,8 @@ def homepage(request, query_date=None):
                 'total_activities': activities_dict.get(date.date(), 0)
             })
         # filter activities by date if query_date is present
-        if query_date:
+            query_date = request.GET.get('query_date', None)
+        if query_date is not None:
             activities = Activity.objects.filter(event_date__date=query_date)
             # format in 'A, d, B' format
             query_date = datetime.strptime(query_date, '%Y-%m-%d').strftime('%A, %d %B')

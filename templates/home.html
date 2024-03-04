@@ -25,7 +25,7 @@
             {% for date_info in dates_with_activities %}
                 <div class="{% if not date_info.has_activities %}bg-zinc-100 border-none {% endif %}{% if query_date == date_info.date|date:'l, d F' %}bg-amber-400 text-white{% endif %} flex-col text-center cursor-pointer border border-amber-100 hover:bg-amber-100 p-2 rounded-2xl min-w-20 h-20" 
                         {% if date_info.has_activities %}
-                            hx-get="{% url 'filter_activities_by_date' date_info.date|date:'Y-m-d' %}" 
+                            hx-get="{% url 'homepage' %}?query_date={{date_info.date|date:'Y-m-d' }}" 
                             hx-swap="outerHTML transition:true" 
                             hx-target=".htmx-body" 
                             hx-trigger="click"
