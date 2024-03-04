@@ -1014,8 +1014,16 @@ select {
   height: 100vh;
 }
 
+.h-1\/2 {
+  height: 50%;
+}
+
 .max-h-72 {
   max-height: 18rem;
+}
+
+.max-h-8 {
+  max-height: 2rem;
 }
 
 .min-h-screen {
@@ -1328,6 +1336,11 @@ select {
 .border-zinc-100 {
   --tw-border-opacity: 1;
   border-color: rgb(244 244 245 / var(--tw-border-opacity));
+}
+
+.border-black {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
 .bg-amber-100 {

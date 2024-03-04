@@ -22,7 +22,6 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.homepage, name="homepage"),
-    path("<str:query_date>/", views.homepage, name="filter_activities_by_date"),
     path("accounts/", include("accounts.urls")),  # new
     path("__reload__/", include("django_browser_reload.urls")),
 
