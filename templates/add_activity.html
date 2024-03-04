@@ -7,7 +7,7 @@
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
 
-    <h1 class="text-5xl font-bold text-center pt-12 mb-5">Add Activity</h1>
+    <h1 class="text-5xl font-bold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
     <form action="{% url 'new_activity' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">
@@ -18,7 +18,7 @@
         <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-16"></textarea>
         
         <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
-        <select id="select-leaderboard" name="leaderboards" multiple placeholder="should points go to a leaderboard?" autocomplete="on" class="px-4 py-2 mt-2 mb-6 border border-gray-300 rounded-2xl w-full">
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="should points go to a leaderboard?" autocomplete="on" class="px-4 py-2 mt-1 mb-6 border border-gray-300 rounded-2xl w-full">
             {% for leaderboard in leaderboards %}
                 <option value="{{ leaderboard.id }}">{{ leaderboard.leaderboard_name }}</option>
             {% endfor %}
@@ -43,21 +43,21 @@
             </div>
         </div>     
 
-        <label class="drag-drop flex justify-center px-4 py-8 my-4 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+        <label class="drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="photo" id="fileInput" class="hidden">
             <span id="imageDropped">Upload image for activity</span>
         </label>
 
         {% if request.user.is_staff %}
-        <div class="flex items-center justify-center">
-            <label class="bg-amber-100 px-4 py-2 rounded-2xl cursor-pointer">
+        <div class="flex items-center justify-center my-4">
+            <label class="bg-amber-100 px-4 py-2 my-2 rounded-2xl cursor-pointer">
                 <input type="checkbox" name="alert" class="px-2 py-2 my-2 mr-2 border border-gray-300 rounded-md">
                 Alert
             </label>
         </div>
         {% endif %}
         <div class="flex justify-center">
-            <button type="submit" class="w-full md:w-96 px-4 py-2 my-6 bg-blue-500 text-white rounded-2xl">Add activity</button>
+            <button type="submit" class="w-full md:w-80 px-4 py-4 my-2 bg-amber-300 text-white font-bold rounded-2xl shadow-lg hover:bg-amber-400">Add activity</button>
         </div>
     </form>
 
@@ -107,6 +107,7 @@ if (typeof TomSelect === 'undefined') {
     tomSelectScript.onload = function() {
         var tomSelectInstance = new TomSelect('#select-leaderboard', {
             create: true,
+            plugins: ['remove_button'],
             createFilter: function (input) {
                 input = input.toLowerCase();
                 return !(input in this.options);
@@ -118,6 +119,7 @@ if (typeof TomSelect === 'undefined') {
 } else {
     var tomSelectInstance = new TomSelect('#select-leaderboard', {
         create: true,
+        plugins: ['remove_button'],
         createFilter: function (input) {
             input = input.toLowerCase();
             return !(input in this.options);
@@ -188,7 +190,7 @@ function formatDateTime(date) {
 }
 
 // if this is the add_activity page:
-document.addEventListener('htmx:afterSettle', function() {
+function initializeAddActivity() {
     if (document.getElementById('imageDropped') === null) {
         return;
     }
@@ -216,6 +218,7 @@ document.addEventListener('htmx:afterSettle', function() {
         if (fileInput.files.length > 0) {
             // Update the label with the name of the first selected file
             fileLabel.textContent = fileInput.files[0].name;
+            dropArea.classList.add('drag-over');
         }
     });
 
@@ -266,6 +269,8 @@ document.addEventListener('htmx:afterSettle', function() {
         document.getElementById('imageDropped').innerText = files[0].name;
         document.querySelector('.drag-drop').classList.add('drag-over');
     }
-});
+}
+
+initializeAddActivity();
 </script>
 {% endblock %}
