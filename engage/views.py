@@ -1,11 +1,10 @@
 from .models import Team, Activity, Leaderboard, Item
+from .models import Team, Activity, Leaderboard, Item
 from accounts.models import CustomUser
 from django.db.models import Sum, Prefetch
 from django.http import HttpRequest
-from .models import Team, Activity, Leaderboard, Item
-from django.db.models import Sum, Count
 from django.db.models.functions import TruncDay
-from accounts.models import CustomUser
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import cloudinary.uploader
