@@ -3,5 +3,12 @@
 
 
 {% block content %}
-
-<img src="{{item.image}}" {% endblock %}
+<div class="mx-auto w-1/2 max-h-8">
+    <img src="{{item.image}}" class="rounded-xl h-1/2 mt-12 border-black border-2">
+    <div class="mx-auto w-1/2 text-center sm:mt-18">
+        <h1 class="text-2xl">This is the name of the item: {{item.name}}</h1>
+        <p>This is the description of the item: {{item.description}}</p>
+        <p>Price: {{item.price}}</p>
+    </div>
+</div>
+{% endblock %}
