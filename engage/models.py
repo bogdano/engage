@@ -17,6 +17,7 @@ class Activity(models.Model):
     longitude = models.FloatField()
     # event_date date
     event_date = models.DateTimeField()
+    # end_date date
     end_date = models.DateTimeField()
     # created_at date
     created_at = models.DateField(auto_now_add=True)
@@ -30,7 +31,10 @@ class Activity(models.Model):
     is_approved = models.BooleanField(default=False)
     # send alert or not boolean (only staff can do this), also place on top of feed, highlighted
     alert = models.BooleanField(default=False)
-    leaderboards = models.ManyToManyField("Leaderboard", related_name="leaderboards")
+    # activity type
+    leaderboards = models.ManyToManyField("Leaderboard", related_name="leaderboards", blank=True)
+    # interested users
+    interested_users = models.ManyToManyField("accounts.CustomUser", related_name="interested_users", blank=True)
 
 
 # so, for leaderboard queries, suppose you want to get the top 10 earners on the
@@ -59,13 +63,6 @@ class UserParticipated(models.Model):
     activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
     # date created
     date_participated = models.DateField(auto_now_add=True)
-
-
-class UserInterested(models.Model):
-    # user_id fk to custom user model
-    user_id = models.ForeignKey("accounts.CustomUser", on_delete=models.CASCADE)
-    # activity_id fk to activity model
-    activity_id = models.ForeignKey("Activity", on_delete=models.CASCADE)
 
 
 class Team(models.Model):

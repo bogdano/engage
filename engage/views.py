@@ -1,25 +1,73 @@
 from .models import Team, Activity, Leaderboard, Item
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncDay
 from accounts.models import CustomUser
-from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import cloudinary.uploader
+from datetime import datetime, timedelta
 
-
-def homepage(request):
+def homepage(request, query_date=None):
     if not request.user.is_authenticated:
         return render(request, "auth/send_login_link.html")
     else:
-        activities = Activity.objects.filter(is_approved=True, is_active=True).order_by(
-            "event_date"
-        )
-        return render(request, "home.html", {"activities": activities})
-
+        # fetch approved and active activities
+        activities = Activity.objects.filter(is_approved=True, is_active=True).order_by("event_date")
+        # set the date range 
+        start_date = datetime.today()
+        end_date = start_date + timedelta(days=15)
+        # generate the date range
+        date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+        # fetch activities within the date range and count them by date
+        activities_in_range = activities.annotate(date=TruncDay('event_date')) \
+            .filter(event_date__date__gte=start_date.date(), event_date__date__lte=end_date.date()) \
+            .values('date') \
+            .annotate(total_activities=Count('id')) \
+            .order_by('date')
+        # convert QuerySet to a dict for easier access
+        activities_dict = {activity['date'].date(): activity['total_activities'] for activity in activities_in_range}
+        # prepare dates with activities info for the template
+        dates_with_activities = []
+        for date in date_range:
+            dates_with_activities.append({
+                'date': date,
+                'has_activities': date.date() in activities_dict,
+                'total_activities': activities_dict.get(date.date(), 0)
+            })
+        # filter activities by date if query_date is present
+        if query_date:
+            activities = Activity.objects.filter(event_date__date=query_date)
+            # format in 'A, d, B' format
+            query_date = datetime.strptime(query_date, '%Y-%m-%d').strftime('%A, %d %B')
+        # update context
+        context = {
+            'activities': activities,
+            'dates_with_activities': dates_with_activities,
+            'query_date': query_date
+        }
+        return render(request, "home.html", context)
 
 def add_activity(request):
     leaderboards = Leaderboard.objects.all()
     return render(request, "add_activity.html", {"leaderboards": leaderboards})
 
+def bookmark_activity(request, pk):
+    activity = Activity.objects.get(pk=pk)
+    user = request.user
+    if user in activity.interested_users.all():
+        activity.interested_users.remove(user)
+    else:
+        activity.interested_users.add(user)
+    return render(request, "partials/activity_card.html", {"activity": activity})
+
+def bookmark_activity_from_activity(request, pk):
+    activity = Activity.objects.get(pk=pk)
+    user = request.user
+    if user in activity.interested_users.all():
+        activity.interested_users.remove(user)
+    else:
+        activity.interested_users.add(user)
+    return render(request, "partials/bookmark_button.html", {"activity": activity})
 
 def new_item(request):
     if request.method == "POST":

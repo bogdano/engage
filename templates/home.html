@@ -1,16 +1,103 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<div class="flex flex-col items-center h-screen">
-    <h1 class="text-5xl font-bold text-center mt-12 mb-5">Activities</h1>
-    {% for activity in activities %}
-    <a href="{% url 'activity' activity.pk %}" class="p-4 m-2 bg-amber-50 border border-amber-100 rounded-2xl w-full">{{ activity.title }}</a>
-    {% endfor %}
-    <a href="{% url 'logout' %}" class="absolute top-4 right-8 underline underline-offset-2">logout</a>
-    <a href="{% url 'add_activity' %}" class="fixed bottom-24 right-4 md:right-72 md:bottom-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center z-50">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-    </a>
+<style>
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* for Chrome, Safari, and Opera */
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none;  /* for IE and Edge */
+        scrollbar-width: none;  /* for Firefox */
+    }
+</style>
+
+<div id="activities-iterator" class="flex flex-col items-center">
+    <div class="flex justify-center items-center space-x-4 align-bottom">
+        <h1 class="text-5xl font-bold text-center mt-12 mb-5">Activities</h1>
+        <a href="{% url 'add_activity' %}" class="bg-amber-400 hover:bg-amber-600 p-2 rounded-xl shadow-md mt-6">
+            <img src="{% static 'icons/add.svg' %}" class="w-7 h-7" alt="Add Activity">
+        </a>
+    </div>
+
+    <div id="draggable-container" class="relative w-full overflow-x-auto hide-scrollbar px-2 lg:px-0">
+        <div class="flex py-4 space-x-2 mb-4">
+            {% for date_info in dates_with_activities %}
+                <div class="{% if not date_info.has_activities %}bg-zinc-100 border-none {% endif %}{% if query_date == date_info.date|date:'l, d F' %}bg-amber-400 text-white{% endif %} flex-col text-center cursor-pointer border border-amber-100 hover:bg-amber-100 p-2 rounded-2xl min-w-20 h-20" 
+                        {% if date_info.has_activities %}
+                            hx-get="{% url 'filter_activities_by_date' date_info.date|date:'Y-m-d' %}" 
+                            hx-swap="outerHTML transition:true" 
+                            hx-target=".htmx-body" 
+                            hx-trigger="click"
+                        {% endif %}>
+                    <p class="text-lg leading-snug font-bold text-zinc-500">{{ date_info.date|date:"D" }}</p>
+                    <p class="text-sm leading-snug">{{ date_info.date|date:"d" }}</p>
+                    <p class="text-sm leading-snug">{{ date_info.date|date:"M" }}</p>
+                    <div class="flex justify-center space-x-0.5 mt-3">
+                        {% if date_info.has_activities %}
+                            {% if date_info.total_activities == 1 %}
+                                <span class="block w-1 h-1 bg-red-700 rounded-full"></span>
+                            {% elif date_info.total_activities == 2 %}
+                                <span class="block w-1 h-1 bg-red-700 rounded-full"></span>
+                                <span class="block w-1 h-1 bg-red-700 rounded-full"></span>
+                            {% else %}
+                                <span class="block w-1 h-1 bg-red-700 rounded-full"></span>
+                                <span class="block w-1 h-1 bg-red-700 rounded-full"></span>
+                                <span class="block w-1 h-1 bg-red-700 rounded-full"></span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if query_date %}
+        <h2 class="text-xl text-amber-400 font-bold text-center mb-4">
+            {{ query_date }}:</h2>
+    {% endif %}
+    
+    <div class="flex flex-col w-full px-5 lg:px-0 space-y-3">
+        {% for activity in activities %}
+            {% include 'partials/activity_card.html' %}
+        {% endfor %}
+    </div>
 </div>
+
+<a href="{% url 'logout' %}" class="absolute top-4 right-8 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold shadow-md rounded-2xl">logout</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function initializeDraggableContainer() {
+    if (typeof document.getElementById('draggable-container') === 'undefined') return
+    const slider = document.getElementById('draggable-container')
+    let isDown = false
+    let startX
+    let scrollLeft
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.classList.add('active')
+        startX = e.pageX - slider.offsetLeft
+        scrollLeft = slider.scrollLeft
+    })
+    slider.addEventListener('mouseleave', () => {
+        isDown = false
+        slider.classList.remove('active')
+    })
+    slider.addEventListener('mouseup', () => {
+        isDown = false
+        slider.classList.remove('active')
+    })
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return
+        e.preventDefault()
+        const x = e.pageX - slider.offsetLeft
+        const walk = (x - startX)
+        slider.scrollLeft = scrollLeft - walk
+    });
+}
+initializeDraggableContainer()    
+</script>
 {% endblock %}

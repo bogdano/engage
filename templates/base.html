@@ -16,9 +16,8 @@
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
-
-<body hx-boost="true" class="htmx-body">
-    <div class="max-w-6xl mx-auto w-full">
+<body hx-boost="true" class="htmx-body" hx-swap="transition:true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div class="max-w-6xl mx-auto w-full min-h-screen">
         {% block content %}
         {% endblock %}
     </div>

@@ -1,11 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ activity.title }}{% endblock %}
+
+{% block title %}ATG: {{ activity.title }}{% endblock %}
 
 {% block content %}
 <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
 
-<h1 class="text-5xl font-bold text-center mt-12 mb-5">{{ activity.title }}</h1>
+<div class="flex flex-col md:flex-row md:space-x-4 justify-center items-center">
+    <h1 class="{% if not activity.is_active %}text-zinc-400{% endif %} text-5xl font-bold text-center pt-12 mb-5">{{ activity.title }}</h1>
+    {% include 'partials/bookmark_button.html' %}
+</div>
+
 <div class="flex justify-center items-center mb-5">
     <div class="mr-2"> 
         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
@@ -52,7 +57,7 @@
 
 {% if activity.photo %}
 <div class="flex justify-center items-center mt-5 rounded-2xl">
-    <img src="{{ activity.photo }}" alt="Activity Image" class="w-96 h-96 rounded-2xl">
+    <img src="{{ activity.photo }}" alt="Activity Image" class="rounded-2xl max-w-full max-h-72">
 </div>
 {% endif %}
 
@@ -80,7 +85,6 @@ if (typeof mapboxgl === 'undefined') {
 }
 function initializeMap() {
     // Ensuring mapboxgl is defined and the map container exists
-    console.log("initializeMap called")
     if (typeof mapboxgl !== 'undefined' && document.getElementById('map')) {
         mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
         const map = new mapboxgl.Map({
@@ -101,4 +105,3 @@ function initializeMap() {
 }
 </script>  
 {% endblock %}
-    
