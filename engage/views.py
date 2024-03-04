@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
+from django.utils.timezone import make_aware
 
 def homepage(request):
     if not request.user.is_authenticated:
@@ -34,15 +35,32 @@ def homepage(request):
                 'has_activities': date.date() in activities_dict,
                 'total_activities': activities_dict.get(date.date(), 0)
             })
+
+        today_activities = []
+        tomorrow_activities = []
+        upcoming_activities = []
+
         # filter activities by date if query_date is present
-            query_date = request.GET.get('query_date', None)
+        query_date = request.GET.get('query_date', None)
         if query_date is not None:
             activities = Activity.objects.filter(event_date__date=query_date)
             # format in 'A, d, B' format
             query_date = datetime.strptime(query_date, '%Y-%m-%d').strftime('%A, %d %B')
+        else:
+            today = make_aware(datetime.today())
+            tomorrow = today + timedelta(days=1)
+            upcoming_start = tomorrow + timedelta(days=1)
+            today_activities = activities.filter(event_date__date=today.date())
+            tomorrow_activities = activities.filter(event_date__date=tomorrow.date())
+            upcoming_activities = activities.filter(event_date__date__gte=upcoming_start.date())
+            activities = None
+
         # update context
         context = {
             'activities': activities,
+            'today_activities': today_activities,
+            'tomorrow_activities': tomorrow_activities,
+            'upcoming_activities': upcoming_activities,
             'dates_with_activities': dates_with_activities,
             'query_date': query_date
         }
