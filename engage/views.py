@@ -1,8 +1,7 @@
-from .models import Team, Activity, Leaderboard, Item, ActivityType
+from .models import Team, Activity, Leaderboard, Item
 from accounts.models import CustomUser
 from django.db.models import Sum, Prefetch
 from django.http import HttpRequest
-from django.utils import timezone
 from .models import Team, Activity, Leaderboard, Item
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncDay
@@ -163,24 +162,6 @@ def activity(request, pk):
     activity = Activity.objects.get(pk=pk)
     return render(request, "activity.html", {"activity": activity})
 
-def activity_leaderboard(request):
-    activities = Activity.objects.all()
-
-    # Filter by activity type if 'type' is in request.GET
-    activity_type = request.GET.get('type')
-    if activity_type:
-        activities = activities.filter(activity_type__name=activity_type)
-
-    # Example of filtering activities from the last 30 days
-    start_date = request.GET.get('start_date')
-    if start_date:
-        # Assuming 'start_date' is in YYYY-MM-DD format
-        activities = activities.filter(created_at__date__gte=start_date)
-    
-    # Further filtering based on end date or other criteria can be similarly added
-
-    return render(request, 'your_template.html', {'activities': activities})
-
 
 def item(request, pk):
     item = Item.objects.get(pk=pk)
@@ -227,14 +208,14 @@ def team_leaderboard_view(request):
 
 
 def leaderboard_view(request: HttpRequest):
-    # Order users by lifetime points
+    # Order users by lifetime points in descending order directly
     users = CustomUser.objects.all().order_by('-lifetime_points')
     
     if request.headers.get('HX-Request', False):
-        # return the partial content
+        # This is an HTMX request; return only the partial content
         return render(request, 'partials/individual_leaderboard.html', {'users': users})
     else:
-        # return the entire page
+        # This is a full page request; return the entire page
         return render(request, 'leaderboard.html', {'users': users})
 
 
