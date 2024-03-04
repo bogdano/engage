@@ -8,8 +8,8 @@
 
     <form method="post" action="{% url 'send_login_link' %}" class="flex items-center">
         {% csrf_token %}
-        <input type="email" name="email" placeholder="sample@email.com" class="p-2 border border-gray-300 rounded-l" required autofocus>
-        <button type="submit" class="p-2 border border-amber-500 rounded-r bg-amber-500 text-white hover:bg-amber-600">Login</button>
+        <input type="email" name="email" placeholder="sample@email.com" class="p-2 border border-gray-300 rounded-l-2xl" required autofocus>
+        <button type="submit" class="p-2 border border-amber-500 rounded-r-2xl bg-amber-500 text-white hover:bg-amber-600">Login</button>
     </form>
     
     <a href="{% url 'register' %}" class="mt-5 text-slate-500 hover:underline">or, click <span class="underline">here</span> to register</a> 

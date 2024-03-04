@@ -24,20 +24,23 @@ urlpatterns = [
     path("", views.homepage, name="homepage"),
     path("accounts/", include("accounts.urls")),  # new
     path("__reload__/", include("django_browser_reload.urls")),
-    path('leaderboard/', views.leaderboard_view, name='leaderboard'),
-    path(
-        "leaderboard/individual/",
-        views.individual_leaderboard,
-        name="individual_leaderboard",
-    ),
-    path('team_leaderboard/', views.team_leaderboard_view, name='team_leaderboard'),
+
+    path("leaderboard/", views.leaderboard, name="leaderboard"),
+    path("leaderboard/individual/", views.individual_leaderboard, name="individual_leaderboard"),
+    path("leaderboard/team/", views.team_leaderboard, name="team_leaderboard"),
+
     path("store/", views.store, name="store"),
     path("notifications/", views.notifications, name="notifications"),
     path("add_activity/", views.add_activity, name="add_activity"),
     path("profile/", views.profile, name="profile"),
     path("activity/<int:pk>/", views.activity, name="activity"),
     path("new_activity/", views.new_activity, name="new_activity"),
+    path("bookmark_activity/<int:pk>/", views.bookmark_activity, name="bookmark_activity"),
+    path("bookmark_activity_from_activity/<int:pk>/", views.bookmark_activity_from_activity, name="bookmark_activity_from_activity"),
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),
 ]
+
+
+# url 'filter_activities_by_date' date_info.date|date:'Y-m-d'

@@ -13,7 +13,5 @@ admin.site.register(Activity)
 admin.site.register(ActivityType)
 admin.site.register(Leaderboard)
 admin.site.register(UserParticipated)
-admin.site.register(UserInterested)
-
 
 

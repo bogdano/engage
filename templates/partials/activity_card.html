@@ -1,0 +1,15 @@
+{% load static %}
+<a href="{% url 'activity' activity.pk %}" id="activity-{{ activity.pk }}" class="group block border border-amber-100 rounded-2xl w-full hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-50 shadow-sm">
+    <div class="p-4 flex justify-between items-center space-x-3">
+        <button type="button" hx-post="{% url 'bookmark_activity' activity.pk %}" hx-swap="outerHTML" hx-target="#activity-{{ activity.pk }}" onclick="event.preventDefault(); event.stopPropagation();"
+                class="flex-none p-2 border rounded-xl border-amber-100 hover:bg-white group-hover:bg-white shadow-sm">
+            <img src="{% if request.user in activity.interested_users.all %}{% static 'icons/bookmark_saved.svg' %}{% else %}{% static 'icons/bookmark.svg' %}{% endif %}" alt="Bookmark Icon" class="w-6 h-6">
+        </button>
+
+        <div class="flex-grow flex items-center justify-start">
+            <span class="text-lg font-medium text-zinc-800">{{ activity.title }}</span>
+        </div>
+
+        <img src="{% static 'icons/right-arrow.svg' %}" alt="Icon" class="w-6 h-6 text-slate-950">
+    </div>
+</a>
