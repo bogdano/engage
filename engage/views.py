@@ -1,6 +1,7 @@
 from .models import Team, Activity, Leaderboard, Item
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncDay
+from accounts.models import CustomUser
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import cloudinary.uploader
@@ -198,4 +199,5 @@ def notifications(request):
 
 
 def profile(request):
-    return render(request, "profile.html")
+    user = CustomUser.objects.all()
+    return render(request, 'profile.html', {"user": user})
