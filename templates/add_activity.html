@@ -8,7 +8,7 @@
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
 
     <h1 class="text-5xl font-bold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
-    <form action="{% url 'new_activity' %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'new_activity' %}" method="post" enctype="multipart/form-data" class="px-5 lg:px-0">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">
             <input type="text" name="title" placeholder="Title" required autofocus class="px-4 py-2 my-2 border border-gray-300 rounded-2xl text-4xl w-full md:w-auto md:flex-grow">
@@ -32,12 +32,12 @@
         <input type="hidden" name="latitude" id="latitudeField">
         <input type="hidden" name="longitude" id="longitudeField">
 
-        <div class="flex space-x-4 justify-center px-4 py-2 my-2">
-            <div>
+        <div class="flex md:flex-row flex-col md:space-x-4 justify-center py-2 my-2">
+            <div class="flex flex-col">
                 <label for="event_date" class="block text-sm font-medium text-gray-700 text-center">Event Date</label>
                 <input type="datetime-local" id="event_date" name="event_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl">
             </div>
-            <div>
+            <div class="flex flex-col">
                 <label for="end_date" class="block text-sm font-medium text-gray-700 text-center">End Date</label>
                 <input type="datetime-local" id="end_date" name="end_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl">
             </div>
