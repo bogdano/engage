@@ -126,9 +126,7 @@ def new_activity(request):
 
         leaderboard_names = request.POST.getlist("leaderboards")
         # Create new Leaderboard instances if necessary
-        leaderboards = [
-            Leaderboard.objects.get_or_create(pk=pk)[0] for pk in leaderboard_names
-        ]
+        leaderboards = [Leaderboard.objects.get_or_create(leaderboard_name=name)[0] for name in leaderboard_names]
 
         activity = Activity.objects.create(
             title=title,
