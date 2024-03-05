@@ -1,12 +1,12 @@
-from .models import Team, Activity, Leaderboard, Item
-from django.db.models import Sum, Count
+from .models import Team, Activity, Leaderboard, Item, UserParticipated
+from django.db.models import Sum, Count, Exists, OuterRef
 from django.db.models.functions import TruncDay
-from accounts.models import CustomUser
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
+from django.template.loader import render_to_string
 
 def homepage(request):
     if not request.user.is_authenticated:
@@ -39,20 +39,37 @@ def homepage(request):
         today_activities = []
         tomorrow_activities = []
         upcoming_activities = []
+        recent_past_activities = []
 
         # filter activities by date if query_date is present
         query_date = request.GET.get('query_date', None)
         if query_date is not None:
-            activities = Activity.objects.filter(event_date__date=query_date)
+            activities = Activity.objects.filter(is_approved=True, event_date__date=query_date).order_by("event_date")
             # format in 'A, d, B' format
             query_date = datetime.strptime(query_date, '%Y-%m-%d').strftime('%A, %d %B')
         else:
             today = make_aware(datetime.today())
             tomorrow = today + timedelta(days=1)
             upcoming_start = tomorrow + timedelta(days=1)
+
             today_activities = activities.filter(event_date__date=today.date())
             tomorrow_activities = activities.filter(event_date__date=tomorrow.date())
             upcoming_activities = activities.filter(event_date__date__gte=upcoming_start.date())
+
+            user_participations = UserParticipated.objects.filter(
+                activity=OuterRef('pk'), 
+                user=request.user
+            )
+
+            # Fetch 10 most recent past activities
+            recent_past_activities = Activity.objects \
+                .filter(is_approved=True, event_date__lt=datetime.now()) \
+                .order_by("-event_date")[:5] \
+                .annotate(user_has_participated=Exists(user_participations))
+            
+            for activity in recent_past_activities:
+                activity.is_active = False
+                activity.save()
             activities = None
 
         # update context
@@ -62,6 +79,7 @@ def homepage(request):
             'tomorrow_activities': tomorrow_activities,
             'upcoming_activities': upcoming_activities,
             'dates_with_activities': dates_with_activities,
+            'recent_past_activities': recent_past_activities,
             'query_date': query_date
         }
         return render(request, "home.html", context)
@@ -88,24 +106,15 @@ def bookmark_activity_from_activity(request, pk):
         activity.interested_users.add(user)
     return render(request, "partials/bookmark_button.html", {"activity": activity})
 
-def new_item(request):
-    if request.method == "POST":
-        name = request.POST.get("itemName")
-        points = request.POST.get("pointCost")
-        description = request.POST.get("itemDescription")
-        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"])
-        uploaded_image_url = uploaded_image["url"]
-    item = Item.objects.create(
-        name=name, description=description, price=points, image=uploaded_image_url
-    )
-    item.save()
-    items = Item.objects.all()
-    return render(request, "store.html", {"items": items})
-
-
-def add_item(request):
-    return render(request, "new_item.html")
-
+def load_more_activities(request):
+    offset = int(request.GET.get('offset', 0))
+    next_offset = offset + 5
+    past_activities = Activity.objects.filter(is_approved=True, is_active=False).order_by("-event_date")[offset:next_offset]
+    if not past_activities or len(past_activities) < 5:
+        html = render_to_string('partials/past_activities.html', {'past_activities': past_activities, 'no_more_activities': True})
+        return HttpResponse(html)
+    html = render_to_string('partials/past_activities.html', {'past_activities': past_activities})
+    return HttpResponse(html)
 
 def new_activity(request):
     if request.method == "POST":
@@ -155,6 +164,40 @@ def new_activity(request):
 def activity(request, pk):
     activity = Activity.objects.get(pk=pk)
     return render(request, "activity.html", {"activity": activity})
+
+
+def award_participation_points(request, pk):
+    activity = Activity.objects.get(pk=pk)
+    user = request.user
+    if user in activity.participated_users.all():
+        return JsonResponse({"error": "User has already been awarded points for this activity"})
+    else:
+        user.balance += activity.points
+        user.lifetime_points += activity.points
+        user.save()
+        activity.participated_users.add(user)
+        return render(request, "partials/activity_card.html", {"activity": activity})
+
+
+
+
+def new_item(request):
+    if request.method == "POST":
+        name = request.POST.get("itemName")
+        points = request.POST.get("pointCost")
+        description = request.POST.get("itemDescription")
+        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"])
+        uploaded_image_url = uploaded_image["url"]
+    item = Item.objects.create(
+        name=name, description=description, price=points, image=uploaded_image_url
+    )
+    item.save()
+    items = Item.objects.all()
+    return render(request, "store.html", {"items": items})
+
+
+def add_item(request):
+    return render(request, "new_item.html")
 
 
 def item(request, pk):
@@ -216,5 +259,5 @@ def notifications(request):
 
 
 def profile(request):
-    user = CustomUser.objects.all()
+    user = request.user
     return render(request, 'profile.html', {"user": user})

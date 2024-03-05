@@ -15,35 +15,35 @@
 <div id="activities-iterator" class="flex flex-col items-center">
     <div class="flex justify-center items-center space-x-4 align-bottom">
         <h1 class="text-5xl font-bold text-center mt-12 mb-5">Activities</h1>
-        <a href="{% url 'add_activity' %}" class="bg-amber-400 hover:bg-amber-600 p-2 rounded-xl shadow-md mt-6">
+        <a href="{% url 'add_activity' %}" class="bg-amber-400 hover:bg-amber-600 p-2.5 rounded-xl shadow-md mt-6">
             <img src="{% static 'icons/add.svg' %}" class="w-7 h-7" alt="Add Activity">
         </a>
     </div>
 
     <div id="draggable-container" class="relative w-full overflow-x-auto hide-scrollbar px-2 lg:px-0">
-        <div class="flex py-4 space-x-2 mb-4">
+        <div class="flex py-4 space-x-2 mb-4 ml-2">
             {% for date_info in dates_with_activities %}
-                <div class="{% if not date_info.has_activities %}bg-zinc-100 border-none {% else %}shadow-sm {% endif %}{% if query_date == date_info.date|date:'l, d F' %}bg-amber-200{% endif %} flex-col text-center cursor-pointer border border-amber-100 hover:bg-amber-100 p-2 rounded-2xl min-w-20 h-20" 
-                        {% if date_info.has_activities %}
-                            hx-get="{% url 'homepage' %}?query_date={{date_info.date|date:'Y-m-d' }}" 
-                            hx-swap="outerHTML transition:true" 
-                            hx-target=".htmx-body" 
-                            hx-trigger="click"
-                        {% endif %}>
-                    <p class="text-lg leading-snug font-bold text-zinc-500">{{ date_info.date|date:"D" }}</p>
-                    <p class="text-sm leading-snug">{{ date_info.date|date:"d" }}</p>
-                    <p class="text-sm leading-snug">{{ date_info.date|date:"M" }}</p>
+                <div class="{% if not date_info.has_activities %}bg-zinc-100 border-none hover:bg-zinc-100 cursor-auto {% else %}shadow-sm hover:border-amber-300{% endif %}{% if query_date == date_info.date|date:'l, d F' %}bg-amber-200 border-amber-300{% endif %} flex-col text-center cursor-pointer border border-amber-100 hover:bg-amber-100 p-2 rounded-2xl min-w-20 h-20" 
+                    {% if date_info.has_activities %}
+                        hx-get="{% url 'homepage' %}?query_date={{date_info.date|date:'Y-m-d' }}" 
+                        hx-swap="outerHTML transition:true" 
+                        hx-target=".htmx-body" 
+                        hx-trigger="click"
+                    {% endif %}>
+                    <span class="text-lg leading-snug font-bold text-zinc-500 block ">{{ date_info.date|date:"D" }}</span>
+                    <span class="text-sm leading-snug block">{{ date_info.date|date:"d" }}</span>
+                    <span class="text-sm leading-snug block">{{ date_info.date|date:"M" }}</span>
                     <div class="flex justify-center space-x-0.5 mt-4">
                         {% if date_info.has_activities %}
                             {% if date_info.total_activities == 1 %}
-                                <span class="block w-1 h-1 bg-zinc-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
                             {% elif date_info.total_activities == 2 %}
-                                <span class="block w-1 h-1 bg-zinc-400 rounded-full"></span>
-                                <span class="block w-1 h-1 bg-zinc-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
                             {% else %}
-                                <span class="block w-1 h-1 bg-zinc-400 rounded-full"></span>
-                                <span class="block w-1 h-1 bg-zinc-400 rounded-full"></span>
-                                <span class="block w-1 h-1 bg-zinc-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -80,20 +80,53 @@
             {% if upcoming_activities %}
                 <div class="w-full space-y-3 mb-8">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Upcoming</h2>
-                {% for activity in upcoming_activities %}
-                    {% include 'partials/activity_card.html' %}
-                {% endfor %}
+                    {% for activity in upcoming_activities %}
+                        {% include 'partials/activity_card.html' %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if recent_past_activities %}<h2 class="text-center text-xl text-amber-300 font-bold mb-4">Past</h2>{% endif %}
+
+            <div id="past-activities-container" class="w-full space-y-3 mb-8">
+                {% include 'partials/past_activities.html' with past_activities=recent_past_activities %}
             </div>
+            
+            {% if not no_more_activities %}
+                <div class="flex justify-center items-center">
+                    <button id="load-more-button"
+                            hx-get="/load-more-activities/" 
+                            hx-include="this" 
+                            hx-target="#past-activities-container" 
+                            hx-swap="beforeend transition:true" 
+                            hx-trigger="click" 
+                            hx-on::after-request="updateOffset(this)"
+                            name="offset" 
+                            value="{{ recent_past_activities|length }}"
+                            class="hover:bg-amber-300 hover:text-white text-amber-400 font-bold py-2 px-4 border border-amber-100 rounded-2xl shadow-md mb-10">
+                            Load More
+                    </button>        
+                </div>
             {% endif %}
         {% endif %}
     </div>
 </div>
 
-<a href="{% url 'logout' %}" class="absolute top-4 right-8 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold shadow-md rounded-2xl">logout</a>
+<a href="{% url 'logout' %}" class="absolute top-12 right-8 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold shadow-md rounded-2xl">logout</a>
 {% endblock %}
 
 {% block scripts %}
 <script>
+document.addEventListener('hideLoadMoreButton', function() {
+    document.getElementById('load-more-button').style.display = 'none';
+});
+
+function updateOffset(button) {
+    // each load more action loads 5 items.
+    const itemsLoadedPerRequest = 5;
+    let currentOffset = parseInt(button.value, 10);
+    button.setAttribute('value', currentOffset + itemsLoadedPerRequest); // Ensure the attribute is updated
+}
+
 function initializeDraggableContainer() {
     if (typeof document.getElementById('draggable-container') === 'undefined') return
     const slider = document.getElementById('draggable-container')

@@ -1,25 +1,19 @@
 {% extends 'base.html' %}
-
+{% block title %}Profile{% endblock %}
 {% block content %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Profile</title>
-</head>
-
-<body class="flex flex-col min-h-screen bg-yellow-100">
-    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
+<div class="flex flex-col min-h-screen bg-yellow-100">
+    <div class="flex justify-between text-center px-4 py-6 bg-yellow-300">
         <button class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile</button>
         <div class="flex items-center">
             <div class="relative">
                 <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-12 w-12">
                 <p class="absolute bottom-0 left-0 right-0 text-center px-6 font-medium">
-                    {{ user.first_name }} {{ user.last_name }}</p>
+                    {{ request.user.first_name }} {{ request.user.last_name }}</p>
             </div>
         </div>
-        <p class=" px-6 font-medium text-black">Balance: {{ user.balance }}</p>
-    </nav>
+        <p class=" px-6 font-medium text-black">Balance: {{ request.user.balance }}</p>
+    </div>
 
 
 
@@ -28,8 +22,7 @@
         <div class="w-4/5">
             <p class="px-6 font-medium text-black uppercase">Team</p>
         </div>
-        <img src="your_image_url.jpg" alt=" " class="rounded-full h-12 w-12">
-
+        <img src="#" alt=" " class="rounded-full h-12 w-12">
     </div>
 
 
@@ -38,11 +31,6 @@
         <!-- This below is for when the edit is finished, not yet done-->
         <!--<p class="px-6 font-medium text-black">{{ user.description }}</p>-->
     </div>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/htmx.org"></script>
-
-</body>
+</div>
 
 {% endblock %}

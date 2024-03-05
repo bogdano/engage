@@ -20,7 +20,7 @@
         <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
         <select id="select-leaderboard" name="leaderboards" multiple placeholder="should points go to a leaderboard?" autocomplete="on" class="px-4 py-2 mt-1 mb-6 border border-gray-300 rounded-2xl w-full">
             {% for leaderboard in leaderboards %}
-                <option value="{{ leaderboard.id }}">{{ leaderboard.leaderboard_name }}</option>
+                <option value="{{ leaderboard.leaderboard_name }}">{{ leaderboard.leaderboard_name }}</option>
             {% endfor %}
         </select>
 
@@ -106,7 +106,7 @@ if (typeof TomSelect === 'undefined') {
     var tomSelectScript = document.createElement('script');
     tomSelectScript.onload = function() {
         var tomSelectInstance = new TomSelect('#select-leaderboard', {
-            create: true,
+            create: {% if not request.user.is_staff %}false{% else %}true{% endif %},
             plugins: ['remove_button'],
             createFilter: function (input) {
                 input = input.toLowerCase();
@@ -118,7 +118,7 @@ if (typeof TomSelect === 'undefined') {
     document.head.appendChild(tomSelectScript);
 } else {
     var tomSelectInstance = new TomSelect('#select-leaderboard', {
-        create: true,
+        create: {% if not request.user.is_staff %}false{% else %}true{% endif %},
         plugins: ['remove_button'],
         createFilter: function (input) {
             input = input.toLowerCase();
