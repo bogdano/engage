@@ -166,9 +166,11 @@ def activity(request, pk):
     return render(request, "activity.html", {"activity": activity})
 
 
+# MAX, THIS IS WHERE YOU NEED TO ADD THE LOGIC TO UPDATE TEAM/LEADERBOARD POINTS
 def award_participation_points(request, pk):
-    activity = Activity.objects.get(pk=pk)
     user = request.user
+    activity = Activity.objects.get(pk=pk)
+    
     if user in activity.participated_users.all():
         return JsonResponse({"error": "User has already been awarded points for this activity"})
     else:
@@ -176,6 +178,7 @@ def award_participation_points(request, pk):
         user.lifetime_points += activity.points
         user.save()
         activity.participated_users.add(user)
+        activity.user_has_participated=True
         return render(request, "partials/activity_card.html", {"activity": activity})
 
 
