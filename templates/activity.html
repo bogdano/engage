@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}ATG: {{ activity.title }}{% endblock %}
+{% block title %}{{ activity.title }}{% endblock %}
 
 {% block content %}
 <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
@@ -31,14 +31,14 @@
 <div class="flex justify-center mt-5">
     <div class="flex items-center py-2 px-6 rounded-2xl bg-amber-50 space-x-5 border border-amber-200">
         <div class="text-center">
-            <p class="text-xl font-semibold">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
+            <p class="text-xl font-extrabold text-zinc-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
             <p class="text-sm">{{ activity.event_date | date:"h:m a" }}</p> <!-- Format time -->
         </div>
-        <div class="self-center">
+        <div class="self-center text-2xl text-zinc-500">
             <p>-</p>
         </div>
         <div class="text-center">
-            <p class="text-xl font-semibold">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
+            <p class="text-xl font-extrabold text-zinc-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
             <p class="text-sm">{{ activity.end_date | date:"h:m a" }}</p> <!-- Format time -->
         </div>
     </div>
@@ -62,7 +62,7 @@
 {% endif %}
 
 <div class="flex justify-center items-center mt-36">
-    <p class="text-xs text-slate-400"><i>Created by:</i> {{ user.email }} at {{ activity.created_at }}</p>
+    <p class="text-xs text-slate-400"><span class="italic">Created by:</span> {{ user.email }} at {{ activity.created_at }}</p>
 </div>
 {% endblock %}
 

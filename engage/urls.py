@@ -31,12 +31,16 @@ urlpatterns = [
 
     path("store/", views.store, name="store"),
     path("notifications/", views.notifications, name="notifications"),
-    path("add_activity/", views.add_activity, name="add_activity"),
     path("profile/", views.profile, name="profile"),
+
+    path("add_activity/", views.add_activity, name="add_activity"),
     path("activity/<int:pk>/", views.activity, name="activity"),
     path("new_activity/", views.new_activity, name="new_activity"),
     path("bookmark_activity/<int:pk>/", views.bookmark_activity, name="bookmark_activity"),
     path("bookmark_activity_from_activity/<int:pk>/", views.bookmark_activity_from_activity, name="bookmark_activity_from_activity"),
+    path('load-more-activities/', views.load_more_activities, name='load_more_activities'),
+    path('award_participation_points/<int:pk>/', views.award_participation_points, name='award_participation_points'),
+
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),

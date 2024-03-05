@@ -23,7 +23,7 @@
     </div>
     {% if user.is_authenticated %}
     <nav class="flex justify-center items-center h-20">
-        <div class="w-full fixed bottom-0 px-1 py-1  z-50 bg-white bg-opacity-65 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-xl md:border md:shadow-lg">
+        <div class="w-full fixed bottom-0 px-1 py-1  z-50 bg-white bg-opacity-65 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-2xl md:border md:shadow-lg">
             <div class="flex justify-between max-w-sm mx-auto">
                 <a href="{% url 'homepage' %}"
                     class="px-2 py-2 mx-1 rounded-xl hover:bg-amber-200 {% if current_section == 'home' %} bg-amber-100 bg-opacity-85{% endif %}">
