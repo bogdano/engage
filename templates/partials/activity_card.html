@@ -13,7 +13,7 @@
 
         <div class="flex-grow flex items-center justify-start">
             <div class="flex flex-col">
-                <span class="block text-lg font-medium text-zinc-800 {% if not activity.is_active %}text-zinc-400{% endif %}">{{ activity.title }}</span>
+                <span class="block text-sm md:text-base font-medium text-zinc-800 {% if not activity.is_active %} text-slate-400 {% endif %}">{{ activity.title }}</span>
                 {% if activity.leaderboards.all %}
                     <div class="flex flex-row mt-0.5 max-h-4 flex-wrap">
                         {% for leaderboard in activity.leaderboards.all %}
@@ -26,31 +26,34 @@
 
         {% if activity.is_active %}
             <div class="flex items-center justify-center space-x-1 w-20 group-hover:bg-white border border-amber-100 shadow-sm px-2 py-1 rounded-xl">
-                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-6 h-6 text-amber-500">
-                <span class="text-amber-500 font-bold">{{ activity.points }}</span>
+                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-6 md:h-6 text-amber-500">
+                <span class="text-amber-500 font-bold text-sm">{{ activity.points }}</span>
             </div>
         {% else %}
-            {% if not activity.user_has_participated and request.user in activity.interested_users.all %}
-                <button type="button" 
-                    hx-post="{% url 'award_participation_points' activity.pk %}" 
-                    hx-swap="outerHTML" 
-                    hx-target="#activity-{{ activity.pk }}" 
-                    onclick="event.preventDefault(); event.stopPropagation();"
-                    class="flex items-center justify-center space-x-1 w-20 bg-white border border-amber-100 shadow-sm px-2 py-1 rounded-xl hover:bg-amber-200 hover:border-none hover:text-white">
-                    
-                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-6 h-6 text-amber-500">
-                    <span class="text-amber-500 font-bold">{{ activity.points }}</span>
-                </button>
+            {% if request.user in activity.interested_users.all %}
+                {% if not activity.user_has_participated %}
+                    <button type="button" 
+                        hx-post="{% url 'award_participation_points' activity.pk %}" 
+                        hx-swap="outerHTML" 
+                        hx-target="#activity-{{ activity.pk }}" 
+                        onclick="event.preventDefault(); event.stopPropagation();"
+                        class="flex items-center justify-center space-x-1 w-20 bg-white border border-amber-100 shadow-sm px-2 py-1 rounded-xl hover:bg-amber-200 hover:border-none hover:text-white">
+                        
+                        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-6 md:h-6 text-amber-500">
+                        <span class="text-amber-500 font-bold text-sm">{{ activity.points }}</span>
+                    </button>
+                {% else %}
+                    <img src="{% static 'icons/checked.svg' %}" alt="Icon" class="w-6 h-6">
+                {% endif %}
             {% endif %}
         {% endif %}
 
         <div class="flex flex-col items-center min-w-10">
-            {% if activity in upcoming_activities or query_date or not activity.is_active %}
-                <span class="text-sm font-extrabold text-zinc-300 leading-snug block">{{ activity.event_date|date:"d" }}</span>
-                <span class="text-xs text-zinc-400 leading-snug block">{{ activity.end_date|date:"M" }}</span>
-            {% endif %}
             {% if activity in today_activities or activity in tomorrow_activities %}
                 <span class="text-sm text-zinc-400 leading-snug block">{{ activity.event_date|date:"h:mp" }}</span>
+            {% else %}
+                <span class="text-sm font-extrabold text-zinc-300 leading-snug block">{{ activity.event_date|date:"d" }}</span>
+                <span class="text-xs text-zinc-400 leading-snug block">{{ activity.end_date|date:"M" }}</span>
             {% endif %}
         </div>
 
@@ -59,4 +62,3 @@
 </a>
 
         
-

@@ -7,7 +7,7 @@
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
 
-    <h1 class="text-5xl font-bold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
+    <h1 class="text-4xl md:text-5xl font-bold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
     <form action="{% url 'new_activity' %}" method="post" enctype="multipart/form-data" class="px-5 lg:px-0">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">
@@ -108,6 +108,7 @@ if (typeof TomSelect === 'undefined') {
         var tomSelectInstance = new TomSelect('#select-leaderboard', {
             create: {% if not request.user.is_staff %}false{% else %}true{% endif %},
             plugins: ['remove_button'],
+            maxItems: 4,
             createFilter: function (input) {
                 input = input.toLowerCase();
                 return !(input in this.options);
@@ -120,6 +121,7 @@ if (typeof TomSelect === 'undefined') {
     var tomSelectInstance = new TomSelect('#select-leaderboard', {
         create: {% if not request.user.is_staff %}false{% else %}true{% endif %},
         plugins: ['remove_button'],
+        maxItems: 4,
         createFilter: function (input) {
             input = input.toLowerCase();
             return !(input in this.options);

@@ -14,7 +14,7 @@
 
 <div id="activities-iterator" class="flex flex-col items-center">
     <div class="flex justify-center items-center space-x-4 align-bottom">
-        <h1 class="text-5xl font-bold text-center mt-12 mb-5">Activities</h1>
+        <h1 class="text-4xl md:text-5xl font-bold text-center mt-12 ml-5 mb-5">Activities</h1>
         <a href="{% url 'add_activity' %}" class="bg-amber-400 hover:bg-amber-600 p-2.5 rounded-xl shadow-md mt-6">
             <img src="{% static 'icons/add.svg' %}" class="w-7 h-7" alt="Add Activity">
         </a>
@@ -52,7 +52,7 @@
         </div>
     </div>
     
-    <div class="flex flex-col w-full px-5 lg:px-0">
+    <div class="flex flex-col w-full px-4 lg:px-0">
         {% if query_date %}
             <div class="w-full space-y-3 mb-8">
                 <h2 class="text-center text-xl text-amber-300 font-bold mb-4">{{ query_date }}</h2>
@@ -90,7 +90,7 @@
             <div id="past-activities-container" class="w-full space-y-3 mb-8">
                 {% include 'partials/past_activities.html' with past_activities=recent_past_activities %}
             </div>
-            
+
             {% if not no_more_activities %}
                 <div class="flex justify-center items-center">
                     <button id="load-more-button"
@@ -111,7 +111,7 @@
     </div>
 </div>
 
-<a href="{% url 'logout' %}" class="absolute top-12 right-8 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold shadow-md rounded-2xl">logout</a>
+<a href="{% url 'logout' %}" class="hidden md:block absolute top-12 right-8 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold shadow-md rounded-2xl">logout</a>
 {% endblock %}
 
 {% block scripts %}
