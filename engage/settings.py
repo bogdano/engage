@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 import cloudinary
 import cloudinary.uploader
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",  # new
     "django.contrib.staticfiles",
+    "pwa",  # new
     "cloudinary",  # maybe not needed
     "accounts",  # new
     "engage",
@@ -139,7 +141,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]  # new
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 STATIC_ROOT = BASE_DIR / "staticfiles"  # new
 STORAGES = {
     "default": {
@@ -160,16 +164,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # EMAIL SETTINGS
 ##############################
 # Email Backend Configuration (for development)
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Print emails to the console for testing
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Print emails to the console for testing
 
 # Email Backend Configuration (for production)
-ANYMAIL = {
-    'MAILJET_API_KEY': env("MAILJET_API_KEY"),
-    'MAILJET_SECRET_KEY': env("MAILJET_SECRET_KEY"),
-    'MAILJET_SENDER_DOMAIN': "bogz.dev",
-}
-EMAIL_BACKEND = 'anymail.backends.mailjet.EmailBackend'
-DEFAULT_FROM_EMAIL = "atg-engage@bogz.dev"
+# ANYMAIL = {
+#     'MAILJET_API_KEY': env("MAILJET_API_KEY"),
+#     'MAILJET_SECRET_KEY': env("MAILJET_SECRET_KEY"),
+#     'MAILJET_SENDER_DOMAIN': "bogz.dev",
+# }
+# EMAIL_BACKEND = 'anymail.backends.mailjet.EmailBackend'
+# DEFAULT_FROM_EMAIL = "atg-engage@bogz.dev"
 
 
 AUTH_USER_MODEL = "accounts.CustomUser"  # new
@@ -182,3 +186,47 @@ TAILWIND_APP_NAME = "theme"  # new
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+
+
+
+
+
+############## PWA SETTINGS ################
+PWA_APP_NAME = 'Engage'
+PWA_APP_DESCRIPTION = "Do fun stuff. Get doubloons. Spend 'em."
+PWA_APP_THEME_COLOR = None
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'portrait'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/favicons/android-chrome-192x192.png',
+        'sizes': '192x192'
+    },
+    {
+        'src': '/static/favicons/android-chrome-512x512.png',
+        'sizes': '512x512'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': '/static/favicons/apple-touch-icon.png',
+        'sizes': '180x180'
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        'src': '/static/logo.png',
+        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'
+
+PWA_APP_DEBUG_MODE = True
+
+# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js')

@@ -32,16 +32,17 @@
         {% else %}
             {% if request.user in activity.interested_users.all %}
                 {% if not activity.user_has_participated %}
-                    <button type="button" 
+                    <button type="button"
                         hx-post="{% url 'award_participation_points' activity.pk %}" 
                         hx-swap="outerHTML" 
                         hx-target="#activity-{{ activity.pk }}" 
-                        onclick="event.preventDefault(); event.stopPropagation();"
-                        class="flex items-center justify-center space-x-1 w-20 bg-white border border-amber-100 shadow-sm px-2 py-1 rounded-xl hover:bg-amber-200 hover:border-none hover:text-white">
+                        onclick="event.preventDefault(); event.stopPropagation(); awardPoints();"
+                        class="award-points-button flex items-center justify-center space-x-1 w-20 bg-white border border-amber-100 shadow-sm px-2 py-1 rounded-xl hover:bg-amber-200 hover:border-none hover:text-white">
                         
                         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-6 md:h-6 text-amber-500">
                         <span class="text-amber-500 font-bold text-sm">{{ activity.points }}</span>
                     </button>
+                    <audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
                 {% else %}
                     <img src="{% static 'icons/checked.svg' %}" alt="Icon" class="w-6 h-6">
                 {% endif %}

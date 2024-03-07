@@ -6,13 +6,16 @@
 {% block content %}
 <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
 
+<!-- add a back button, maybe? -->
+<!-- <button onclick="window.history.back()">go back</button> -->
+
 <div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12">
     <h1 class="mb-5 font-bold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-zinc-400{% endif %}">{{ activity.title }}</h1>
     {% include 'partials/bookmark_button.html' %}
 </div>
 
-<div class="flex justify-center items-center mb-5">
-    <div class="mr-2"> 
+<div class="flex justify-center items-center mb-5 {% if not activity.is_active %}grayscale{% endif %}">
+    <div class="mr-1.5"> 
         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
     </div>
     <p class="font-bold text-2xl text-center text-yellow-500">
@@ -29,7 +32,7 @@
 {% endif %}
 
 <div class="flex justify-center mt-5">
-    <div class="flex items-center space-x-5 border-amber-200 bg-amber-50 px-6 py-2 border rounded-2xl">
+    <div class="flex items-center space-x-5 border-amber-200 bg-amber-50 px-6 py-4 border rounded-2xl">
         <div class="text-center">
             <p class="font-extrabold text-xl text-zinc-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
             <p class="text-sm">{{ activity.event_date | date:"h:m a" }}</p> <!-- Format time -->
@@ -44,25 +47,25 @@
     </div>
 </div>
 
-<div class="relative flex justify-center items-center bg-slate-100 mt-5 md:rounded-2xl h-72">
+<div class="relative flex justify-center items-center bg-slate-100 mt-8 md:rounded-2xl h-72">
     <div id="map" class="md:rounded-2xl w-full h-full cursor-pointer"></div>
-    <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-4 py-2 rounded-2xl font-bold text-zinc-600">
+    <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-2 py-1 md:px-4 md:py-2 text-sm md:text-base rounded-2xl font-bold text-zinc-600">
         @ {{ activity.address }}
     </span>
 </div>  
 
-<p class="mt-5 text-center text-md">
+<p class="my-10 text-md md:text-lg font-serif px-6">
     {{ activity.description }}
 </p>
 
 {% if activity.photo %}
-<div class="flex justify-center items-center mt-5 rounded-2xl">
-    <img src="{{ activity.photo }}" alt="Activity Image" class="rounded-2xl max-w-full max-h-72">
+<div class="flex justify-center items-center rounded-2xl">
+    <img src="{{ activity.photo }}" alt="Activity Image" class="md:rounded-2xl max-w-full md:max-h-96">
 </div>
 {% endif %}
 
-<div class="flex justify-center items-center mt-36">
-    <p class="text-slate-400 text-xs"><span class="italic">Created by:</span> {{ user.email }} at {{ activity.created_at }}</p>
+<div class="flex justify-center items-center mt-20">
+    <p class="text-slate-400 text-xs"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
 </div>
 {% endblock %}
 

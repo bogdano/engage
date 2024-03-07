@@ -127,13 +127,19 @@ function updateOffset(button) {
     button.setAttribute('value', currentOffset + itemsLoadedPerRequest); // Ensure the attribute is updated
 }
 
+function awardPoints() {
+    // play sound effect when clicking on the award points button
+    const audio = document.querySelector('.award-points-sound')
+    audio.play()
+    console.log('Awarded points!')
+}   
+
 function initializeDraggableContainer() {
     if (typeof document.getElementById('draggable-container') === 'undefined') return
     const slider = document.getElementById('draggable-container')
     let isDown = false
     let startX
     let scrollLeft
-
     slider.addEventListener('mousedown', (e) => {
         isDown = true;
         slider.classList.add('active')
