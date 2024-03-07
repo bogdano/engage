@@ -108,7 +108,7 @@ if (typeof TomSelect === 'undefined') {
         var tomSelectInstance = new TomSelect('#select-leaderboard', {
             create: {% if not request.user.is_staff %}false{% else %}true{% endif %},
             plugins: ['remove_button'],
-            maxItems: 4,
+            maxItems: 3,
             createFilter: function (input) {
                 input = input.toLowerCase();
                 return !(input in this.options);
@@ -121,7 +121,7 @@ if (typeof TomSelect === 'undefined') {
     var tomSelectInstance = new TomSelect('#select-leaderboard', {
         create: {% if not request.user.is_staff %}false{% else %}true{% endif %},
         plugins: ['remove_button'],
-        maxItems: 4,
+        maxItems: 3,
         createFilter: function (input) {
             input = input.toLowerCase();
             return !(input in this.options);

@@ -54,7 +54,7 @@
     
     <div class="flex flex-col w-full px-4 lg:px-0">
         {% if query_date %}
-            <div class="w-full space-y-3 mb-8">
+            <div class="w-full space-y-3 mb-4">
                 <h2 class="text-center text-xl text-amber-300 font-bold mb-4">{{ query_date }}</h2>
                 {% for activity in activities %}
                     {% include 'partials/activity_card.html' %}
@@ -62,7 +62,7 @@
             </div>
         {% else %}
             {% if today_activities %}
-                <div class="w-full space-y-3 mb-8">
+                <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Today</h2>
                     {% for activity in today_activities %}
                         {% include 'partials/activity_card.html' %}
@@ -70,7 +70,7 @@
                 </div>
             {% endif %}
             {% if tomorrow_activities %}
-                <div class="w-full space-y-3 mb-8">
+                <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Tomorrow</h2>
                     {% for activity in tomorrow_activities %}
                         {% include 'partials/activity_card.html' %}
@@ -78,7 +78,7 @@
                 </div>
             {% endif %}
             {% if upcoming_activities %}
-                <div class="w-full space-y-3 mb-8">
+                <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Upcoming</h2>
                     {% for activity in upcoming_activities %}
                         {% include 'partials/activity_card.html' %}

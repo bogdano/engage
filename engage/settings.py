@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "tailwind",  # new
     "theme",
     "django_browser_reload",
+    "anymail",
 ]
 
 MIDDLEWARE = [
@@ -96,7 +97,10 @@ WSGI_APPLICATION = "engage.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db_url("DATABASE_URL", default="sqlite:///db.sqlite3"),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
@@ -156,15 +160,17 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # EMAIL SETTINGS
 ##############################
 # Email Backend Configuration (for development)
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Print emails to the console for testing
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Print emails to the console for testing
 
-# Your SMTP email configuration (for production)
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'your-smtp-host'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-smtp-username'
-# EMAIL_HOST_PASSWORD = 'your-smtp-password'
+# Email Backend Configuration (for production)
+ANYMAIL = {
+    'MAILJET_API_KEY': env("MAILJET_API_KEY"),
+    'MAILJET_SECRET_KEY': env("MAILJET_SECRET_KEY"),
+    'MAILJET_SENDER_DOMAIN': "bogz.dev",
+}
+EMAIL_BACKEND = 'anymail.backends.mailjet.EmailBackend'
+DEFAULT_FROM_EMAIL = "atg-engage@bogz.dev"
+
 
 AUTH_USER_MODEL = "accounts.CustomUser"  # new
 

@@ -31,12 +31,16 @@ def send_login_link(request):
             # Send the login link via email
             subject = 'Your Login Link'
             message = render_to_string('auth/login_link.html', {'login_link': login_link})
-            from_email = 'noreply@example.com'
+            from_email = 'atg-engage@bogz.dev'
             send_mail(subject, message, from_email, [email])
             return render(request, 'auth/email_sent.html')
         else:
             return render(request, 'auth/register.html', {'error': 'User not found'})
+    else:
+        if request.user.is_authenticated:
+            return redirect('homepage')
     return render(request, 'auth/send_login_link.html')
+
 
 def login_with_link(request, uidb64, token):
     try:
@@ -60,6 +64,7 @@ def login_with_link(request, uidb64, token):
     token_record.delete()
 
     return redirect('homepage')  
+
 
 def register(request):
     if request.method == 'POST':
@@ -100,11 +105,13 @@ def register(request):
         # Send the login link via email
         subject = 'Welcome! Use this link to log in'
         message = render_to_string('auth/login_link.html', {'login_link': login_link})
-        send_mail(subject, message, 'noreply@example.com', [email])
+        send_mail(subject, message, 'atg-engage@bogz.dev', [email])
 
         # Redirect or return a success message
         return render(request, 'auth/email_sent.html')
     else:
+        if request.user.is_authenticated:
+            return redirect('homepage')
         return render(request, 'auth/register.html')
 
 def logout_view(request):
