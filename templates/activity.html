@@ -6,63 +6,68 @@
 {% block content %}
 <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
 
-<div class="flex flex-col md:flex-row md:space-x-4 pt-12 justify-center items-center">
-    <h1 class="{% if not activity.is_active %}text-zinc-400{% endif %} text-5xl font-bold text-center mb-5">{{ activity.title }}</h1>
+<!-- add a back button, maybe? -->
+<!-- <button onclick="window.history.back()">go back</button> -->
+
+<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12">
+    <h1 class="mb-5 font-bold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-zinc-400{% endif %}">{{ activity.title }}</h1>
     {% include 'partials/bookmark_button.html' %}
 </div>
 
-<div class="flex justify-center items-center mb-5">
-    <div class="mr-2"> 
-        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
+<div class=" {% if not activity.is_active %}grayscale{% endif %}">
+    <div class="flex justify-center items-center mb-5">
+        <div class="mr-1.5"> 
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
+        </div>
+        <p class="font-bold text-2xl text-center text-yellow-500">
+            {{ activity.points }}
+        </p>
     </div>
-    <p class="text-2xl font-bold text-center text-yellow-500">
-        {{ activity.points }}
-    </p>
-</div>
 
-{% if activity.leaderboards.all %}
-<div class="flex justify-center space-x-1">
-    {% for leaderboard in activity.leaderboards.all %}
-        <a href="#" class="py-1 px-3 text-xs bg-amber-500 text-white font-extrabold rounded-xl hover:bg-amber-600">{{ leaderboard.leaderboard_name }}</a>
-    {% endfor %}
-</div>
-{% endif %}
+    {% if activity.leaderboards.all %}
+    <div class="flex justify-center space-x-1">
+        {% for leaderboard in activity.leaderboards.all %}
+            <a href="#" class="bg-amber-500 hover:bg-amber-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-<div class="flex justify-center mt-5">
-    <div class="flex items-center py-2 px-6 rounded-2xl bg-amber-50 space-x-5 border border-amber-200">
-        <div class="text-center">
-            <p class="text-xl font-extrabold text-zinc-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
-            <p class="text-sm">{{ activity.event_date | date:"h:m a" }}</p> <!-- Format time -->
-        </div>
-        <div class="self-center text-2xl text-zinc-500">
-            <p>-</p>
-        </div>
-        <div class="text-center">
-            <p class="text-xl font-extrabold text-zinc-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
-            <p class="text-sm">{{ activity.end_date | date:"h:m a" }}</p> <!-- Format time -->
+    <div class="flex justify-center mt-5">
+        <div class="flex items-center space-x-3 border-amber-200 bg-amber-50 px-6 py-4 border rounded-2xl">
+            <div class="text-center">
+                <p class="font-extrabold text-xl text-zinc-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="text-sm">{{ activity.event_date | date:"g:iA" }}</p> <!-- Format time -->
+            </div>
+            <div class="text-2xl text-zinc-500 self-center">
+                <span>-</span>
+            </div>
+            <div class="text-center">
+                <p class="font-extrabold text-xl text-zinc-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="text-sm">{{ activity.end_date | date:"g:iA" }}</p> <!-- Format time -->
+            </div>
         </div>
     </div>
 </div>
 
-<div class="flex items-center justify-center h-72 mt-5 md:rounded-2xl bg-slate-100 relative">
-    <div id="map" class="w-full h-full md:rounded-2xl cursor-pointer "></div>
-    <span class="absolute bottom-1.5 right-1.5 text-zinc-600 bg-amber-300 font-bold z-10 px-4 py-2 rounded-2xl">
+<div class="relative flex justify-center items-center bg-slate-100 mt-8 md:rounded-2xl h-72">
+    <div id="map" class="md:rounded-2xl w-full h-full cursor-pointer"></div>
+    <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-2 py-1 md:px-4 md:py-2 text-sm md:text-base rounded-2xl font-bold text-zinc-600">
         @ {{ activity.address }}
     </span>
 </div>  
 
-<p class="text-md text-center mt-5">
+<p class="my-10 text-md md:text-lg font-serif px-6">
     {{ activity.description }}
 </p>
 
 {% if activity.photo %}
-<div class="flex justify-center items-center mt-5 rounded-2xl">
-    <img src="{{ activity.photo }}" alt="Activity Image" class="rounded-2xl max-w-full max-h-72">
+<div class="flex justify-center items-center rounded-2xl">
+    <img src="{{ activity.photo }}" alt="Activity Image" class="md:rounded-2xl max-w-full md:max-h-96">
 </div>
 {% endif %}
 
-<div class="flex justify-center items-center mt-36">
-    <p class="text-xs text-slate-400"><span class="italic">Created by:</span> {{ user.email }} at {{ activity.created_at }}</p>
+<div class="flex justify-center items-center mt-20">
+    <p class="text-slate-400 text-xs"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
 </div>
 {% endblock %}
 

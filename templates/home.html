@@ -14,7 +14,7 @@
 
 <div id="activities-iterator" class="flex flex-col items-center">
     <div class="flex justify-center items-center space-x-4 align-bottom">
-        <h1 class="text-5xl font-bold text-center mt-12 mb-5">Activities</h1>
+        <h1 class="text-4xl md:text-5xl font-bold text-center mt-12 ml-5 mb-5">Activities</h1>
         <a href="{% url 'add_activity' %}" class="bg-amber-400 hover:bg-amber-600 p-2.5 rounded-xl shadow-md mt-6">
             <img src="{% static 'icons/add.svg' %}" class="w-7 h-7" alt="Add Activity">
         </a>
@@ -52,9 +52,9 @@
         </div>
     </div>
     
-    <div class="flex flex-col w-full px-5 lg:px-0">
+    <div class="flex flex-col w-full px-4 lg:px-0">
         {% if query_date %}
-            <div class="w-full space-y-3 mb-8">
+            <div class="w-full space-y-3 mb-4">
                 <h2 class="text-center text-xl text-amber-300 font-bold mb-4">{{ query_date }}</h2>
                 {% for activity in activities %}
                     {% include 'partials/activity_card.html' %}
@@ -62,7 +62,7 @@
             </div>
         {% else %}
             {% if today_activities %}
-                <div class="w-full space-y-3 mb-8">
+                <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Today</h2>
                     {% for activity in today_activities %}
                         {% include 'partials/activity_card.html' %}
@@ -70,7 +70,7 @@
                 </div>
             {% endif %}
             {% if tomorrow_activities %}
-                <div class="w-full space-y-3 mb-8">
+                <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Tomorrow</h2>
                     {% for activity in tomorrow_activities %}
                         {% include 'partials/activity_card.html' %}
@@ -78,7 +78,7 @@
                 </div>
             {% endif %}
             {% if upcoming_activities %}
-                <div class="w-full space-y-3 mb-8">
+                <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Upcoming</h2>
                     {% for activity in upcoming_activities %}
                         {% include 'partials/activity_card.html' %}
@@ -90,7 +90,7 @@
             <div id="past-activities-container" class="w-full space-y-3 mb-8">
                 {% include 'partials/past_activities.html' with past_activities=recent_past_activities %}
             </div>
-            
+
             {% if not no_more_activities %}
                 <div class="flex justify-center items-center">
                     <button id="load-more-button"
@@ -99,7 +99,7 @@
                             hx-target="#past-activities-container" 
                             hx-swap="beforeend transition:true" 
                             hx-trigger="click" 
-                            hx-on::after-request="updateOffset(this)"
+                            hx-on::after-request="updateOffset(this);"
                             name="offset" 
                             value="{{ recent_past_activities|length }}"
                             class="hover:bg-amber-300 hover:text-white text-amber-400 font-bold py-2 px-4 border border-amber-100 rounded-2xl shadow-md mb-10">
@@ -111,7 +111,8 @@
     </div>
 </div>
 
-<a href="{% url 'logout' %}" class="absolute top-12 right-8 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold shadow-md rounded-2xl">logout</a>
+<audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
+<a href="{% url 'logout' %}" class="hidden md:block absolute top-12 right-8 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-bold shadow-md rounded-2xl">logout</a>
 {% endblock %}
 
 {% block scripts %}
@@ -125,7 +126,16 @@ function updateOffset(button) {
     const itemsLoadedPerRequest = 5;
     let currentOffset = parseInt(button.value, 10);
     button.setAttribute('value', currentOffset + itemsLoadedPerRequest); // Ensure the attribute is updated
+    // blur the button
+    button.blur();
 }
+
+function awardPoints() {
+    // play sound effect when clicking on the award points button
+    const audio = document.querySelector('.award-points-sound')
+    audio.play()
+    console.log('Awarded points!')
+}   
 
 function initializeDraggableContainer() {
     if (typeof document.getElementById('draggable-container') === 'undefined') return
@@ -133,7 +143,6 @@ function initializeDraggableContainer() {
     let isDown = false
     let startX
     let scrollLeft
-
     slider.addEventListener('mousedown', (e) => {
         isDown = true;
         slider.classList.add('active')

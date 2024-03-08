@@ -44,6 +44,8 @@ urlpatterns = [
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),
+
+    path('', include('pwa.urls')),
 ]
 
 

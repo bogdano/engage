@@ -1,7 +1,7 @@
 from .models import Team, Activity, Leaderboard, Item, UserParticipated
 from django.db.models import Sum, Count, Exists, OuterRef
 from django.db.models.functions import TruncDay
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
@@ -130,7 +130,7 @@ def new_activity(request):
         # upload photo to cloudinary and store URL in database
         uploaded_image_url = ""
         if "photo" in request.FILES:
-            uploaded_image = cloudinary.uploader.upload(request.FILES["photo"])
+            uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="auto", fetch_format="auto")
             uploaded_image_url = uploaded_image["url"]
 
         leaderboard_names = request.POST.getlist("leaderboards")
@@ -154,7 +154,7 @@ def new_activity(request):
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
-            return render(request, "activity_added.html")
+            return redirect("homepage")
         else:
             return render(request, "activity_pending.html")
     else:
@@ -170,7 +170,6 @@ def activity(request, pk):
 def award_participation_points(request, pk):
     user = request.user
     activity = Activity.objects.get(pk=pk)
-    
     if user in activity.participated_users.all():
         return JsonResponse({"error": "User has already been awarded points for this activity"})
     else:
@@ -189,7 +188,7 @@ def new_item(request):
         name = request.POST.get("itemName")
         points = request.POST.get("pointCost")
         description = request.POST.get("itemDescription")
-        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"])
+        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="auto", fetch_format="auto")
         uploaded_image_url = uploaded_image["url"]
     item = Item.objects.create(
         name=name, description=description, price=points, image=uploaded_image_url
