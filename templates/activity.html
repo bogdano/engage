@@ -14,35 +14,37 @@
     {% include 'partials/bookmark_button.html' %}
 </div>
 
-<div class="flex justify-center items-center mb-5 {% if not activity.is_active %}grayscale{% endif %}">
-    <div class="mr-1.5"> 
-        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
+<div class=" {% if not activity.is_active %}grayscale{% endif %}">
+    <div class="flex justify-center items-center mb-5">
+        <div class="mr-1.5"> 
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
+        </div>
+        <p class="font-bold text-2xl text-center text-yellow-500">
+            {{ activity.points }}
+        </p>
     </div>
-    <p class="font-bold text-2xl text-center text-yellow-500">
-        {{ activity.points }}
-    </p>
-</div>
 
-{% if activity.leaderboards.all %}
-<div class="flex justify-center space-x-1">
-    {% for leaderboard in activity.leaderboards.all %}
-        <a href="#" class="bg-amber-500 hover:bg-amber-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
-    {% endfor %}
-</div>
-{% endif %}
+    {% if activity.leaderboards.all %}
+    <div class="flex justify-center space-x-1">
+        {% for leaderboard in activity.leaderboards.all %}
+            <a href="#" class="bg-amber-500 hover:bg-amber-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-<div class="flex justify-center mt-5">
-    <div class="flex items-center space-x-5 border-amber-200 bg-amber-50 px-6 py-4 border rounded-2xl">
-        <div class="text-center">
-            <p class="font-extrabold text-xl text-zinc-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
-            <p class="text-sm">{{ activity.event_date | date:"h:m a" }}</p> <!-- Format time -->
-        </div>
-        <div class="text-2xl text-zinc-500 self-center">
-            <p>-</p>
-        </div>
-        <div class="text-center">
-            <p class="font-extrabold text-xl text-zinc-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
-            <p class="text-sm">{{ activity.end_date | date:"h:m a" }}</p> <!-- Format time -->
+    <div class="flex justify-center mt-5">
+        <div class="flex items-center space-x-3 border-amber-200 bg-amber-50 px-6 py-4 border rounded-2xl">
+            <div class="text-center">
+                <p class="font-extrabold text-xl text-zinc-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="text-sm">{{ activity.event_date | date:"g:iA" }}</p> <!-- Format time -->
+            </div>
+            <div class="text-2xl text-zinc-500 self-center">
+                <span>-</span>
+            </div>
+            <div class="text-center">
+                <p class="font-extrabold text-xl text-zinc-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="text-sm">{{ activity.end_date | date:"g:iA" }}</p> <!-- Format time -->
+            </div>
         </div>
     </div>
 </div>

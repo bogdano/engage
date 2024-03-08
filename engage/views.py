@@ -1,7 +1,7 @@
 from .models import Team, Activity, Leaderboard, Item, UserParticipated
 from django.db.models import Sum, Count, Exists, OuterRef
 from django.db.models.functions import TruncDay
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
@@ -154,7 +154,7 @@ def new_activity(request):
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
-            return render(request, "activity_added.html")
+            return redirect("homepage")
         else:
             return render(request, "activity_pending.html")
     else:

@@ -821,12 +821,20 @@ select {
   right: 0.375rem;
 }
 
+.right-3 {
+  right: 0.75rem;
+}
+
 .right-4 {
   right: 1rem;
 }
 
 .right-8 {
   right: 2rem;
+}
+
+.top-1\/2 {
+  top: 50%;
 }
 
 .top-12 {
@@ -867,6 +875,11 @@ select {
   margin-right: auto;
 }
 
+.my-10 {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
 .my-2 {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -882,14 +895,9 @@ select {
   margin-bottom: 1.5rem;
 }
 
-.my-8 {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
-
-.my-10 {
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .mb-1 {
@@ -940,6 +948,10 @@ select {
   margin-right: 0.25rem;
 }
 
+.mr-1\.5 {
+  margin-right: 0.375rem;
+}
+
 .mr-2 {
   margin-right: 0.5rem;
 }
@@ -984,8 +996,16 @@ select {
   margin-top: 2rem;
 }
 
-.mr-1\.5 {
-  margin-right: 0.375rem;
+.mr-5 {
+  margin-right: 1.25rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
+}
+
+.ml-4 {
+  margin-left: 1rem;
 }
 
 .block {
@@ -1064,6 +1084,18 @@ select {
   height: 100vh;
 }
 
+.h-14 {
+  height: 3.5rem;
+}
+
+.h-\[56px\] {
+  height: 56px;
+}
+
+.h-\[58px\] {
+  height: 58px;
+}
+
 .max-h-4 {
   max-height: 1rem;
 }
@@ -1138,6 +1170,22 @@ select {
 
 .w-full {
   width: 100%;
+}
+
+.w-14 {
+  width: 3.5rem;
+}
+
+.w-16 {
+  width: 4rem;
+}
+
+.w-\[56px\] {
+  width: 56px;
+}
+
+.w-\[58px\] {
+  width: 58px;
 }
 
 .min-w-10 {
@@ -1268,12 +1316,6 @@ select {
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
-.space-x-5 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(1.25rem * var(--tw-space-x-reverse));
-  margin-left: calc(1.25rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
 .space-y-3 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1359,6 +1401,10 @@ select {
 
 .border-t {
   border-top-width: 1px;
+}
+
+.border-l-0 {
+  border-left-width: 0px;
 }
 
 .border-dashed {
@@ -1579,11 +1625,6 @@ select {
   padding-right: 1rem;
 }
 
-.px-5 {
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-}
-
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
@@ -1619,9 +1660,12 @@ select {
   padding-bottom: 2rem;
 }
 
-.py-3 {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
+.pr-10 {
+  padding-right: 2.5rem;
 }
 
 .pt-12 {
@@ -1632,8 +1676,20 @@ select {
   padding-top: 2.25rem;
 }
 
+.pr-5 {
+  padding-right: 1.25rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
+}
+
 .text-center {
   text-align: center;
+}
+
+.align-middle {
+  vertical-align: middle;
 }
 
 .align-bottom {
@@ -1839,18 +1895,18 @@ select {
   color: rgb(39 39 42 / var(--tw-text-opacity));
 }
 
-.text-stone-400 {
-  --tw-text-opacity: 1;
-  color: rgb(168 162 158 / var(--tw-text-opacity));
-}
-
-.text-yellow-600 {
-  --tw-text-opacity: 1;
-  color: rgb(202 138 4 / var(--tw-text-opacity));
-}
-
 .underline {
   text-decoration-line: underline;
+}
+
+.placeholder-yellow-500::-moz-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-placeholder-opacity));
+}
+
+.placeholder-yellow-500::placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-placeholder-opacity));
 }
 
 .shadow {
@@ -1877,13 +1933,8 @@ select {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.drop-shadow-sm {
-  --tw-drop-shadow: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
-.drop-shadow {
-  --tw-drop-shadow: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+.blur {
+  --tw-blur: blur(8px);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -2139,6 +2190,14 @@ select {
 
   .md\:w-auto {
     width: auto;
+  }
+
+  .md\:w-40 {
+    width: 10rem;
+  }
+
+  .md\:w-36 {
+    width: 9rem;
   }
 
   .md\:max-w-md {

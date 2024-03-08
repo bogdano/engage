@@ -36,13 +36,12 @@
                         hx-post="{% url 'award_participation_points' activity.pk %}" 
                         hx-swap="outerHTML" 
                         hx-target="#activity-{{ activity.pk }}" 
-                        onclick="event.preventDefault(); event.stopPropagation(); awardPoints();"
+                        onclick="awardPoints(); event.preventDefault(); event.stopPropagation();"
                         class="award-points-button flex items-center justify-center space-x-1 w-20 bg-white border border-amber-100 shadow-sm px-2 py-1 rounded-xl hover:bg-amber-200 hover:border-none hover:text-white">
                         
                         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-6 md:h-6 text-amber-500">
                         <span class="text-amber-500 font-bold text-sm">{{ activity.points }}</span>
                     </button>
-                    <audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
                 {% else %}
                     <img src="{% static 'icons/checked.svg' %}" alt="Icon" class="w-6 h-6">
                 {% endif %}
@@ -51,7 +50,7 @@
 
         <div class="flex flex-col items-center min-w-10">
             {% if activity in today_activities or activity in tomorrow_activities %}
-                <span class="text-sm text-zinc-400 leading-snug block">{{ activity.event_date|date:"h:mp" }}</span>
+                <span class="text-sm text-zinc-400 leading-snug block">{{ activity.event_date|date:"g:iA" }}</span>
             {% else %}
                 <span class="text-sm font-extrabold text-zinc-300 leading-snug block">{{ activity.event_date|date:"d" }}</span>
                 <span class="text-xs text-zinc-400 leading-snug block">{{ activity.end_date|date:"M" }}</span>
