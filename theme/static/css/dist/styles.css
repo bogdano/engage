@@ -1096,6 +1096,10 @@ select {
   height: 58px;
 }
 
+.h-28 {
+  height: 7rem;
+}
+
 .max-h-4 {
   max-height: 1rem;
 }
@@ -2158,6 +2162,14 @@ select {
 
   .md\:h-6 {
     height: 1.5rem;
+  }
+
+  .md\:h-\[58px\] {
+    height: 58px;
+  }
+
+  .md\:h-14 {
+    height: 3.5rem;
   }
 
   .md\:max-h-96 {
