@@ -21,7 +21,7 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body hx-boost="true" class="htmx-body" hx-swap="transition:true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div class="max-w-6xl mx-auto w-full min-h-screen">
+    <div class="max-w-6xl mx-auto w-full min-h-screen relative">
         {% if current_section == 'home' %}
             <meta name="theme-color" content="#fbbf24">
         {% elif current_section == 'leaderboard' %}

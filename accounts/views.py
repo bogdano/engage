@@ -33,7 +33,7 @@ def send_login_link(request):
             message = render_to_string('auth/login_link.html', {'login_link': login_link})
             from_email = 'atg-engage@bogz.dev'
             send_mail(subject, message, from_email, [email])
-            return render(request, 'auth/email_sent.html')
+            return render(request, 'auth/send_login_link.html',  {'success': 'An email with your login link has been sent to your email address. Please check your inbox.'})
         else:
             return render(request, 'auth/register.html', {'error': 'User not found'})
     else:
@@ -51,10 +51,10 @@ def login_with_link(request, uidb64, token):
         # Check if the token is expired
         if timezone.now() > token_record.expiration_date:
             token_record.delete()
-            return render(request, 'auth/login_link_expired.html')
+            return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
 
     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist, LoginToken.DoesNotExist):
-        return render(request, 'auth/login_link_invalid.html')
+        return render(request, 'auth/send_login_link.html', {'error': 'This login link was invalid. Please request a new one.'})
 
     # Log the user in without requiring a password
     user.backend = 'django.contrib.auth.backends.ModelBackend'
@@ -70,6 +70,8 @@ def register(request):
     if request.method == 'POST':
         # Extract form data
         email = request.POST.get('email')
+        if CustomUser.objects.filter(email=email).exists():
+            return render(request, 'auth/send_login_link.html', {'error': 'User already exists'})
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         position = request.POST.get('position', '')

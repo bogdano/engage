@@ -102,6 +102,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # enable WAL mode on sqlite DB (commented out code will work in Django 5.1 (releasing august 2024))
+        # for now this lives in startup.sh
+        # 'OPTIONS': {
+        #     'init_command': 'PRAGMA synchronous=1; PRAGMA cache_size=2000;'
+        # }
     }
 }
 

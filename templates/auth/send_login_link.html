@@ -2,17 +2,24 @@
 {% load static %}
 {% block title %}Login{% endblock %}
 {% block content %}
-<div class="flex flex-col justify-center items-center h-screen">
-    <img src="{% static '/logo.png' %}" alt="logo" class="w-60 h-60 mb-8">
+<div class="flex flex-col justify-center items-center h-screen px-4">
+    <img src="{% static '/logo.png' %}" alt="logo" class="w-64 h-64 mb-8">
     <h1 class="text-5xl font-bold mb-8">ENGAGE</h1>
+    {% if error %}
+        <p class="text-red-500 mb-4 italic">{{ error }}</p>
+    {% endif %}
+    {% if success %}
+        <p class="text-green-500 mb-4 italic">{{ success }}</p>
+        <p class="text-stone-500">(You may close this tab.)</p>
+    {% endif %}
 
-    <form method="post" action="{% url 'send_login_link' %}" class="flex items-center">
+    <form hx-post="{% url 'send_login_link' %}" hx-target=".htmx-body" class="flex items-center w-full max-w-md {% if success %}hidden{% endif %}">
         {% csrf_token %}
-        <input type="email" name="email" placeholder="sample@email.com" class="p-2 border border-gray-300 rounded-l-2xl" required autofocus>
-        <button type="submit" class="p-2 border border-amber-500 rounded-r-2xl bg-amber-500 text-white hover:bg-amber-600">Login</button>
+        <input type="email" name="email" placeholder="example@email.com" class="h-14 px-2 w-full border rounded-l-2xl border-r-0  focus:border-amber-400 focus:outline-none focus:ring-0" required autofocus>
+        <button type="submit" class="h-14 px-3 font-bold border border-amber-500 rounded-r-2xl border-l-0 bg-amber-500 text-white hover:bg-amber-600">Login</button>
     </form>
     
-    <a href="{% url 'register' %}" class="mt-5 text-slate-500 hover:underline">or, click <span class="underline">here</span> to register</a> 
+    <a href="{% url 'register' %}" class="mt-5 text-slate-500 hover:underline {% if success %}hidden{% endif %}">or, click <span class="underline">here</span> to register</a> 
 </div>
 {% endblock %}
 
