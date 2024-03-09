@@ -34,6 +34,7 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("edit_profile", views.edit_profile, name="edit_profile"),
 
+    path("add_activity/", views.add_activity, name="add_activity"),
     path("activity/<int:pk>/", views.activity, name="activity"),
     path("new_activity/", views.new_activity, name="new_activity"),
     path("bookmark_activity/<int:pk>/", views.bookmark_activity, name="bookmark_activity"),
