@@ -1,3 +1,4 @@
+import sys
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
@@ -33,9 +34,9 @@ def send_login_link(request):
             message = render_to_string('auth/login_link.html', {'login_link': login_link})
             from_email = 'atg-engage@bogz.dev'
             send_mail(subject, message, from_email, [email])
-            return render(request, 'auth/send_login_link.html',  {'success': 'An email with your login link has been sent to your email address. Please check your inbox.'})
+            return render(request, 'auth/send_login_link.html',  {'success': 'An email with your login link has been sent to ' + email + '. Please check your inbox.'})
         else:
-            return render(request, 'auth/register.html', {'error': 'User not found'})
+            return render(request, 'auth/register.html', {'error': 'User with email address ' + email + ' not found'})
     else:
         if request.user.is_authenticated:
             return redirect('homepage')
@@ -43,6 +44,8 @@ def send_login_link(request):
 
 
 def login_with_link(request, uidb64, token):
+    if request.user.is_authenticated:
+        return redirect('homepage')
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = CustomUser.objects.get(pk=uid)
@@ -50,10 +53,13 @@ def login_with_link(request, uidb64, token):
         
         # Check if the token is expired
         if timezone.now() > token_record.expiration_date:
+            print('Token expired')
             token_record.delete()
             return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
 
     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist, LoginToken.DoesNotExist):
+        # print out type of error in console
+        print('Error:', sys.exc_info()[0])
         return render(request, 'auth/send_login_link.html', {'error': 'This login link was invalid. Please request a new one.'})
 
     # Log the user in without requiring a password
@@ -62,6 +68,7 @@ def login_with_link(request, uidb64, token):
     
     # Mark the token as used or delete it
     token_record.delete()
+    print(f"deleted token {token}")
 
     return redirect('homepage')  
 
@@ -71,7 +78,7 @@ def register(request):
         # Extract form data
         email = request.POST.get('email')
         if CustomUser.objects.filter(email=email).exists():
-            return render(request, 'auth/send_login_link.html', {'error': 'User already exists'})
+            return render(request, 'auth/send_login_link.html', {'error': 'User already exists. Please login.'})
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         position = request.POST.get('position', '')
