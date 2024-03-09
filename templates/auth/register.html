@@ -5,25 +5,27 @@
 <div class="flex flex-col justify-center items-center h-screen">
     <img src="{% static '/logo.png' %}" alt="logo" class="w-60 h-60 mb-8">
     <h1 class="text-5xl font-bold mb-4">Register</h1>
+    {% if error %}
+        <p class="text-red-500 mb-4 italic">{{ error }}</p>
+    {% endif %}
     <a href="{% url 'send_login_link' %}" class="mb-5 text-slate-500 hover:underline">or, <span class="underline">login</span> here</a> 
     <form method="post" action="{% url 'register' %}" enctype="multipart/form-data" class="w-full max-w-xs space-y-4">
         {% csrf_token %}
-        <input type="email" name="email" placeholder="your@email.com" required class="w-full p-2 border border-gray-300 rounded" autofocus>
-        
+        <input type="email" name="email" placeholder="your@email.com" required class="w-full p-2 border border-gray-300 rounded-2xl" autofocus>
         <div class="flex justify-between space-x-2">
-            <input type="text" name="first_name" placeholder="First Name" required class="w-full p-2 border border-gray-300 rounded">
-            <input type="text" name="last_name" placeholder="Last Name" required class="w-full p-2 border border-gray-300 rounded">
+            <input type="text" name="first_name" placeholder="First Name" required class="w-full p-2 border border-gray-300 rounded-2xl">
+            <input type="text" name="last_name" placeholder="Last Name" required class="w-full p-2 border border-gray-300 rounded-2xl">
         </div>
     
-        <input type="text" name="position" placeholder="Position" class="w-full p-2 border border-gray-300 rounded">
-        <textarea name="description" placeholder="Bio" class="w-full p-2 border border-gray-300 rounded resize-y"></textarea>
+        <input type="text" name="position" placeholder="Position" class="w-full p-2 border border-gray-300 rounded-2xl">
+        <textarea name="description" placeholder="Bio" class="w-full p-2 border border-gray-300 rounded-xl resize-y"></textarea>
         
-        <label class="w-full flex justify-center p-2 border border-gray-300 rounded cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+        <label class="w-full flex justify-center p-2 border border-gray-300 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="profile_picture" id="fileInput" class="hidden">
             <span>Upload Profile Picture</span>
         </label>
         
-        <button type="submit" class="w-full p-2 border border-amber-500 rounded bg-amber-500 text-white hover:bg-amber-600">Register</button>
+        <button type="submit" class="w-full p-2 border border-amber-500 rounded-2xl bg-amber-500 text-white hover:bg-amber-600">Register</button>
     </form>
 </div>   
 {% endblock %}

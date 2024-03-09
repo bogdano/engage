@@ -1,0 +1,11 @@
+{% load static %}
+<button type="button" 
+        hx-post="{% url 'bookmark_activity_from_activity' activity.pk %}" 
+        hx-swap="outerHTML" 
+        {% if not activity.is_active %}disabled{% endif %}
+        class="{% if not activity.is_active %}grayscale{% endif %} 
+         p-2 border rounded-xl border-amber-200 hover:bg-amber-50 mb-5 shadow w-auto inline-flex items-center justify-center text-yellow-500 text-sm font-bold pl-3">
+    {% if request.user in activity.interested_users.all %}Participating{% else %}Participate!{% endif %}
+    <img src="{% if request.user in activity.interested_users.all %}{% static 'icons/bookmark_saved.svg' %}{% else %}{% static 'icons/bookmark.svg' %}{% endif %}" alt="Bookmark Icon" class="w-6 h-6 ml-1">
+</button>
+

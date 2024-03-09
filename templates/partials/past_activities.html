@@ -1,0 +1,11 @@
+{% for activity in past_activities %}
+    {% include 'partials/activity_card.html' %}
+{% endfor %}
+{% if no_more_activities %}
+    <p class="text-center text-zinc-300 font-bold pt-9 mb-12">No more activities</p>
+    <script>
+        // Dispatch an event to hide the "Load More" button
+        var event = new CustomEvent('hideLoadMoreButton');
+        document.dispatchEvent(event);
+    </script>
+{% endif %}

@@ -16,6 +16,7 @@
             class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile
         </a>
 
+
         <div class="flex items-center">
             <div class="relative">
                 <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-12 w-12">
@@ -23,10 +24,12 @@
                     {{ user.first_name }} {{ user.last_name }}</p>
             </div>
         </div>
+
         <!--
         <img src="/static/icons/coin.svg" alt="" class="rounded-full h-12 w-12"> -->
         <p class=" px-6 font-medium text-black">Balance: {{ user.balance }}</p>
     </nav>
+
 
 
 
@@ -38,6 +41,7 @@
             <img src="/static/logo.png" alt=" " class="rounded-full h-12 w-12">
         </div>
 
+        <img src="#" alt=" " class="rounded-full h-12 w-12">
 
     </div>
 
@@ -57,40 +61,6 @@
         <!--<p class="px-6 font-medium text-black">{{ user.description }}</p>-->
     </div>
 
-
-    <!-- this is to display after the edit button is pressed -->
-    <!--
-    <div class="flex flex-col justify-center items-center h-screen">
-        <form method="post" action="{% url 'register' %}" enctype="multipart/form-data"
-            class="w-full max-w-xs space-y-4">
-            {% csrf_token %}
-            <input type="email" name="email" placeholder="your@email.com" required
-                class="w-full p-2 border border-gray-300 rounded" autofocus>
-
-            <div class="flex justify-between space-x-2">
-                <input type="text" name="first_name" placeholder="First Name" required
-                    class="w-full p-2 border border-gray-300 rounded">
-                <input type="text" name="last_name" placeholder="Last Name" required
-                    class="w-full p-2 border border-gray-300 rounded">
-            </div>
-
-            <input type="text" name="position" placeholder="Position" class="w-full p-2 border border-gray-300 rounded">
-            <textarea name="description" placeholder="Bio"
-                class="w-full p-2 border border-gray-300 rounded resize-y"></textarea>
-
-            <label
-                class="w-full flex justify-center p-2 border border-gray-300 rounded cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
-                <input type="file" name="profile_picture" id="fileInput" class="hidden">
-                <span>Upload Profile Picture</span>
-            </label>
-
-            <button type="submit"
-                class="w-full p-2 border border-amber-500 rounded bg-amber-500 text-white hover:bg-amber-600">Register</button>
-        </form>
-
-
-
-    </div>-->
 
 </body>
 
