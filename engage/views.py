@@ -151,5 +151,42 @@ def notifications(request):
 
 
 def profile(request):
-    user = CustomUser.objects.all()
+    user = request.user 
     return render(request, 'profile.html', {"user": user})
+
+def edit_profile(request):
+    # This is to check if the user is authenticated before allowing the edit
+    if not request.user.is_authenticated:
+        return redirect('profile')
+    
+    else:
+   
+        if request.method == 'POST':
+        # Get the current user
+            user = request.user
+
+        # Update the user fields with the data from the form
+            if 'email' in request.POST and request.POST['email']:
+                user.email = request.POST['email']
+            if 'first_name' in request.POST and request.POST['first_name']:
+                user.first_name = request.POST['first_name']
+            if 'last_name' in request.POST and request.POST['last_name']:
+                user.last_name = request.POST['last_name']
+            if 'position' in request.POST:
+                user.position = request.POST['position']
+            if 'description' in request.POST:
+                user.description = request.POST['description']
+            if 'profile_picture' in request.FILES:
+                user.profile_picture = request.FILES['profile_picture']
+            # Handle profile picture upload if provided
+            # This part is up to you depending on how you handle profile picture uploads
+                pass
+
+        # Save the updated user information
+            user.save()
+
+        # Redirect to the profile page or any other appropriate page
+            return redirect('profile')
+        else:
+            return render(request, 'edit_profile.html')
+ 

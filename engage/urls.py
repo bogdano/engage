@@ -35,6 +35,7 @@ urlpatterns = [
     path("notifications/", views.notifications, name="notifications"),
     path("add_activity/", views.add_activity, name="add_activity"),
     path("profile/", views.profile, name="profile"),
+    path("edit_profile", views.edit_profile, name="edit_profile"),
     path("activity/<int:pk>/", views.activity, name="activity"),
     path("new_activity/", views.new_activity, name="new_activity"),
     path("new_item/", views.new_item, name="new_item"),

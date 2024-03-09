@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Profile {% endblock %}
+{% block content %}
+
+<body class="flex flex-col min-h-screen bg-yellow-100">
+    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
+        <a href="{% url 'edit_profile' %}"
+            class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit profile
+        </a>
+
+        <div class="flex items-center">
+            <div class="relative">
+                <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-12 w-12">
+                <p class="absolute bottom-0 left-0 right-0 text-center px-6 font-medium">
+                    {{ user.first_name }} {{ user.last_name }}</p>
+            </div>
+        </div>
+        <!--
+        <img src="/static/icons/coin.svg" alt="" class="rounded-full h-12 w-12"> -->
+        <p class=" px-6 font-medium text-black">Balance: {{ user.balance }}</p>
+    </nav>
+
+    <div class="flex flex-col justify-center items-center h-screen">
+
+        <form method="post" action="{% url 'edit_profile' %}" enctype="multipart/form-data"
+            class="w-full max-w-xs space-y-4">
+            {% csrf_token %}
+            <!-- Input fields for updating profile information -->
+            {% if user.is_authenticated %}
+            <input type="email" name="email" placeholder="your@email.com" value="{{ user.email }}"
+                class="w-full p-2 border border-gray-300 rounded" autofocus>
+
+            <div class="flex justify-between space-x-2">
+                <input type="text" name="first_name" placeholder="First Name" value="{{ user.first_name }}"
+                    class="w-full p-2 border border-gray-300 rounded">
+                <input type="text" name="last_name" placeholder="Last Name" value="{{ user.last_name }}"
+                    class="w-full p-2 border border-gray-300 rounded">
+            </div>
+
+            <input type="text" name="position" placeholder="Position" value="{{ user.position }}"
+                class="w-full p-2 border border-gray-300 rounded">
+            <textarea name="description" placeholder="Bio"
+                class="w-full p-2 border border-gray-300 rounded resize-y">{{ user.description }}</textarea>
+
+            <label
+                class="w-full flex justify-center p-2 border border-gray-300 rounded cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+                <input type="file" name="profile_picture" id="fileInput" class="hidden">
+                <span>Upload Profile Picture</span>
+            </label>
+
+            <button type="submit"
+                class="w-full p-2 border border-amber-500 rounded bg-amber-500 text-white hover:bg-amber-600">Update
+                Profile</button>
+            {% else %}
+            <p>Please log in to edit your profile.</p>
+            {% endif %}
+        </form>
+
+
+
+
+    </div>
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
