@@ -1,36 +1,67 @@
 {% extends 'base.html' %}
-{% block title %}Profile{% endblock %}
+{% load static %}
+{% block title %} Profile {% endblock %}
 {% block content %}
 
-<div class="flex flex-col min-h-screen bg-yellow-100">
-    <div class="flex justify-between text-center px-4 py-6 bg-yellow-300">
-        <button class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile</button>
+
+<!--<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profile</title>
+</head>-->
+
+<body class="flex flex-col min-h-screen bg-yellow-100">
+    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
+        <a href="{% url 'edit_profile' %}"
+            class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile
+        </a>
+
+
         <div class="flex items-center">
             <div class="relative">
                 <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-12 w-12">
                 <p class="absolute bottom-0 left-0 right-0 text-center px-6 font-medium">
-                    {{ request.user.first_name }} {{ request.user.last_name }}</p>
+                    {{ user.first_name }} {{ user.last_name }}</p>
             </div>
         </div>
-        <p class=" px-6 font-medium text-black">Balance: {{ request.user.balance }}</p>
-    </div>
+
+        <!--
+        <img src="/static/icons/coin.svg" alt="" class="rounded-full h-12 w-12"> -->
+        <p class=" px-6 font-medium text-black">Balance: {{ user.balance }}</p>
+    </nav>
+
 
 
 
     <div class="flex-grow">
         <!-- this is the content of the page-->
         <div class="w-4/5">
-            <p class="px-6 font-medium text-black uppercase">Team</p>
+            <p class="px-6 font-medium text-black uppercase">Team:</p>
+            <p class="px-6 font-medium text-black">Team Name Placeholder</p>
+            <img src="/static/logo.png" alt=" " class="rounded-full h-12 w-12">
         </div>
+
         <img src="#" alt=" " class="rounded-full h-12 w-12">
+
     </div>
 
+    <div class="flex-grow">
+        <!-- this is the content of the page-->
+        <p class="px-6 font-medium text-black uppercase"> Lifetime Points: {{ user.lifetime_points }}</p>
+    </div>
 
     <div class="flex-grow">
+
+        <!-- here, when the user presses the edit button this pops up as the text to be entered
         <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
+        -->
+
+        <p class="px-6 fornt-medium text black"> About Me: {{ user.description }}</p>
         <!-- This below is for when the edit is finished, not yet done-->
         <!--<p class="px-6 font-medium text-black">{{ user.description }}</p>-->
     </div>
-</div>
+
+
+</body>
 
 {% endblock %}
