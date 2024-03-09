@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 
 def homepage(request):
     if not request.user.is_authenticated:
-        return render(request, "auth/send_login_link.html")
+        return redirect("send_login_link")
     else:
         # fetch approved and active activities
         activities = Activity.objects.filter(is_approved=True, is_active=True).order_by("event_date")
@@ -85,6 +85,8 @@ def homepage(request):
         return render(request, "home.html", context)
 
 def add_activity(request):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     leaderboards = Leaderboard.objects.all()
     return render(request, "add_activity.html", {"leaderboards": leaderboards})
 
@@ -162,6 +164,8 @@ def new_activity(request):
 
 
 def activity(request, pk):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     activity = Activity.objects.get(pk=pk)
     return render(request, "activity.html", {"activity": activity})
 

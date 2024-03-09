@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include
 from . import views
 
@@ -23,7 +24,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.homepage, name="homepage"),
     path("accounts/", include("accounts.urls")), 
-    path("__reload__/", include("django_browser_reload.urls")),
 
     path("leaderboard/", views.leaderboard, name="leaderboard"),
     path("leaderboard/individual/", views.individual_leaderboard, name="individual_leaderboard"),
@@ -45,8 +45,9 @@ urlpatterns = [
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),
 
-    path('', include('pwa.urls')),
+    # path('', include('pwa.urls')),
 ]
 
+if settings.DEBUG:
+    urlpatterns += [path("__reload__/", include("django_browser_reload.urls"))]
 
-# url 'filter_activities_by_date' date_info.date|date:'Y-m-d'

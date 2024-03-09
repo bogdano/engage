@@ -10,6 +10,5 @@
     "status_bar": "default",
     "icons": [{"src": "/static/favicons/android-chrome-192x192.png", "type": "image/png", "sizes": "192x192"}, {"src": "/static/favicons/android-chrome-512x512.png", "type": "image/png", "sizes": "512x512"}],
     "dir": "ltr",
-    "lang": "en-US",
-    "launch_handler": { "client_mode": "navigate-existing"}
+    "lang": "en-US"
   }

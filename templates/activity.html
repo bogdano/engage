@@ -62,12 +62,12 @@
 
 {% if activity.photo %}
 <div class="flex justify-center items-center rounded-2xl">
-    <img src="{{ activity.photo }}" alt="Activity Image" class="md:rounded-2xl max-w-full md:max-h-96">
+    <img src="{{ activity.photo }}" alt="Activity Image" class="md:rounded-2xl max-w-full md:max-h-96 mb-10" loading="lazy"
 </div>
 {% endif %}
 
-<div class="flex justify-center items-center mt-20">
-    <p class="text-slate-400 text-xs"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
+<div class="absolute bottom-0 w-full">
+    <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
 </div>
 {% endblock %}
 
