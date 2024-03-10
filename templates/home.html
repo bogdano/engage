@@ -25,7 +25,7 @@
             {% for date_info in dates_with_activities %}
                 <div class="{% if not date_info.has_activities %}bg-zinc-100 border-none hover:bg-zinc-100 cursor-auto {% else %}shadow-sm hover:border-amber-300{% endif %}{% if query_date == date_info.date|date:'l, d F' %}bg-amber-200 border-amber-300{% endif %} flex-col text-center cursor-pointer border border-amber-100 hover:bg-amber-100 p-2 rounded-2xl min-w-20 h-20" 
                     {% if date_info.has_activities %}
-                        hx-get="{% url 'homepage' %}?query_date={{date_info.date|date:'Y-m-d' }}" 
+                        hx-get="{% url 'home' %}?query_date={{date_info.date|date:'Y-m-d' }}" 
                         hx-swap="outerHTML transition:true" 
                         hx-target=".htmx-body" 
                         hx-trigger="click"
@@ -112,11 +112,15 @@
 </div>
 
 <audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
-<a href="{% url 'logout' %}" class="hidden md:block absolute top-4 right-0 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold shadow-md rounded-xl">logout</a>
+<div class="flex justify-center items-center mx-auto">
+    <a href="{% url 'logout' %}" class="text-center block px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold shadow-md rounded-xl">logout</a>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+navigator.serviceWorker.register("{% static '/js/service-worker.js' %}")
+
 document.addEventListener('hideLoadMoreButton', function() {
     document.getElementById('load-more-button').style.display = 'none';
 });

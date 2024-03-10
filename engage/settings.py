@@ -193,8 +193,6 @@ INTERNAL_IPS = [
 
 
 
-
-
 ############## PWA SETTINGS ################
 # PWA_APP_NAME = 'Engage'
 # PWA_APP_DESCRIPTION = "Do fun stuff. Get doubloons. Spend 'em."

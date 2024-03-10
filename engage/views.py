@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 from django.template.loader import render_to_string
 
-def homepage(request):
+def home(request):
     if not request.user.is_authenticated:
         return redirect("send_login_link")
     else:
@@ -132,7 +132,7 @@ def new_activity(request):
         # upload photo to cloudinary and store URL in database
         uploaded_image_url = ""
         if "photo" in request.FILES:
-            uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="auto", fetch_format="auto")
+            uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="50", fetch_format="auto")
             uploaded_image_url = uploaded_image["url"]
 
         leaderboard_names = request.POST.getlist("leaderboards")
@@ -156,7 +156,7 @@ def new_activity(request):
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
-            return redirect("homepage")
+            return redirect("home")
         else:
             return render(request, "activity_pending.html")
     else:
@@ -192,7 +192,7 @@ def new_item(request):
         name = request.POST.get("itemName")
         points = request.POST.get("pointCost")
         description = request.POST.get("itemDescription")
-        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="auto", fetch_format="auto")
+        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="50", fetch_format="auto")
         uploaded_image_url = uploaded_image["url"]
     item = Item.objects.create(
         name=name, description=description, price=points, image=uploaded_image_url

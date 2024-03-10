@@ -18,12 +18,16 @@ def send_login_link(request):
         try:
             user = CustomUser.objects.get(email=email)
         except CustomUser.DoesNotExist:
+            print('User with email address ' + email + ' not found')
             user = None
 
         if user:
             # Create a new LoginToken for the user
+            print('Creating token for user', user)
             token = LoginToken.objects.create(user=user, token=uuid.uuid4())
-            
+            token.save()
+            print('Token:', token.token)
+
             # Create a unique link for the user to log in
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             domain = get_current_site(request).domain
@@ -39,39 +43,37 @@ def send_login_link(request):
             return render(request, 'auth/register.html', {'error': 'User with email address ' + email + ' not found'})
     else:
         if request.user.is_authenticated:
-            return redirect('homepage')
-    return render(request, 'auth/send_login_link.html')
+            return redirect('home')
+        return render(request, 'auth/send_login_link.html')
 
 
 def login_with_link(request, uidb64, token):
     if request.user.is_authenticated:
-        return redirect('homepage')
+        return redirect('home')
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = CustomUser.objects.get(pk=uid)
+        print('User:', user)
         token_record = LoginToken.objects.get(user=user, token=token)
-        
-        # Check if the token is expired
-        if timezone.now() > token_record.expiration_date:
-            print('Token expired')
-            token_record.delete()
-            return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
+        if token_record:
+            print('Found token:', token_record.token)
+            # Check if the token is expired 
+            if timezone.now() > token_record.expiration_date:
+                print('Token expired')
+                token_record.delete()
+                return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
+            else:
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                login(request, user)
+                # Mark the token as used or delete it
+                # print(f"deleting token {token}")
+                # token_record.delete()
+                return redirect('home')
 
     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist, LoginToken.DoesNotExist):
         # print out type of error in console
         print('Error:', sys.exc_info()[0])
-        return render(request, 'auth/send_login_link.html', {'error': 'This login link was invalid. Please request a new one.'})
-
-    # Log the user in without requiring a password
-    user.backend = 'django.contrib.auth.backends.ModelBackend'
-    login(request, user)
-    
-    # Mark the token as used or delete it
-    token_record.delete()
-    print(f"deleted token {token}")
-
-    return redirect('homepage')  
-
+        return render(request, 'auth/send_login_link.html', {'error': 'Invalid login link. Please request a new one.'})
 
 def register(request):
     if request.method == 'POST':
@@ -120,9 +122,9 @@ def register(request):
         return render(request, 'auth/email_sent.html')
     else:
         if request.user.is_authenticated:
-            return redirect('homepage')
+            return redirect('home')
         return render(request, 'auth/register.html')
 
 def logout_view(request):
     logout(request)
-    return redirect('homepage')  # Replace 'home' with the URL to redirect after logout
+    return redirect('home') 

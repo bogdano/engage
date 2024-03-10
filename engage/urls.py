@@ -19,10 +19,11 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
 from . import views
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.homepage, name="homepage"),
+    path("", views.home, name="home"),
     path("accounts/", include("accounts.urls")), 
 
     path("leaderboard/", views.leaderboard, name="leaderboard"),
@@ -41,6 +42,8 @@ urlpatterns = [
     path("bookmark_activity_from_activity/<int:pk>/", views.bookmark_activity_from_activity, name="bookmark_activity_from_activity"),
     path('load-more-activities/', views.load_more_activities, name='load_more_activities'),
     path('award_participation_points/<int:pk>/', views.award_participation_points, name='award_participation_points'),
+
+    # path('serviceworker.js', (TemplateView.as_view(template_name="serviceworker.js", content_type='application/javascript', )), name='serviceworker.js'),
 
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
