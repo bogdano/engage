@@ -10,7 +10,7 @@
 <!-- <button onclick="window.history.back()">go back</button> -->
 
 <div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12">
-    <h1 class="mb-5 font-bold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-zinc-400{% endif %}">{{ activity.title }}</h1>
+    <h1 class="mb-5 font-extrabold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
     {% include 'partials/bookmark_button.html' %}
 </div>
 
@@ -35,14 +35,14 @@
     <div class="flex justify-center mt-5">
         <div class="flex items-center space-x-3 border-amber-200 bg-amber-50 px-6 py-4 border rounded-2xl">
             <div class="text-center">
-                <p class="font-extrabold text-xl text-zinc-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="font-extrabold text-xl text-stone-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
                 <p class="text-sm">{{ activity.event_date | date:"g:iA" }}</p> <!-- Format time -->
             </div>
-            <div class="text-2xl text-zinc-500 self-center">
+            <div class="text-2xl text-stone-500 self-center">
                 <span>-</span>
             </div>
             <div class="text-center">
-                <p class="font-extrabold text-xl text-zinc-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="font-extrabold text-xl text-stone-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
                 <p class="text-sm">{{ activity.end_date | date:"g:iA" }}</p> <!-- Format time -->
             </div>
         </div>
@@ -51,14 +51,28 @@
 
 <div class="relative flex justify-center items-center bg-slate-100 mt-8 md:rounded-2xl h-72">
     <div id="map" class="md:rounded-2xl w-full h-full cursor-pointer"></div>
-    <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-2 py-1 md:px-4 md:py-2 text-sm md:text-base rounded-2xl font-bold text-zinc-600">
+    <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-2 py-1 md:px-4 md:py-2 text-sm md:text-base rounded-2xl font-bold text-stone-600">
         @ {{ activity.address }}
     </span>
 </div>  
 
-<p class="my-10 text-md md:text-lg font-serif px-6">
-    {{ activity.description }}
-</p>
+<p class="my-10 text-md md:text-lg px-6 text-center">{{ activity.description }}</p>
+
+{% if interested_users.all %}
+<div class="mb-10 mx-4 p-3 bg-stone-50 rounded-2xl">
+    <p class="font-semibold text-stone-500 text-sm mb-3 text-center">Also participating:</p>
+    <div id="users-list" class="grid grid-cols-1 md:grid-cols-4 gap-2 text-sm px-2 md:text-md">
+        {% with users=interested_users.all|slice:":8" %}
+            {% include 'partials/additional_users.html' %}
+        {% endwith %}
+    </div>
+    {% if interested_users.all|length > 8 %}
+        <div class="flex justify-center items-center pt-5">
+            <button class="show-more-button font-semibold text-stone-400 text-sm" hx-get="{% url 'additional_users' activity.pk %}" hx-target="#users-list" hx-swap="beforeend transition:true"  hx-on:htmx:after-request="this.remove()">Show all</button>
+        </div>
+    {% endif %}
+</div>
+{% endif %}
 
 {% if activity.photo %}
 <div class="flex justify-center items-center rounded-2xl">

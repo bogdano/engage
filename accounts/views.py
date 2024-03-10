@@ -1,4 +1,5 @@
 import sys
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
@@ -65,9 +66,10 @@ def login_with_link(request, uidb64, token):
             else:
                 user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
-                # Mark the token as used or delete it
-                # print(f"deleting token {token}")
-                # token_record.delete()
+                # delete the aleady used token (breaks local if I don't delete, breaks deployed if I do)
+                if settings.DJANGO_ENVIRONMENT == 'local':
+                    print(f"deleting token {token}")
+                    token_record.delete()
                 return redirect('home')
 
     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist, LoginToken.DoesNotExist):
@@ -88,11 +90,11 @@ def register(request):
 
         # Basic validation (you can add more according to your needs)
         if not email or not first_name or not last_name:
-            return HttpResponse('Missing fields', status=400)
+            return render(request, 'auth/register.html', {'error': 'Please fill in all required fields'})
 
         uploaded_image_url = ''
         if 'profile_picture' in request.FILES:
-            uploaded_image = cloudinary.uploader.upload(request.FILES['profile_picture'])
+            uploaded_image = cloudinary.uploader.upload(request.FILES['profile_picture'], upload_preset="gj4yeadt")
             uploaded_image_url = uploaded_image['url']
 
         # Create the user
