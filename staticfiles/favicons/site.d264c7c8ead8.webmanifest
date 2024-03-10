@@ -13,6 +13,11 @@
     "lang": "en-US",
     "shortcuts": [
       {
+        "name": "Profile",
+        "url": "/profile",
+        "description": "Your profile"
+      },
+      {
         "name": "Add activity",
         "url": "/add_activity",
         "description": "Create a new event"
@@ -33,8 +38,5 @@
         "description": "wat"
       }
     ],
-    "launch_handler": {
-      "client_mode": "navigate-existing"
-  },
-  "handle_links": "preferred"
-}
+    "handle_links": "preferred"
+  }
