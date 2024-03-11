@@ -1,5 +1,5 @@
 {% load static %}
-<a href="{% url 'activity' activity.pk %}" id="activity-{{ activity.pk }}" class="p-4 group block border border-amber-100 rounded-2xl w-full hover:bg-amber-100 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-50 shadow-sm {% if not activity.is_active %}bg-slate-50 border-none hover:bg-slate-100{% endif %}">
+<a href="{% url 'activity' activity.pk %}" id="activity-{{ activity.pk }}" class="p-4 group block border border-amber-100 rounded-2xl w-full hover:bg-amber-100 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-50 shadow-sm {% if not activity.is_active %}bg-stone-50 border-none hover:bg-stone-100{% endif %}">
     <div class="p-2 flex justify-between items-center space-x-3">
         <button type="button" 
                 hx-post="{% url 'bookmark_activity' activity.pk %}" 
@@ -13,11 +13,11 @@
 
         <div class="flex-grow flex items-center justify-start">
             <div class="flex flex-col">
-                <span class="block text-sm md:text-base font-medium text-zinc-800 {% if not activity.is_active %} text-slate-400 {% endif %}">{{ activity.title }}</span>
+                <span class="block text-sm md:text-base font-bold text-stone-800 {% if not activity.is_active %} text-stone-400 {% endif %}">{{ activity.title }}</span>
                 {% if activity.leaderboards.all %}
                     <div class="flex flex-row mt-0.5 max-h-4 flex-wrap">
                         {% for leaderboard in activity.leaderboards.all %}
-                            <span class="{% if not activity.is_active %}bg-slate-300 group-hover:bg-slate-400{% endif %} bg-amber-400 text-white font-semibold text-xs px-1.5 py-0 rounded-lg mr-1 group-hover:bg-amber-500 mb-1">{{ leaderboard.leaderboard_name }}</span>
+                            <span class="{% if not activity.is_active %}bg-stone-300 group-hover:bg-stone-400{% endif %} bg-amber-400 text-white font-semibold text-xs px-1.5 py-0 rounded-lg mr-1 group-hover:bg-amber-500 mb-1">{{ leaderboard.leaderboard_name }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
@@ -50,14 +50,14 @@
 
         <div class="flex flex-col items-center min-w-10">
             {% if activity in today_activities or activity in tomorrow_activities %}
-                <span class="text-sm text-zinc-400 leading-snug block">{{ activity.event_date|date:"g:iA" }}</span>
+                <span class="text-sm text-stone-400 leading-snug block">{{ activity.event_date|date:"g:iA" }}</span>
             {% else %}
-                <span class="text-sm font-extrabold text-zinc-300 leading-snug block">{{ activity.event_date|date:"d" }}</span>
-                <span class="text-xs text-zinc-400 leading-snug block">{{ activity.end_date|date:"M" }}</span>
+                <span class="text-sm font-extrabold text-stone-300 leading-snug block">{{ activity.event_date|date:"d" }}</span>
+                <span class="text-xs text-stone-400 leading-snug block">{{ activity.end_date|date:"M" }}</span>
             {% endif %}
         </div>
 
-        <img src="{% static 'icons/right-arrow.svg' %}" alt="Icon" class="w-7 h-7 text-slate-950 hidden md:block {% if not activity.is_active %}grayscale{% endif %}">
+        <img src="{% static 'icons/right-arrow.svg' %}" alt="Icon" class="w-7 h-7 text-stone-950 hidden md:block {% if not activity.is_active %}grayscale{% endif %}">
     </div>
 </a>
 

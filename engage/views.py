@@ -167,7 +167,12 @@ def activity(request, pk):
     if not request.user.is_authenticated:
         return redirect("send_login_link")
     activity = Activity.objects.get(pk=pk)
-    return render(request, "activity.html", {"activity": activity})
+    interested_users = activity.interested_users.all().exclude(pk=request.user.pk)
+    return render(request, "activity.html", {"activity": activity, "interested_users": interested_users})
+
+def additional_users(request, pk):
+    users = Activity.objects.get(id=pk).interested_users.all().exclude(pk=request.user.pk)[8:]
+    return render(request, 'partials/additional_users.html', {'users': users})
 
 
 # MAX, THIS IS WHERE YOU NEED TO ADD THE LOGIC TO UPDATE TEAM/LEADERBOARD POINTS
