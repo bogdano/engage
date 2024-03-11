@@ -56,4 +56,5 @@ class LoginToken(models.Model):
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=False, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(minutes=15), null=False)
+    used = models.BooleanField(default=False)
     # delete token after usage, or if it is accessed and expired

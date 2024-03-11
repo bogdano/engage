@@ -60,7 +60,7 @@
 
 {% if interested_users.all %}
 <div class="mb-10 mx-4 p-3 bg-stone-50 rounded-2xl">
-    <p class="font-semibold text-stone-500 text-sm mb-3 text-center">Also participating:</p>
+    <p class="font-semibold text-stone-500 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
     <div id="users-list" class="grid grid-cols-1 md:grid-cols-4 gap-2 text-sm px-2 md:text-md">
         {% with users=interested_users.all|slice:":8" %}
             {% include 'partials/additional_users.html' %}

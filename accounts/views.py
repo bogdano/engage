@@ -1,5 +1,4 @@
 import sys
-from django.conf import settings
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
@@ -11,7 +10,7 @@ from django.template.loader import render_to_string
 from .models import LoginToken, CustomUser
 import cloudinary.uploader
 import uuid
-from django.http import HttpResponse
+from django.db.models import Q
 
 def send_login_link(request):
     if request.method == 'POST':
@@ -56,21 +55,20 @@ def login_with_link(request, uidb64, token):
         user = CustomUser.objects.get(pk=uid)
         print('User:', user)
         token_record = LoginToken.objects.get(user=user, token=token)
-        if token_record:
-            print('Found token:', token_record.token)
-            # Check if the token is expired 
-            if timezone.now() > token_record.expiration_date:
-                print('Token expired')
-                token_record.delete()
-                return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
-            else:
-                user.backend = 'django.contrib.auth.backends.ModelBackend'
-                login(request, user)
-                # delete the aleady used token (breaks local if I don't delete, breaks deployed if I do)
-                if settings.DJANGO_ENVIRONMENT == 'local':
-                    print(f"deleting token {token}")
-                    token_record.delete()
-                return redirect('home')
+        print('Found token:', token_record.token)
+        # Check if the token is expired 
+        if timezone.now() > token_record.expiration_date or token_record.used == True:
+            print('Token expired')
+            token_record.delete()
+            return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
+        else:
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
+            # delete the aleady used token (breaks local if I don't delete, breaks deployed if I do)
+            print(f"deleting token {token}")
+            token_record.used = True
+            token_record.save()
+            return redirect('home')
 
     except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist, LoginToken.DoesNotExist):
         # print out type of error in console
@@ -128,5 +126,12 @@ def register(request):
         return render(request, 'auth/register.html')
 
 def logout_view(request):
+    # get all expired tokens and all used tokens
+    tokens_query = LoginToken.objects.filter(Q(expiration_date__lt=timezone.now()) | Q(used=True))
+    expired_or_used_tokens = tokens_query.all()
+    # delete all expired tokens
+    for token in expired_or_used_tokens:
+        token.delete()
+        
     logout(request)
     return redirect('home') 
