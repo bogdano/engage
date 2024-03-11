@@ -13,7 +13,7 @@
 
         <div class="flex-grow flex items-center justify-start">
             <div class="flex flex-col">
-                <span class="block text-sm md:text-base font-bold text-stone-800 {% if not activity.is_active %} text-stone-400 {% endif %}">{{ activity.title }}</span>
+                <span class="block text-sm md:text-base font-bold {% if not activity.is_active %} text-stone-500 {% else %} text-stone-800 {% endif %}">{{ activity.title }}</span>
                 {% if activity.leaderboards.all %}
                     <div class="flex flex-row mt-0.5 max-h-4 flex-wrap">
                         {% for leaderboard in activity.leaderboards.all %}

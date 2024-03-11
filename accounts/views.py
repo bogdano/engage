@@ -57,7 +57,7 @@ def login_with_link(request, uidb64, token):
         token_record = LoginToken.objects.get(user=user, token=token)
         print('Found token:', token_record.token)
         # Check if the token is expired 
-        if timezone.now() > token_record.expiration_date or token_record.used == True:
+        if timezone.now() > token_record.expiration_date:
             print('Token expired')
             token_record.delete()
             return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
