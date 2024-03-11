@@ -49,17 +49,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name + " " + self.last_name + " (" + self.email + ")"
 
 class LoginToken(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=False, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
-    expiration_date = models.DateTimeField(null=True)
+    expiration_date = models.DateTimeField(default=timezone.now() + timezone.timedelta(minutes=15), null=False)
+    used = models.BooleanField(default=False)
     # delete token after usage, or if it is accessed and expired
-
-    def save(self, *args, **kwargs):
-        # Set expiration_date for new records only
-        if not self.pk:  # Check if the instance is new (has no primary key yet)
-            self.expiration_date = timezone.now() + timezone.timedelta(minutes=15)
-        super(LoginToken, self).save(*args, **kwargs)

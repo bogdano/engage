@@ -42,6 +42,9 @@ module.exports = {
         // '../../**/*.py'
     ],
     theme: {
+        fontFamily: {
+            sans: ['Lato', 'sans-serif'],
+        },
         extend: {},
     },
     plugins: [

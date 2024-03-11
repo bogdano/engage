@@ -1,16 +1,174 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<div class="flex flex-col items-center h-screen">
-    <h1 class="text-5xl font-bold text-center mt-12 mb-5">Activities</h1>
-    {% for activity in activities %}
-    <a href="{% url 'activity' activity.pk %}" class="p-4 m-2 bg-amber-50 border border-amber-100 rounded-2xl w-full">{{ activity.title }}</a>
-    {% endfor %}
-    <a href="{% url 'logout' %}" class="absolute top-4 right-8 underline underline-offset-2">logout</a>
-    <a href="{% url 'add_activity' %}" class="fixed bottom-24 right-4 md:right-72 md:bottom-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center z-50">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-    </a>
+<style>
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* for Chrome, Safari, and Opera */
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none;  /* for IE and Edge */
+        scrollbar-width: none;  /* for Firefox */
+    }
+</style>
+
+<div id="activities-iterator" class="flex flex-col items-center">
+    <div class="flex justify-center items-center space-x-4 align-bottom">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center mt-12 ml-5 mb-5">Activities</h1>
+        <a href="{% url 'add_activity' %}" class="bg-amber-400 hover:bg-amber-600 p-2.5 rounded-xl shadow-md mt-6">
+            <img src="{% static 'icons/add.svg' %}" class="w-7 h-7" alt="Add Activity">
+        </a>
+    </div>
+
+    <div id="draggable-container" class="relative w-full overflow-x-auto hide-scrollbar px-2 lg:px-0">
+        <div class="flex py-4 space-x-2 mb-4 ml-2">
+            {% for date_info in dates_with_activities %}
+                <div class="{% if not date_info.has_activities %}bg-stone-100 border-none hover:bg-stone-100 cursor-auto {% else %}shadow-sm hover:border-amber-300 cursor-pointer{% endif %}{% if query_date == date_info.date|date:'l, d F' %}bg-amber-200 border-amber-300{% endif %} flex-col text-center border border-amber-100 hover:bg-amber-100 p-2 rounded-2xl min-w-20 h-20" 
+                    {% if date_info.has_activities %}
+                        hx-get="{% url 'home' %}?query_date={{date_info.date|date:'Y-m-d' }}" 
+                        hx-swap="outerHTML transition:true" 
+                        hx-target=".htmx-body" 
+                        hx-trigger="click"
+                    {% endif %}>
+                    <span class="text-lg leading-snug font-bold text-stone-500 block ">{{ date_info.date|date:"D" }}</span>
+                    <span class="text-sm leading-snug block">{{ date_info.date|date:"d" }}</span>
+                    <span class="text-sm leading-snug block">{{ date_info.date|date:"M" }}</span>
+                    <div class="flex justify-center space-x-0.5 mt-4">
+                        {% if date_info.has_activities %}
+                            {% if date_info.total_activities == 1 %}
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                            {% elif date_info.total_activities == 2 %}
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                            {% else %}
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                <span class="block w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="flex flex-col w-full px-4 lg:px-0">
+        {% if query_date %}
+            <div class="w-full space-y-3 mb-4">
+                <h2 class="text-center text-xl text-amber-300 font-bold mb-4">{{ query_date }}</h2>
+                {% for activity in activities %}
+                    {% include 'partials/activity_card.html' %}
+                {% endfor %}
+            </div>
+        {% else %}
+            {% if today_activities %}
+                <div class="w-full space-y-3 mb-4">
+                    <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Today</h2>
+                    {% for activity in today_activities %}
+                        {% include 'partials/activity_card.html' %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if tomorrow_activities %}
+                <div class="w-full space-y-3 mb-4">
+                    <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Tomorrow</h2>
+                    {% for activity in tomorrow_activities %}
+                        {% include 'partials/activity_card.html' %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if upcoming_activities %}
+                <div class="w-full space-y-3 mb-4">
+                    <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Upcoming</h2>
+                    {% for activity in upcoming_activities %}
+                        {% include 'partials/activity_card.html' %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if recent_past_activities %}<h2 class="text-center text-xl text-amber-300 font-bold mb-4">Past</h2>{% endif %}
+
+            <div id="past-activities-container" class="w-full space-y-3 mb-8">
+                {% include 'partials/past_activities.html' with past_activities=recent_past_activities %}
+            </div>
+
+            {% if not no_more_activities %}
+                <div class="flex justify-center items-center">
+                    <button id="load-more-button"
+                            hx-get="/load-more-activities/" 
+                            hx-include="this" 
+                            hx-target="#past-activities-container" 
+                            hx-swap="beforeend transition:true" 
+                            hx-trigger="click" 
+                            hx-on::after-request="updateOffset(this);"
+                            name="offset" 
+                            value="{{ recent_past_activities|length }}"
+                            class="hover:bg-amber-300 hover:text-white text-amber-400 font-bold py-2 px-4 border border-amber-100 rounded-2xl shadow-md mb-10">
+                            Load More
+                    </button>        
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
 </div>
+
+<audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
+<div class="flex justify-center items-center mx-auto mt-20">
+    <a href="{% url 'logout' %}" class="text-center block px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold shadow-md rounded-xl">logout</a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+navigator.serviceWorker.register("{% static '/js/service-worker.js' %}")
+
+document.addEventListener('hideLoadMoreButton', function() {
+    document.getElementById('load-more-button').style.display = 'none';
+});
+
+function updateOffset(button) {
+    // each load more action loads 5 items.
+    const itemsLoadedPerRequest = 5;
+    let currentOffset = parseInt(button.value, 10);
+    button.setAttribute('value', currentOffset + itemsLoadedPerRequest); // Ensure the attribute is updated
+    // blur the button
+    button.blur();
+}
+
+function awardPoints() {
+    // play sound effect when clicking on the award points button
+    const audio = document.querySelector('.award-points-sound')
+    audio.play()
+    console.log('Awarded points!')
+}   
+
+function initializeDraggableContainer() {
+    if (typeof document.getElementById('draggable-container') === 'undefined') return
+    const slider = document.getElementById('draggable-container')
+    let isDown = false
+    let startX
+    let scrollLeft
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.classList.add('active')
+        startX = e.pageX - slider.offsetLeft
+        scrollLeft = slider.scrollLeft
+    })
+    slider.addEventListener('mouseleave', () => {
+        isDown = false
+        slider.classList.remove('active')
+    })
+    slider.addEventListener('mouseup', () => {
+        isDown = false
+        slider.classList.remove('active')
+    })
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return
+        e.preventDefault()
+        const x = e.pageX - slider.offsetLeft
+        const walk = (x - startX)
+        slider.scrollLeft = scrollLeft - walk
+    });
+}
+initializeDraggableContainer()    
+</script>
 {% endblock %}

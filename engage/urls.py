@@ -16,28 +16,43 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.conf import settings
 from django.urls import path, include
 from . import views
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.homepage, name="homepage"),
-    path("accounts/", include("accounts.urls")),  # new
-    path("__reload__/", include("django_browser_reload.urls")),
+    path("", views.home, name="home"),
+    path("accounts/", include("accounts.urls")), 
+
     path('leaderboard/', views.leaderboard_view, name='leaderboard'),
-    path(
-        "leaderboard/individual/",
-        views.individual_leaderboard,
-        name="individual_leaderboard",
-    ),
+    path("leaderboard/individual/", views.individual_leaderboard, name="individual_leaderboard"),
     path('team_leaderboard/', views.team_leaderboard_view, name='team_leaderboard'),
+
     path("store/", views.store, name="store"),
     path("notifications/", views.notifications, name="notifications"),
-    path("add_activity/", views.add_activity, name="add_activity"),
     path("profile/", views.profile, name="profile"),
+    path("edit_profile", views.edit_profile, name="edit_profile"),
+
+    path("add_activity/", views.add_activity, name="add_activity"),
     path("activity/<int:pk>/", views.activity, name="activity"),
     path("new_activity/", views.new_activity, name="new_activity"),
+    path("bookmark_activity/<int:pk>/", views.bookmark_activity, name="bookmark_activity"),
+    path("bookmark_activity_from_activity/<int:pk>/", views.bookmark_activity_from_activity, name="bookmark_activity_from_activity"),
+    path('load-more-activities/', views.load_more_activities, name='load_more_activities'),
+    path('award_participation_points/<int:pk>/', views.award_participation_points, name='award_participation_points'),
+    path('additional_users/<int:pk>/', views.additional_users, name='additional_users'),
+
+    # path('serviceworker.js', (TemplateView.as_view(template_name="serviceworker.js", content_type='application/javascript', )), name='serviceworker.js'),
+
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),
+
+    # path('', include('pwa.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [path("__reload__/", include("django_browser_reload.urls"))]
+
