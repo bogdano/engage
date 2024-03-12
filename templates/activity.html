@@ -14,16 +14,24 @@
     {% include 'partials/bookmark_button.html' %}
 </div>
 
-<div class=" {% if not activity.is_active %}grayscale{% endif %}">
-    <div class="flex justify-center items-center mb-5">
-        <div class="mr-1.5"> 
-            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
-        </div>
-        <p class="font-bold text-2xl text-center text-yellow-500">
-            {{ activity.points }}
-        </p>
+{% if request.user in activity.interested_users.all and not user_has_participated and not activity.is_active %}
+    <div id="points-button-container" class="flex justify-center items-center mb-5">
+        <button type="button"
+            name="award_points_from_activity_page"
+            hx-post="{% url 'award_participation_points' activity.pk %}?from_activity_page=true" 
+            hx-swap="outerHTML transition:true" 
+            hx-target="#points-button-container" 
+            onclick="awardPoints()"
+            class="award-points-button group flex items-center justify-center space-x-1 border border-amber-100 shadow-md px-2 py-1 rounded-xl hover:bg-amber-300 hover:border-amber-300">
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            <span class="text-yellow-500 font-bold text-2xl group-hover:text-white">{{ activity.points }}</span>
+        </button>
     </div>
+{% else %}
+    {% include 'partials/points_display.html' %}
+{% endif %}
 
+<div class=" {% if not activity.is_active %}grayscale{% endif %}">
     {% if activity.leaderboards.all %}
     <div class="flex justify-center space-x-1">
         {% for leaderboard in activity.leaderboards.all %}
@@ -58,15 +66,15 @@
 
 <p class="my-10 text-md md:text-lg px-6 text-center">{{ activity.description }}</p>
 
-{% if interested_users.all %}
+{% if other_interested_users.all %}
 <div class="mb-10 mx-4 p-3 bg-stone-50 rounded-2xl">
     <p class="font-semibold text-stone-500 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
     <div id="users-list" class="grid grid-cols-1 md:grid-cols-4 gap-2 text-sm px-2 md:text-md">
-        {% with users=interested_users.all|slice:":8" %}
+        {% with users=other_interested_users.all|slice:":8" %}
             {% include 'partials/additional_users.html' %}
         {% endwith %}
     </div>
-    {% if interested_users.all|length > 8 %}
+    {% if other_interested_users.all|length > 8 %}
         <div class="flex justify-center items-center pt-5">
             <button class="show-more-button font-semibold text-stone-400 text-sm" hx-get="{% url 'additional_users' activity.pk %}" hx-target="#users-list" hx-swap="beforeend transition:true"  hx-on:htmx:after-request="this.remove()">Show all</button>
         </div>
@@ -83,10 +91,18 @@
 <div class="absolute bottom-0 w-full">
     <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
 </div>
+<audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
 {% endblock %}
 
 {% block scripts %}
 <script defer>
+function awardPoints() {
+    // play sound effect when clicking on the award points button
+    const audio = document.querySelector('.award-points-sound')
+    audio.play()
+    console.log('Awarded points!')
+}   
+
 // Check if Mapbox GL JS is already loaded
 if (typeof mapboxgl === 'undefined') {
     // Create a new script element to load Mapbox GL JS
