@@ -85,6 +85,6 @@
 {% block scripts %}
 {% endblock %}
 <script defer>
-    htmx.config.scrollBehavior = 'smooth';
+    if (typeof htmx !== 'undefined') htmx.config.scrollBehavior = 'smooth';
 </script>
 </html>
