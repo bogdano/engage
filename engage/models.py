@@ -1,5 +1,12 @@
 from django.db import models
 
+class ActivityType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+    
 # model for activities
 class Activity(models.Model):
     # title string
@@ -30,6 +37,7 @@ class Activity(models.Model):
     # send alert or not boolean (only staff can do this), also place on top of feed, highlighted
     alert = models.BooleanField(default=False)
     # activity type
+    activity_type = models.ForeignKey(ActivityType, on_delete=models.SET_NULL, null=True, blank=True, related_name="activities")
     leaderboards = models.ManyToManyField("Leaderboard", related_name="leaderboards", blank=True)
     # interested users
     interested_users = models.ManyToManyField("accounts.CustomUser", related_name="interested_users", blank=True)
