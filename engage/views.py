@@ -7,6 +7,11 @@ import cloudinary.uploader
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 from django.template.loader import render_to_string
+from django.views.generic.base import TemplateView
+
+# class ServiceWorker(TemplateView):
+#     template_name = "sw.js"
+#     content_type = "application/javascript"
 
 def home(request):
     if not request.user.is_authenticated:

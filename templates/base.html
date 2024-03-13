@@ -4,16 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An employee portal for rewarding community engagement at ATG, Missoula MT.">
     {% tailwind_preload_css %}
     {% tailwind_css %}
-    <script src="https://unpkg.com/htmx.org"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
     <link rel="icon" href="{% static 'favicons/favicon.ico' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
     <!-- <script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script> -->
-
+    <script>
+    //     if ('serviceWorker' in navigator) {
+    //         window.addEventListener('load', function() {
+    //         navigator.serviceWorker.register('{ url "sw" }').then(function(registration) {
+    //             // Registration was successful
+    //             console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    //         }, function(err) {
+    //             // registration failed :(
+    //             console.log('ServiceWorker registration failed: ', err);
+    //         });
+    //     });
+    // }
+    </script>
+    
     {% block head %}
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
@@ -66,4 +84,7 @@
 </body>
 {% block scripts %}
 {% endblock %}
+<script defer>
+    htmx.config.scrollBehavior = 'smooth';
+</script>
 </html>

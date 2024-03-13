@@ -1,5 +1,5 @@
 {% load static %}
-<a href="{% url 'activity' activity.pk %}" id="activity-{{ activity.pk }}" class="p-4 group block border border-amber-100 rounded-2xl w-full hover:bg-amber-100 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-50 shadow-sm {% if not activity.is_active %}bg-stone-50 border-none hover:bg-stone-100{% endif %}">
+<a href="{% url 'activity' activity.pk %}" id="activity-{{ activity.pk }}" class="px-1 py-4 md:p-4 group block border border-amber-100 rounded-2xl w-full hover:bg-amber-100 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-50 shadow-sm {% if not activity.is_active %}bg-stone-50 border-none hover:bg-stone-100{% endif %}">
     <div class="p-2 flex justify-between items-center space-x-3">
         <button type="button" 
                 hx-post="{% url 'bookmark_activity' activity.pk %}" 
@@ -48,9 +48,9 @@
             {% endif %}
         {% endif %}
 
-        <div class="flex flex-col items-center min-w-10">
+        <div class="flex flex-col items-center min-w-8">
             {% if activity in today_activities or activity in tomorrow_activities %}
-                <span class="text-sm text-stone-400 leading-snug block">{{ activity.event_date|date:"g:iA" }}</span>
+                <span class="text-xs text-stone-400 leading-snug block">{{ activity.event_date|date:"g:iA" }}</span>
             {% else %}
                 <span class="text-sm font-extrabold text-stone-300 leading-snug block">{{ activity.event_date|date:"d" }}</span>
                 <span class="text-xs text-stone-400 leading-snug block">{{ activity.end_date|date:"M" }}</span>

@@ -119,8 +119,6 @@
 
 {% block scripts %}
 <script>
-navigator.serviceWorker.register("{% static '/js/service-worker.js' %}")
-
 document.addEventListener('hideLoadMoreButton', function() {
     document.getElementById('load-more-button').style.display = 'none';
 });
