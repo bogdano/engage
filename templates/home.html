@@ -119,8 +119,6 @@
 
 {% block scripts %}
 <script>
-navigator.serviceWorker.register("{% static '/js/service-worker.js' %}")
-
 document.addEventListener('hideLoadMoreButton', function() {
     document.getElementById('load-more-button').style.display = 'none';
 });
@@ -130,8 +128,6 @@ function updateOffset(button) {
     const itemsLoadedPerRequest = 5;
     let currentOffset = parseInt(button.value, 10);
     button.setAttribute('value', currentOffset + itemsLoadedPerRequest); // Ensure the attribute is updated
-    // blur the button
-    button.blur();
 }
 
 function awardPoints() {

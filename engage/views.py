@@ -7,6 +7,11 @@ import cloudinary.uploader
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 from django.template.loader import render_to_string
+from django.views.generic.base import TemplateView
+
+# class ServiceWorker(TemplateView):
+#     template_name = "sw.js"
+#     content_type = "application/javascript"
 
 def home(request):
     if not request.user.is_authenticated:
@@ -167,8 +172,10 @@ def activity(request, pk):
     if not request.user.is_authenticated:
         return redirect("send_login_link")
     activity = Activity.objects.get(pk=pk)
-    interested_users = activity.interested_users.all().exclude(pk=request.user.pk)
-    return render(request, "activity.html", {"activity": activity, "interested_users": interested_users})
+    other_interested_users = activity.interested_users.all().exclude(pk=request.user.pk)
+    user_has_participated = activity.participated_users.filter(pk=request.user.pk).exists()
+    return render(request, "activity.html", {"activity": activity, "other_interested_users": other_interested_users, "user_has_participated": user_has_participated})
+
 
 def additional_users(request, pk):
     users = Activity.objects.get(id=pk).interested_users.all().exclude(pk=request.user.pk)[8:]
@@ -187,7 +194,10 @@ def award_participation_points(request, pk):
         user.save()
         activity.participated_users.add(user)
         activity.user_has_participated=True
-        return render(request, "partials/activity_card.html", {"activity": activity})
+        if request.GET.get('from_activity_page'):
+            return render(request, "partials/points_display.html", {"activity": activity})
+        else:
+            return render(request, "partials/activity_card.html", {"activity": activity})
 
 
 

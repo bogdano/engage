@@ -19,7 +19,6 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
 from . import views
-from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -44,7 +43,8 @@ urlpatterns = [
     path('award_participation_points/<int:pk>/', views.award_participation_points, name='award_participation_points'),
     path('additional_users/<int:pk>/', views.additional_users, name='additional_users'),
 
-    # path('serviceworker.js', (TemplateView.as_view(template_name="serviceworker.js", content_type='application/javascript', )), name='serviceworker.js'),
+    # service worker for offline PWA
+    # path('sw.js', views.ServiceWorker.as_view(), name="sw"),
 
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
@@ -53,6 +53,5 @@ urlpatterns = [
     # path('', include('pwa.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += [path("__reload__/", include("django_browser_reload.urls"))]
-
+if settings.DJANGO_ENVIRONMENT == "local":
+    urlpatterns += [path("__reload__/", include("django_browser_reload.urls")),]

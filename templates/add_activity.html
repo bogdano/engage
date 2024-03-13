@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
 
-    <h1 class="text-4xl md:text-5xl font-bold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
+    <h1 class="text-4xl md:text-5xl font-extrabold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
     <form action="{% url 'new_activity' %}" method="post" enctype="multipart/form-data" class="px-4 lg:px-0">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">
@@ -38,11 +38,11 @@
 
         <div class="flex md:flex-row flex-col md:space-x-4 justify-center py-2 my-2">
             <div class="flex flex-col justify-center">
-                <label for="event_date" class="text-sm font-medium text-gray-700 text-center">Event Time/Date</label>
+                <label for="event_date" class="text-sm font-bold text-gray-700 text-center">Event Time/Date</label>
                 <input type="datetime-local" id="event_date" name="event_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full md:w-auto focus:border-amber-400 focus:outline-none focus:ring-0">
             </div>
             <div class="flex flex-col">
-                <label for="end_date" class="text-sm font-medium text-gray-700 text-center">End Time/Date</label>
+                <label for="end_date" class="text-sm font-bold text-gray-700 text-center">End Time/Date</label>
                 <input type="datetime-local" id="end_date" name="end_date" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full md:w-auto focus:border-amber-400 focus:outline-none focus:ring-0">
             </div>
         </div>     
