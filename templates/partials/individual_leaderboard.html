@@ -1,5 +1,8 @@
-<ul>
+<div class="space-y-4">
     {% for user in users %}
-    <li>{{ user.user.username }} - {{ user.total_points }} Points</li>
+    <div class="flex justify-between items-center p-4 bg-white rounded-lg shadow-lg">
+        <div class="text-lg font-medium text-gray-900">{{ forloop.counter }}. {{ user.first_name }} {{ user.last_name }}</div>
+        <div class="text-lg font-semibold text-blue-500">{{ user.lifetime_points }} Points</div>
+    </div>
     {% endfor %}
-</ul>
+</div>
