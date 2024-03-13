@@ -1,4 +1,5 @@
 from .models import Team, Activity, Leaderboard, Item, ActivityType, UserParticipated
+from accounts.models import CustomUser
 from django.db.models import Sum, Count, Exists, OuterRef, Prefetch
 from django.db.models.functions import TruncDay
 from django.http import HttpRequest
@@ -217,33 +218,38 @@ def item(request, pk):
     item = Item.objects.get(pk=pk)
     return render(request, "item_details.html", {"item": item})
 
+def activity_leaderboard(request):
+    activities = Activity.objects.all()
+    activity_types = ActivityType.objects.all()
+
+    date_filter = request.GET.get('date_filter')
+    
+    # Handle the new date_filter options
+    if date_filter == "this_year":
+        start_date = datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        activities = activities.filter(created_at__gte=start_date)
+    elif date_filter == "this_month":
+        now = timezone.now()
+        start_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        activities = activities.filter(created_at__gte=start_date)
+    # No need to filter for "all_time" since it includes everything
+
+    return render(request, 'leaderboard.html', {
+        'activities': activities,
+        'activity_types': activity_types
+    })
+
 
 def leaderboard(request):
-    # start_date = request.GET.get('start_date')
-    # end_date = request.GET.get('end_date')
-    # start_date_parsed = parse_date(start_date) if start_date else None
-    # end_date_parsed = parse_date(end_date) if end_date else None
-
-    # queryset = Activity.objects.all()
-
-    # if start_date_parsed:
-    #     queryset = queryset.filter(date_completed__gte=start_date_parsed)
-    # if end_date_parsed:
-    #     queryset = queryset.filter(date_completed__lte=end_date_parsed)
-
-    # leaderboard_data = queryset.values('user__id', 'user__email').annotate(total_points=Sum('points')).order_by('-total_points')
-
-    # data = list(leaderboard_data)
-    # return JsonResponse(data, safe=False)
+    
     return render(request, "leaderboard.html")
 
 
 def individual_leaderboard(request):
-    # Fetch users and their points
-    users = UserProfile.objects.annotate(total_points=Sum("points")).order_by(
-        "-total_points"
-    )
+    # Assuming lifetime_points or a similar field exists in CustomUser
+    users = CustomUser.objects.annotate(total_points=Sum("lifetime_points")).order_by("-total_points")
     return render(request, "partials/individual_leaderboard.html", {"users": users})
+
 
 
 def team_leaderboard_view(request):

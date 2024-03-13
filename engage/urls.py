@@ -27,6 +27,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")), 
 
     path('leaderboard/', views.leaderboard_view, name='leaderboard'),
+    path('activity_leaderboard/', views.activity_leaderboard, name='activity_leaderboard'),
     path("leaderboard/individual/", views.individual_leaderboard, name="individual_leaderboard"),
     path('team_leaderboard/', views.team_leaderboard_view, name='team_leaderboard'),
 

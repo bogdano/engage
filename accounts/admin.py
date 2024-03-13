@@ -25,10 +25,10 @@ class ItemAdmin(admin.ModelAdmin):
 
 admin.site.register(CustomUser)
 admin.site.register(LoginToken)
-admin.site.register(Team)
 
 admin.site.register(Activity, ActivityAdmin)
 admin.site.register(Leaderboard, LeaderboardAdmin)
 admin.site.register(UserParticipated, UserParticipatedAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Item, ItemAdmin)
+admin.site.register(ActivityType)
