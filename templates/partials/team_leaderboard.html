@@ -1,5 +1,11 @@
-<ul>
+<div class="space-y-4">
     {% for team in teams %}
-    <li>{{ team.name }} - {{ team.total_points }} Points</li>
+    <div class="flex justify-between items-center p-4 bg-white rounded-lg shadow">
+        <div>
+            <h3 class="text-lg font-semibold">{{ team.name }}</h3>
+            <p>Leader: {{ team.leader.first_name }} {{ team.leader.last_name }}</p>
+        </div>
+        <div class="text-lg font-semibold text-blue-500">{{ team.team_points }} Points</div>
+    </div>
     {% endfor %}
-</ul>
+</div>
