@@ -8,67 +8,87 @@ import cloudinary.uploader
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 
+
 def homepage(request):
     if not request.user.is_authenticated:
         return render(request, "auth/send_login_link.html")
     else:
         # fetch approved and active activities
-        activities = Activity.objects.filter(is_approved=True, is_active=True).order_by("event_date")
-        # set the date range 
+        activities = Activity.objects.filter(is_approved=True, is_active=True).order_by(
+            "event_date"
+        )
+        # set the date range
         start_date = datetime.today()
         end_date = start_date + timedelta(days=15)
         # generate the date range
-        date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+        date_range = [
+            start_date + timedelta(days=x)
+            for x in range((end_date - start_date).days + 1)
+        ]
         # fetch activities within the date range and count them by date
-        activities_in_range = activities.annotate(date=TruncDay('event_date')) \
-            .filter(event_date__date__gte=start_date.date(), event_date__date__lte=end_date.date()) \
-            .values('date') \
-            .annotate(total_activities=Count('id')) \
-            .order_by('date')
+        activities_in_range = (
+            activities.annotate(date=TruncDay("event_date"))
+            .filter(
+                event_date__date__gte=start_date.date(),
+                event_date__date__lte=end_date.date(),
+            )
+            .values("date")
+            .annotate(total_activities=Count("id"))
+            .order_by("date")
+        )
         # convert QuerySet to a dict for easier access
-        activities_dict = {activity['date'].date(): activity['total_activities'] for activity in activities_in_range}
+        activities_dict = {
+            activity["date"].date(): activity["total_activities"]
+            for activity in activities_in_range
+        }
         # prepare dates with activities info for the template
         dates_with_activities = []
         for date in date_range:
-            dates_with_activities.append({
-                'date': date,
-                'has_activities': date.date() in activities_dict,
-                'total_activities': activities_dict.get(date.date(), 0)
-            })
+            dates_with_activities.append(
+                {
+                    "date": date,
+                    "has_activities": date.date() in activities_dict,
+                    "total_activities": activities_dict.get(date.date(), 0),
+                }
+            )
 
         today_activities = []
         tomorrow_activities = []
         upcoming_activities = []
 
         # filter activities by date if query_date is present
-        query_date = request.GET.get('query_date', None)
+        query_date = request.GET.get("query_date", None)
         if query_date is not None:
             activities = Activity.objects.filter(event_date__date=query_date)
             # format in 'A, d, B' format
-            query_date = datetime.strptime(query_date, '%Y-%m-%d').strftime('%A, %d %B')
+            query_date = datetime.strptime(query_date, "%Y-%m-%d").strftime("%A, %d %B")
         else:
             today = make_aware(datetime.today())
             tomorrow = today + timedelta(days=1)
             upcoming_start = tomorrow + timedelta(days=1)
             today_activities = activities.filter(event_date__date=today.date())
             tomorrow_activities = activities.filter(event_date__date=tomorrow.date())
-            upcoming_activities = activities.filter(event_date__date__gte=upcoming_start.date())
+            upcoming_activities = activities.filter(
+                event_date__date__gte=upcoming_start.date()
+            )
             activities = None
 
         # update context
         context = {
-            'activities': activities,
-            'today_activities': today_activities,
-            'tomorrow_activities': tomorrow_activities,
-            'upcoming_activities': upcoming_activities,
-            'dates_with_activities': dates_with_activities,
-            'query_date': query_date
+            "activities": activities,
+            "today_activities": today_activities,
+            "tomorrow_activities": tomorrow_activities,
+            "upcoming_activities": upcoming_activities,
+            "dates_with_activities": dates_with_activities,
+            "query_date": query_date,
         }
         return render(request, "home.html", context)
+
 
 def add_activity(request):
     leaderboards = Leaderboard.objects.all()
     return render(request, "add_activity.html", {"leaderboards": leaderboards})
+
 
 def bookmark_activity(request, pk):
     activity = Activity.objects.get(pk=pk)
@@ -79,6 +99,7 @@ def bookmark_activity(request, pk):
         activity.interested_users.add(user)
     return render(request, "partials/activity_card.html", {"activity": activity})
 
+
 def bookmark_activity_from_activity(request, pk):
     activity = Activity.objects.get(pk=pk)
     user = request.user
@@ -87,6 +108,7 @@ def bookmark_activity_from_activity(request, pk):
     else:
         activity.interested_users.add(user)
     return render(request, "partials/bookmark_button.html", {"activity": activity})
+
 
 def new_item(request):
     if request.method == "POST":
@@ -100,11 +122,15 @@ def new_item(request):
     )
     item.save()
     items = Item.objects.all()
-    return render(request, "store.html", {"items": items})
+    user = request.user
+    return render(request, "store.html", {"items": items, "user": user})
 
 
 def add_item(request):
-    return render(request, "new_item.html")
+    if request.user.is_staff:
+        return render(request, "new_item.html")
+    else:
+        return JsonResponse({"error": "You are not staff."})
 
 
 def new_activity(request):
@@ -126,7 +152,10 @@ def new_activity(request):
 
         leaderboard_names = request.POST.getlist("leaderboards")
         # Create new Leaderboard instances if necessary
-        leaderboards = [Leaderboard.objects.get_or_create(leaderboard_name=name)[0] for name in leaderboard_names]
+        leaderboards = [
+            Leaderboard.objects.get_or_create(leaderboard_name=name)[0]
+            for name in leaderboard_names
+        ]
 
         activity = Activity.objects.create(
             title=title,
@@ -217,4 +246,4 @@ def notifications(request):
 
 def profile(request):
     user = CustomUser.objects.all()
-    return render(request, 'profile.html', {"user": user})
+    return render(request, "profile.html", {"user": user})
