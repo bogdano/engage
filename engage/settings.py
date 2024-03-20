@@ -43,6 +43,9 @@ DEBUG = env.bool("DEBUG", default=True)
 ALLOWED_HOSTS = [".fly.dev", "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ["https://*.fly.dev"]
 
+SESSION_COOKIE_AGE = 864000
+CART_SESSION_ID = "cart"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,6 +62,7 @@ INSTALLED_APPS = [
     "tailwind",  # new
     "theme",
     "anymail",
+    "cart",
 ]
 
 if DJANGO_ENVIRONMENT == "local":
@@ -93,6 +97,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "engage.context_processors.current_section",  # new
+                "cart.context_processors.cart",
             ],
         },
     },
@@ -144,7 +149,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, "static"),
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"  # new
 STORAGES = {
@@ -171,11 +176,11 @@ if DJANGO_ENVIRONMENT == "local":
 else:
     # Email Backend Configuration (for production)
     ANYMAIL = {
-        'MAILJET_API_KEY': env("MAILJET_API_KEY"),
-        'MAILJET_SECRET_KEY': env("MAILJET_SECRET_KEY"),
-        'MAILJET_SENDER_DOMAIN': "bogz.dev",
+        "MAILJET_API_KEY": env("MAILJET_API_KEY"),
+        "MAILJET_SECRET_KEY": env("MAILJET_SECRET_KEY"),
+        "MAILJET_SENDER_DOMAIN": "bogz.dev",
     }
-    EMAIL_BACKEND = 'anymail.backends.mailjet.EmailBackend'
+    EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"
     DEFAULT_FROM_EMAIL = "atg-engage@bogz.dev"
 
 
@@ -189,8 +194,6 @@ TAILWIND_APP_NAME = "theme"  # new
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-
-
 
 
 ############## PWA SETTINGS ################

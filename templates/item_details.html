@@ -4,11 +4,18 @@
 
 {% block content %}
 <div class="mx-auto w-1/2 max-h-8">
+
     <img src="{{item.image}}" class="rounded-xl h-1/2 mt-12 border-black border-2">
     <div class="mx-auto w-1/2 text-center sm:mt-18">
         <h1 class="text-2xl">This is the name of the item: {{item.name}}</h1>
         <p>This is the description of the item: {{item.description}}</p>
         <p>Price: {{item.price}}</p>
+        <a href="#" class="mt-6 inline-block px-8 py-4 rounded-xl bg-purple-500 text-white"
+            hx-get="{% url 'add_to_cart' item.id %}" hx-target="#menu-cart-button" hx-swap="outerHTML">
+            Add to Cart
+        </a>
+
     </div>
-</div>
-{% endblock %}
+
+    {% include 'cart/menu_cart.html' %}
+    {% endblock %}
