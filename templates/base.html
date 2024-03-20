@@ -1,31 +1,64 @@
-{% load static %}
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
-    <script src="https://unpkg.com/htmx.org"></script>
+    <meta name="description" content="An employee portal for rewarding community engagement at ATG, Missoula MT.">
+    {% tailwind_preload_css %}
+    {% tailwind_css %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <link rel="icon" href="{% static 'favicons/favicon.ico' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- <script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script> -->
+    <script>
+    //     if ('serviceWorker' in navigator) {
+    //         window.addEventListener('load', function() {
+    //         navigator.serviceWorker.register('{ url "sw" }').then(function(registration) {
+    //             // Registration was successful
+    //             console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    //         }, function(err) {
+    //             // registration failed :(
+    //             console.log('ServiceWorker registration failed: ', err);
+    //         });
+    //     });
+    // }
+    </script>
+    
     {% block head %}
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body hx-boost="true" class="htmx-body" hx-swap="transition:true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div class="max-w-6xl mx-auto w-full min-h-screen">
+    <div class="max-w-6xl mx-auto w-full min-h-screen relative">
+        {% if current_section == 'home' %}
+            <meta name="theme-color" content="#fbbf24">
+        {% elif current_section == 'leaderboard' %}
+            <meta name="theme-color" content="#22d3ee">
+        {% elif current_section == 'profile' %}
+            <meta name="theme-color" content="#fb7185">
+        {% elif current_section == 'store' %}
+            <meta name="theme-color" content="#a3e635">
+        {% elif current_section == 'notifications' %}
+            <meta name="theme-color" content="#a78bfa">
+        {% endif %}
+        
         {% block content %}
         {% endblock %}
     </div>
     {% if user.is_authenticated %}
     <nav class="flex justify-center items-center h-20">
-        <div class="w-full fixed bottom-0 px-1 py-1  z-50 bg-white bg-opacity-65 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-xl md:border md:shadow-lg">
+        <div class="w-full fixed bottom-0 px-1 py-1  z-50 bg-white bg-opacity-65 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-2xl md:border md:shadow-lg">
             <div class="flex justify-between max-w-sm mx-auto">
-                <a href="{% url 'homepage' %}"
+                <a href="{% url 'home' %}"
                     class="px-2 py-2 mx-1 rounded-xl hover:bg-amber-200 {% if current_section == 'home' %} bg-amber-100 bg-opacity-85{% endif %}">
                     <img src="{% static 'icons/home.svg' %}" alt="Home" class="w-10 h-10">
                 </a>
@@ -52,5 +85,7 @@
 </body>
 {% block scripts %}
 {% endblock %}
-
+<script defer>
+    if (typeof htmx !== 'undefined') htmx.config.scrollBehavior = 'smooth';
+</script>
 </html>

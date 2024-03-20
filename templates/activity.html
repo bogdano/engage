@@ -1,73 +1,108 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}ATG: {{ activity.title }}{% endblock %}
+{% block title %}{{ activity.title }}{% endblock %}
 
 {% block content %}
 <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
 
-<div class="flex flex-col md:flex-row md:space-x-4 pt-12 justify-center items-center">
-    <h1 class="{% if not activity.is_active %}text-zinc-400{% endif %} text-5xl font-bold text-center mb-5">{{ activity.title }}</h1>
+<!-- add a back button, maybe? -->
+<!-- <button onclick="window.history.back()">go back</button> -->
+
+<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12">
+    <h1 class="mb-5 font-extrabold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
     {% include 'partials/bookmark_button.html' %}
 </div>
 
-<div class="flex justify-center items-center mb-5">
-    <div class="mr-2"> 
-        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
+{% if request.user in activity.interested_users.all and not user_has_participated and not activity.is_active %}
+    <div id="points-button-container" class="flex justify-center items-center mb-5">
+        <button type="button"
+            name="award_points_from_activity_page"
+            hx-post="{% url 'award_participation_points' activity.pk %}?from_activity_page=true" 
+            hx-swap="outerHTML transition:true" 
+            hx-target="#points-button-container" 
+            onclick="awardPoints()"
+            class="award-points-button group flex items-center justify-center space-x-1 border border-amber-100 shadow-md px-2 py-1 rounded-xl hover:bg-amber-300 hover:border-amber-300">
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            <span class="text-yellow-500 font-bold text-2xl group-hover:text-white">{{ activity.points }}</span>
+        </button>
     </div>
-    <p class="text-2xl font-bold text-center text-yellow-500">
-        {{ activity.points }}
-    </p>
-</div>
-
-{% if activity.leaderboards.all %}
-<div class="flex justify-center space-x-1">
-    {% for leaderboard in activity.leaderboards.all %}
-        <a href="#" class="py-1 px-3 text-xs bg-amber-500 text-white font-extrabold rounded-xl hover:bg-amber-600">{{ leaderboard.leaderboard_name }}</a>
-    {% endfor %}
-</div>
+{% else %}
+    {% include 'partials/points_display.html' %}
 {% endif %}
 
-<div class="flex justify-center mt-5">
-    <div class="flex items-center py-2 px-6 rounded-2xl bg-amber-50 space-x-5 border border-amber-200">
-        <div class="text-center">
-            <p class="text-xl font-semibold">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
-            <p class="text-sm">{{ activity.event_date | date:"h:m a" }}</p> <!-- Format time -->
-        </div>
-        <div class="self-center">
-            <p>-</p>
-        </div>
-        <div class="text-center">
-            <p class="text-xl font-semibold">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
-            <p class="text-sm">{{ activity.end_date | date:"h:m a" }}</p> <!-- Format time -->
+<div class=" {% if not activity.is_active %}grayscale{% endif %}">
+    {% if activity.leaderboards.all %}
+    <div class="flex justify-center space-x-1">
+        {% for leaderboard in activity.leaderboards.all %}
+            <a href="#" class="bg-amber-500 hover:bg-amber-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="flex justify-center mt-5">
+        <div class="flex items-center space-x-3 border-amber-200 bg-amber-50 px-6 py-4 border rounded-2xl">
+            <div class="text-center">
+                <p class="font-extrabold text-xl text-stone-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="text-sm">{{ activity.event_date | date:"g:iA" }}</p> <!-- Format time -->
+            </div>
+            <div class="text-2xl text-stone-500 self-center">
+                <span>-</span>
+            </div>
+            <div class="text-center">
+                <p class="font-extrabold text-xl text-stone-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="text-sm">{{ activity.end_date | date:"g:iA" }}</p> <!-- Format time -->
+            </div>
         </div>
     </div>
 </div>
 
-<div class="flex items-center justify-center h-72 mt-5 md:rounded-2xl bg-slate-100 relative">
-    <div id="map" class="w-full h-full md:rounded-2xl cursor-pointer "></div>
-    <span class="absolute bottom-1.5 right-1.5 text-zinc-600 bg-amber-300 font-bold z-10 px-4 py-2 rounded-2xl">
+<div class="relative flex justify-center items-center bg-slate-100 mt-8 md:rounded-2xl h-72">
+    <div id="map" class="md:rounded-2xl w-full h-full cursor-pointer"></div>
+    <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-2 py-1 md:px-4 md:py-2 text-sm md:text-base rounded-2xl font-bold text-stone-600">
         @ {{ activity.address }}
     </span>
 </div>  
 
-<p class="text-md text-center mt-5">
-    {{ activity.description }}
-</p>
+<p class="my-10 text-md md:text-lg px-6 text-center">{{ activity.description }}</p>
 
-{% if activity.photo %}
-<div class="flex justify-center items-center mt-5 rounded-2xl">
-    <img src="{{ activity.photo }}" alt="Activity Image" class="rounded-2xl max-w-full max-h-72">
+{% if other_interested_users.all %}
+<div class="mb-10 mx-4 p-3 bg-stone-50 rounded-2xl">
+    <p class="font-semibold text-stone-500 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
+    <div id="users-list" class="grid grid-cols-1 md:grid-cols-4 gap-2 text-sm px-2 md:text-md">
+        {% with users=other_interested_users.all|slice:":8" %}
+            {% include 'partials/additional_users.html' %}
+        {% endwith %}
+    </div>
+    {% if other_interested_users.all|length > 8 %}
+        <div class="flex justify-center items-center pt-5">
+            <button class="show-more-button font-semibold text-stone-400 text-sm" hx-get="{% url 'additional_users' activity.pk %}" hx-target="#users-list" hx-swap="beforeend transition:true"  hx-on:htmx:after-request="this.remove()">Show all</button>
+        </div>
+    {% endif %}
 </div>
 {% endif %}
 
-<div class="flex justify-center items-center mt-36">
-    <p class="text-xs text-slate-400"><i>Created by:</i> {{ user.email }} at {{ activity.created_at }}</p>
+{% if activity.photo %}
+<div class="flex justify-center items-center rounded-2xl">
+    <img src="{{ activity.photo }}" alt="Activity Image" class="md:rounded-2xl max-w-full md:max-h-96 mb-16" loading="lazy">
 </div>
+{% endif %}
+
+<div class="absolute bottom-0 w-full">
+    <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
+</div>
+<audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
 {% endblock %}
 
 {% block scripts %}
 <script defer>
+function awardPoints() {
+    // play sound effect when clicking on the award points button
+    const audio = document.querySelector('.award-points-sound')
+    audio.play()
+    console.log('Awarded points!')
+}   
+
 // Check if Mapbox GL JS is already loaded
 if (typeof mapboxgl === 'undefined') {
     // Create a new script element to load Mapbox GL JS

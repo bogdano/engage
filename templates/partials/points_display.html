@@ -1,0 +1,9 @@
+{% load static %}
+<div class="flex justify-center items-center mb-5 {% if not activity.is_active %}grayscale{% endif %}">
+    <div class="mr-1.5"> 
+        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
+    </div>
+    <p class="font-bold text-2xl text-center text-yellow-500">
+        {{ activity.points }}
+    </p>
+</div>

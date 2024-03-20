@@ -1,0 +1,22 @@
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+/* define animations for the old and new content */
+::view-transition-old(slide-it) {
+  animation: 80ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+}
+::view-transition-new(slide-it) {
+  animation: 80ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+}
+
+/* tie the view transition to a given CSS class */
+.htmx-body {
+    view-transition-name: slide-it;
+}
+
+/* @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap') */
