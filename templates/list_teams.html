@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List Teams</title>
+    <!-- Ensure your static path to CSS is correct -->
+    <link href="{% static 'css/tailwind.min.css' %}" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org" defer></script>
+</head>
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center mb-8">Teams</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for team in teams %}
+        <div class="bg-white rounded-lg shadow-lg p-5">
+            <h2 class="font-semibold text-xl mb-2">{{ team.name }}</h2>
+            <p>Leader: {{ team.leader.first_name }} {{ team.leader.last_name }}</p>
+            <form action="{% url 'join_team' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}">
+                <button type="submit" class="mt-3 px-4 py-2 bg-green-500 hover:bg-green-700 rounded-lg text-white font-bold">Join Team</button>
+            </form>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center">
+            <p>No teams found.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

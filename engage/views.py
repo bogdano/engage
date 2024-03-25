@@ -1,16 +1,18 @@
 from .models import Team, Activity, Leaderboard, Item, UserParticipated
+from .forms import TeamCreateForm, JoinTeamForm
 from accounts.models import CustomUser
 from django.db.models import Sum, Count, Exists, OuterRef, Prefetch, Q
 from django.db.models.functions import TruncDay
 from django.http import HttpRequest
 from django.utils import timezone
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
+from django.contrib import messages
 
 # class ServiceWorker(TemplateView):
 #     template_name = "sw.js"
@@ -420,6 +422,36 @@ def leaderboard_view(request):
 
     # Render the same leaderboard.html template for both modes but pass different context based on the mode
     return render(request, "leaderboard.html", context)
+
+def list_teams(request):
+    teams = Team.objects.all()
+    join_form = JoinTeamForm()
+    return render(request, 'list_teams.html', {'teams': teams, 'join_form': join_form})
+
+def create_team(request):
+    if request.method == 'POST':
+        form = TeamCreateForm(request.POST)
+        if form.is_valid():
+            team = form.save(commit=False)
+            team.leader = request.user
+            team.save()
+            messages.success(request, 'Team created successfully.')
+            return redirect('list_teams')
+    else:
+        form = TeamCreateForm()
+    return render(request, 'create_team.html', {'form': form})
+
+def join_team(request):
+    if request.method == 'POST':
+        form = JoinTeamForm(request.POST)
+        if form.is_valid():
+            team_id = form.cleaned_data['team_id']
+            team = get_object_or_404(Team, id=team_id)
+            team.member.add(request.user)
+            messages.success(request, 'Join request sent.')
+            return redirect('list_teams')
+    else:
+        return redirect('list_teams')
 
 def store(request):
     items = Item.objects.all()
