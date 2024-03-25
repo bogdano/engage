@@ -26,15 +26,8 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("accounts/", include("accounts.urls")),
     path("leaderboard/", views.leaderboard_view, name="leaderboard"),
-    path(
-        "activity_leaderboard/", views.activity_leaderboard, name="activity_leaderboard"
-    ),
-    path(
-        "leaderboard/individual/",
-        views.individual_leaderboard,
-        name="individual_leaderboard",
-    ),
-    path("team_leaderboard/", views.team_leaderboard_view, name="team_leaderboard"),
+    path("leaderboard/individual/", views.individual_leaderboard_view, name="individual_leaderboard"),
+    path("leaderboard/team/", views.team_leaderboard_view, name="team_leaderboard"),
     path("store/", views.store, name="store"),
     path("notifications/", views.notifications, name="notifications"),
     path("profile/", views.profile, name="profile"),

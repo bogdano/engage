@@ -1,8 +1,15 @@
+<!-- partials/individual_leaderboard.html -->
 <div class="space-y-4">
-    {% for user in users %}
-    <div class="flex justify-between items-center p-4 bg-white rounded-lg shadow-lg">
-        <div class="text-lg font-medium text-gray-900">{{ forloop.counter }}. {{ user.first_name }} {{ user.last_name }}</div>
-        <div class="text-lg font-semibold text-blue-500">{{ user.lifetime_points }} Points</div>
-    </div>
+    {% for user in users_with_points %}
+        <div class="flex justify-between items-center p-4 bg-white rounded-lg shadow">
+            <div class="text-lg font-medium text-gray-900">
+                {{ user.user__first_name }} {{ user.user__last_name }}
+            </div>
+            <div class="text-lg font-semibold text-blue-500">
+                {{ user.total_points }} Points
+            </div>
+        </div>
+    {% empty %}
+        <p>No users found for the selected criteria.</p>
     {% endfor %}
 </div>
