@@ -324,25 +324,20 @@ def individual_leaderboard_view(request):
     # Default to None, will be used to filter by date if specified
     start_date = None
 
-# Handling date filters to calculate start_date if needed
-    now = datetime.now()  # Using naive datetime
+    now = datetime.now() 
     if date_filter == "this_year":
         start_date = datetime(now.year, 1, 1)
     elif date_filter == "this_month":
         start_date = datetime(now.year, now.month, 1)
 
-    # Constructing the base queryset for user participations
     user_participations = UserParticipated.objects.all()
 
-    # Apply the date filter to the user participations if start_date is defined
     if start_date:
         user_participations = user_participations.filter(date_participated__gte=start_date)
 
-    # If a specific leaderboard is selected, further filter the participations
     if selected_leaderboard_id:
         user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
     
-    # Aggregate points by user, considering the filtered participations
     users_with_points = user_participations.values(
         'user__id', 'user__first_name', 'user__last_name'
     ).annotate(
@@ -360,7 +355,6 @@ def individual_leaderboard_view(request):
 def team_leaderboard_view(request):
     leaderboards = Leaderboard.objects.all()
     selected_leaderboard_id = request.GET.get('leaderboard_id')
-    # Initial queryset for teams
     teams_query = Team.objects.prefetch_related(
         Prefetch(
             "member",
@@ -379,15 +373,14 @@ def team_leaderboard_view(request):
 
     if date_filter == "this_year":
         start_of_year = datetime(now.year, 1, 1)
-        start_date = timezone.make_aware(start_of_year)  # Making it timezone-aware
+        start_date = timezone.make_aware(start_of_year)
     elif date_filter == "this_month":
         start_of_month = datetime(now.year, now.month, 1)
-        start_date = timezone.make_aware(start_of_month)  # Making it timezone-aware
+        start_date = timezone.make_aware(start_of_month)
     else:
-        # For "all_time" or unspecified, you might use the earliest date Django can handle
-        start_date = timezone.make_aware(datetime(1, 1, 1))  # Far back in time
+        start_date = timezone.make_aware(datetime(1, 1, 1)) 
 
-    end_date = now  # Already timezone-aware, no need to adjust
+    end_date = now
 
     teams = teams_query.annotate(team_points=Sum("member__lifetime_points")).order_by("-team_points")
 
@@ -410,17 +403,14 @@ def leaderboard_view(request):
 
     # Logic for individual leaderboard
     if leaderboard_mode == 'individual':
-        # Your existing logic for fetching and filtering individual leaderboard data
         users = CustomUser.objects.annotate(total_points=Sum("lifetime_points")).order_by("-total_points")
         context['users'] = users
 
     # Logic for team leaderboard
     elif leaderboard_mode == 'team':
-        # Your existing logic for fetching and filtering team leaderboard data
         teams = Team.objects.annotate(team_points=Sum("member__lifetime_points")).order_by("-team_points")
         context['teams'] = teams
 
-    # Render the same leaderboard.html template for both modes but pass different context based on the mode
     return render(request, "leaderboard.html", context)
 
 def list_teams(request):
