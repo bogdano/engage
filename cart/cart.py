@@ -49,9 +49,11 @@ class Cart(object):
             del self.cart[item_id]
             self.save()
 
+    def empty(self):
+        self.cart = {}
+        self.save()
+
     def total(self):
-        if self.cart.keys() == None:
-            return 0
         for id in self.cart.keys():
             self.cart[str(id)]["item"] = Item.objects.get(pk=id)
         return sum(

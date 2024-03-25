@@ -1,0 +1,19 @@
+<div class="items mb-6 flex pr-6" id="cart-item-{{ item.item.id }}">
+    <a href="#" class="w-1/4">
+        <img class="hover:shadow-lg rounded-xl" src="{{ item.item.image }}">
+    </a>
+
+    <div class="w-3/4 pl-6">
+        <div class="flex justify-between">
+            <a href="#" class="text-lg">{{item.item.name}}</a>
+
+            <span class="mb-6 pt-1 text-gray-600">{{item.total_price}}</span>
+        </div>
+
+        <hr>
+
+        <div class="quantity mt-6 flex items-center space-x-4">
+            <span>Quantity: {{ item.quantity }}</span>
+        </div>
+    </div>
+</div>
