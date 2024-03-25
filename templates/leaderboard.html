@@ -1,56 +1,59 @@
 <!DOCTYPE html>
 {% extends 'base.html' %}
-{% load static %} <!-- Load static if needed for additional static files -->
+{% load static %}
 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Leaderboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/htmx.org"></script>
+    <!-- Ensure your static path to CSS is correct -->
+    <link href="{% static 'css/tailwind.min.css' %}" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org" defer></script>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center">
+<body class="bg-gray-50">
     {% block content %}
-    <div class="container max-w-4xl mx-auto px-4">
-        <h1 class="text-4xl font-bold text-center my-8 text-gray-800">Leaderboard</h1>
-        
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">Leaderboard</h1>
+
         <!-- Filtering Form -->
-<div class="mb-6">
-    <form action="{% url 'activity_leaderboard' %}" method="get" class="flex justify-center gap-4">
-        <select name="type" class="border-2 border-gray-300 rounded-lg p-2">
-            <option value="">All Activity Types</option>
-            {% for type in activity_types %}
-            <option value="{{ type.name }}" {% if request.GET.type == type.name %}selected{% endif %}>{{ type.name }}</option>
-            {% endfor %}
-        </select>
-        <select name="date_filter" class="border-2 border-gray-300 rounded-lg p-2">
-            <option value="all_time">All Time</option>
-            <option value="this_year">This Year</option>
-            <option value="this_month">This Month</option>
-        </select>
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Filter
-        </button>
-    </form>
-</div>
+        <div class="mb-6">
+            <form action="{% url 'individual_leaderboard' %}" method="get" class="flex justify-center gap-4">
+                <!-- Leaderboard Type Filter -->
+                <select name="leaderboard_id" class="border-2 border-gray-300 rounded-lg p-2" onchange="this.form.submit();">
+                    <option value="">Select Leaderboard Type</option>
+                    {% for leaderboard in leaderboards %}
+                    <option value="{{ leaderboard.id }}" {% if request.GET.leaderboard_id == leaderboard.id|stringformat:"s" %}selected{% endif %}>
+                        {{ leaderboard.leaderboard_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+        
+                <!-- Date Filter -->
+                <select name="date_filter" class="border-2 border-gray-300 rounded-lg p-2" onchange="this.form.submit();">
+                    <option value="">Select Time Frame</option>
+                    <option value="all_time" {% if request.GET.date_filter == "all_time" %}selected{% endif %}>All Time</option>
+                    <option value="this_year" {% if request.GET.date_filter == "this_year" %}selected{% endif %}>This Year</option>
+                    <option value="this_month" {% if request.GET.date_filter == "this_month" %}selected{% endif %}>This Month</option>
+                </select>
+            </form>
+        </div>
 
         <!-- Toggle Buttons for Team and Individual Leaderboards -->
         <div class="flex justify-center gap-4 mb-6">
-            <button hx-get="{% url 'individual_leaderboard' %}" hx-target="#leaderboard" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow">
+            <button hx-get="{% url 'individual_leaderboard' %}" hx-target="#leaderboard" hx-trigger="click" class="px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg">
                 Individual
             </button>
-            <button hx-get="{% url 'team_leaderboard' %}" hx-target="#leaderboard" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow">
+            <button hx-get="{% url 'team_leaderboard' %}" hx-target="#leaderboard" hx-trigger="click" class="px-6 py-2 bg-green-500 hover:bg-green-700 text-white font-bold rounded-lg">
                 Team
             </button>
         </div>
         
         <!-- Leaderboard Content -->
         <div id="leaderboard" class="mt-8">
-            <!-- Dynamically include individual or team leaderboard partial based on HTMX request -->
+            <!-- This will be filled dynamically with HTMX or initial content if needed -->
+            {% include 'partials/individual_leaderboard.html' %}
         </div>
     </div>
     {% endblock %}
 </body>
 </html>
-
-

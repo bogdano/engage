@@ -1,11 +1,4 @@
 from django.db import models
-
-class ActivityType(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.name
     
 # model for activities
 class Activity(models.Model):
@@ -37,7 +30,6 @@ class Activity(models.Model):
     # send alert or not boolean (only staff can do this), also place on top of feed, highlighted
     alert = models.BooleanField(default=False)
     # activity type
-    activity_type = models.ForeignKey(ActivityType, on_delete=models.SET_NULL, null=True, blank=True, related_name="activities")
     leaderboards = models.ManyToManyField("Leaderboard", related_name="leaderboards", blank=True)
     # interested users
     interested_users = models.ManyToManyField("accounts.CustomUser", related_name="interested_users", blank=True)
@@ -50,17 +42,6 @@ class Activity(models.Model):
     )
     def __str__(self):
         return self.title
-
-
-# so, for leaderboard queries, suppose you want to get the top 10 earners on the
-# Tabletennis leaderboard in the last week you would do something like this:
-# query UserParticipated for all users who participated in activities which contribute to
-# said leaderboard (query the many-many field), then query those activities for each user, to
-# sum the point values of each activity
-# finally, order by sum total of points in that result
-# also, to display a UI for picking which leaderboard to view, you can just query the
-# Leaderboard model. any time someone creates an event with a previouly non-existing
-# leaderboard, it will be added to the Leaderboard model (will have to add a form somewhere to set logo and color values)
 
 
 class Leaderboard(models.Model):
