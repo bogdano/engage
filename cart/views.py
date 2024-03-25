@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from engage.models import Item
+from accounts.models import CustomUser
 from django.http import HttpResponse
 from .cart import Cart
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+import random
 
 # Create your views here.
 
@@ -55,3 +59,38 @@ def hx_menu_cart(request):
 
 def hx_cart_total(request):
     return render(request, "cart/partials/cart_total.html")
+
+
+def checkout(request):
+    cart = Cart(request)
+    total = cart.total()
+    # change -1 to total once balance is fully functional
+    if request.user.balance > -1:
+        items = cart.cart.copy()
+        email_order(request)
+        return render(request, "cart/checkout.html", {"items": items})
+    else:
+        # fail state; not enough currency
+        # render with error message
+        return render(request, "cart.html")
+
+
+def email_order(request):
+    cart = Cart(request)
+    user = request.user
+    admin = list(CustomUser.objects.filter(is_staff=True))
+    random.shuffle(admin)
+    email = admin[0].email
+    subject = "New Order"
+    message = render_to_string(
+        "cart/partials/order_message.html", {"user": user, "cart": cart}
+    )
+    from_email = "atg-engage@bogz.dev"
+    send_mail(subject, message, from_email, [email])
+
+
+def clear_cart(request):
+    cart = Cart(request)
+    items = Item.objects.all()
+    cart.empty()
+    return render(request, "store.html", {"items": items})
