@@ -1,0 +1,7 @@
+Hello,
+
+Engage user {{ user }} has placed an order. Please deliver the following items:
+
+{% for item in cart %}
+{{item.item.name}} (x{{item.quantity}})
+{% endfor %}
