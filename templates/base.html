@@ -17,7 +17,6 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- <script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script> -->
     <script>
     //     if ('serviceWorker' in navigator) {
@@ -56,7 +55,7 @@
     </div>
     {% if user.is_authenticated %}
     <nav class="flex justify-center items-center h-20">
-        <div class="w-full fixed bottom-0 px-1 py-1  z-50 bg-white bg-opacity-65 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-2xl md:border md:shadow-lg">
+        <div class="w-full fixed bottom-0 px-1 py-1  z-50 bg-white bg-opacity-60 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-md md:rounded-2xl md:border md:shadow-lg">
             <div class="flex justify-between max-w-sm mx-auto">
                 <a href="{% url 'home' %}"
                     class="px-2 py-2 mx-1 rounded-xl hover:bg-amber-200 {% if current_section == 'home' %} bg-amber-100 bg-opacity-85{% endif %}">
