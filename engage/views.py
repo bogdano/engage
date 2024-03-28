@@ -454,8 +454,12 @@ def notifications(request):
 
 def profile(request):
     user = request.user
-    return render(request, "profile.html", {"user": user})
+    teams = Team.objects.all()
+    return render(request, "profile.html", {"user": user, "teams": teams})
 
+def outside_profile(request):
+    user = request.user
+    return render(request, "outside_profile.html", {"user": user})
 
 def edit_profile(request):
     # This is to check if the user is authenticated before allowing the edit
@@ -482,6 +486,10 @@ def edit_profile(request):
             if "profile_picture" in request.FILES:
                 user.profile_picture = request.FILES["profile_picture"]
                 # Handle profile picture upload if provided
+                # Upload the image to Cloudinary
+                uploaded_image = cloudinary.uploader.upload(request.FILES["profile_picture"])
+                # Get the URL of the uploaded image from Cloudinary
+                user.profile_picture = uploaded_image["url"]
                 # This part is up to you depending on how you handle profile picture uploads
                 pass
 
