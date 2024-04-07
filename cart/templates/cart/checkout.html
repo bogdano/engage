@@ -9,7 +9,8 @@
         {% for item in cart %}
         {% include 'cart/partials/checkout_item.html' %}
         {% endfor %}
-        <h2 class="py-5 text-xl">Your order has been sent to an admin for processing.
+        <h2 class="py-5 text-xl">Your order has been sent to an admin for processing. Your new balance is
+            {{user.balance}}.
         </h2>
     </div>
 
