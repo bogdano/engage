@@ -50,7 +50,8 @@ def update_cart(request, item_id, action):
 
 
 def cart(request):
-    return render(request, "cart/cart.html")
+    user = request.user
+    return render(request, "cart/cart.html", {"user": user})
 
 
 def hx_menu_cart(request):
@@ -65,14 +66,21 @@ def checkout(request):
     cart = Cart(request)
     total = cart.total()
     # change -1 to total once balance is fully functional
-    if request.user.balance > -1:
+    if request.user.balance >= total and len(cart) > 0:
         items = cart.cart.copy()
         email_order(request)
+        user = request.user
+        user.balance -= total
+        user.save()
         return render(request, "cart/checkout.html", {"items": items})
-    else:
+    elif len(cart) > 0:
         # fail state; not enough currency
         # render with error message
-        return render(request, "cart.html")
+        response = render(request, "cart/cart.html", {"insufficient_funds": True})
+        return response
+    else:
+        response = render(request, "cart/cart.html", {"empty_cart": True})
+        return response
 
 
 def email_order(request):
