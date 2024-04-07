@@ -9,7 +9,7 @@
 <!-- add a back button, maybe? -->
 <!-- <button onclick="window.history.back()">go back</button> -->
 
-<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12">
+<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12 px-2">
     <h1 class="mb-5 font-extrabold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
     {% include 'partials/bookmark_button.html' %}
 </div>
