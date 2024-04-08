@@ -226,19 +226,13 @@ def add_item(request):
 def load_more_activities(request):
     offset = int(request.GET.get("offset", 0))
     next_offset = offset + 5
+    user_participations = UserParticipated.objects.filter(activity=OuterRef("pk"), user=request.user)
     past_activities = Activity.objects.filter(
         is_approved=True, is_active=False
-    ).order_by("-event_date")[offset:next_offset]
+    ).order_by("-event_date")[offset:next_offset].annotate(user_has_participated=Exists(user_participations))
     if not past_activities or len(past_activities) < 5:
-        html = render_to_string(
-            "partials/past_activities.html",
-            {"past_activities": past_activities, "no_more_activities": True},
-        )
-        return HttpResponse(html)
-    html = render_to_string(
-        "partials/past_activities.html", {"past_activities": past_activities}
-    )
-    return HttpResponse(html)
+        return render(request, "partials/past_activities.html", {"past_activities": past_activities, "no_more_activities": True})
+    return render(request, "partials/past_activities.html", {"past_activities": past_activities})
 
 
 def new_activity(request):
@@ -317,7 +311,6 @@ def additional_users(request, pk):
     return render(request, "partials/additional_users.html", {"users": users})
 
 
-# MAX, THIS IS WHERE YOU NEED TO ADD THE LOGIC TO UPDATE TEAM/LEADERBOARD POINTS
 def award_participation_points(request, pk):
     user = request.user
     activity = Activity.objects.get(pk=pk)
