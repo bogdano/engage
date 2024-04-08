@@ -57,7 +57,11 @@
             <div class="w-full space-y-3 mb-4">
                 <h2 class="text-center text-xl text-amber-300 font-bold mb-4">{{ query_date }}</h2>
                 {% for activity in activities %}
-                    {% include 'partials/activity_card.html' %}
+                    {% if activity.is_approved %}
+                        {% include 'partials/activity_card.html' %}
+                    {% elif request.user.is_staff or request.user == activity.creator %}
+                        {% include 'partials/activity_card.html' %}
+                    {% endif %}
                 {% endfor %}
             </div>
         {% else %}
@@ -65,7 +69,11 @@
                 <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Today</h2>
                     {% for activity in today_activities %}
-                        {% include 'partials/activity_card.html' %}
+                        {% if activity.is_approved %}
+                            {% include 'partials/activity_card.html' %}
+                        {% elif request.user.is_staff or request.user == activity.creator %}
+                            {% include 'partials/activity_card.html' %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
@@ -73,7 +81,11 @@
                 <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Tomorrow</h2>
                     {% for activity in tomorrow_activities %}
-                        {% include 'partials/activity_card.html' %}
+                        {% if activity.is_approved %}
+                            {% include 'partials/activity_card.html' %}
+                        {% elif request.user.is_staff or request.user == activity.creator %}
+                            {% include 'partials/activity_card.html' %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
@@ -81,7 +93,11 @@
                 <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Upcoming</h2>
                     {% for activity in upcoming_activities %}
-                        {% include 'partials/activity_card.html' %}
+                        {% if activity.is_approved %}
+                            {% include 'partials/activity_card.html' %}
+                        {% elif request.user.is_staff or request.user == activity.creator %}
+                            {% include 'partials/activity_card.html' %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
@@ -121,6 +137,33 @@
 <script>
 document.addEventListener('hideLoadMoreButton', function() {
     document.getElementById('load-more-button').style.display = 'none';
+});
+
+// toggle kebab menu display (for admins)
+document.querySelectorAll('.kebab-button').forEach(button => {
+    button.addEventListener('click', function(event) {
+        const menuId = 'kebab-menu-' + this.getAttribute('data-activity');
+        const menu = document.getElementById(menuId);
+        const isMenuVisible = menu.style.display === 'block';
+        // hide all menus
+        document.querySelectorAll('ul[id^="kebab-menu-"]').forEach((el) => {
+            el.style.display = 'none';
+        });
+        // toggle this menu
+        menu.style.display = isMenuVisible ? 'none' : 'block';
+        event.preventDefault();
+        event.stopPropagation();
+    });
+});
+
+// close the menu when clicking outside
+document.addEventListener('click', function(event) {
+    const isClickInsideKebab = event.target.closest('.kebab-button');
+    if (!isClickInsideKebab) {
+        document.querySelectorAll('ul[id^="kebab-menu-"]').forEach((menu) => {
+            menu.style.display = 'none';
+        });
+    }
 });
 
 function updateOffset(button) {
