@@ -286,14 +286,15 @@ def new_activity(request):
 def activity(request, pk):
     if not request.user.is_authenticated:
         return redirect("send_login_link")
-    activity = Activity.objects.get(pk=pk)
+    try:
+        activity = Activity.objects.get(pk=pk)
+    except Activity.DoesNotExist:
+        return redirect("home")
     other_interested_users = activity.interested_users.all().exclude(pk=request.user.pk)
     user_has_participated = activity.participated_users.filter(
         pk=request.user.pk
     ).exists()
-    return render(
-        request,
-        "activity.html",
+    return render(request, "activity.html", 
         {
             "activity": activity,
             "other_interested_users": other_interested_users,
