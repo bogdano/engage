@@ -81,7 +81,7 @@
                         <img src="{% static 'icons/edit.svg' %}" class="h-5 w-5 mr-2">
                         <span>edit</span>
                     </li>
-                    <li hx-delete="{% url 'delete_activity' activity.pk %}" hx-target=".htmx-body" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 rounded-b-2xl">
+                    <li hx-delete="{% url 'delete_activity' activity.pk %}" hx-confirm="Are you sure you want to delete this activity?" hx-target=".htmx-body" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 rounded-b-2xl">
                         <img src="{% static 'icons/delete.svg' %}" class="h-5 w-5 mr-2">
                         <span>delete</span>
                     </li>
