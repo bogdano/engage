@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
 
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="icon" href="{% static 'favicons/favicon.ico' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
@@ -36,7 +37,8 @@
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body hx-boost="true" class="htmx-body" hx-swap="transition:true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body hx-boost="true" class="htmx-body" hx-swap="transition:true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-indicator=".loading-bar"> 
+    <div class="loading-bar"></div>
     <div class="max-w-6xl mx-auto w-full min-h-screen relative">
         {% if current_section == 'home' %}
             <meta name="theme-color" content="#fbbf24">

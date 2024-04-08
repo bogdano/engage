@@ -24,7 +24,7 @@ def home(request):
         return redirect("send_login_link")
     else:
         # fetch approved and active activities
-        activities = Activity.objects.filter(is_approved=True, is_active=True).order_by(
+        activities = Activity.objects.filter(is_active=True).order_by(
             "event_date"
         )
         # set the date range
@@ -41,6 +41,7 @@ def home(request):
             .filter(
                 event_date__date__gte=start_date.date(),
                 event_date__date__lte=end_date.date(),
+                is_approved=True,
             )
             .values("date")
             .annotate(total_activities=Count("id"))
@@ -70,9 +71,7 @@ def home(request):
         # filter activities by date if query_date is present
         query_date = request.GET.get("query_date", None)
         if query_date is not None:
-            activities = Activity.objects.filter(
-                is_approved=True, event_date__date=query_date
-            ).order_by("event_date")
+            activities = Activity.objects.filter(event_date__date=query_date).order_by("event_date")
             # format in 'A, d, B' format
             query_date = datetime.strptime(query_date, "%Y-%m-%d").strftime("%A, %d %B")
         else:
@@ -140,6 +139,65 @@ def bookmark_activity_from_activity(request, pk):
     else:
         activity.interested_users.add(user)
     return render(request, "partials/bookmark_button.html", {"activity": activity})
+
+
+def edit_activity(request, pk):
+    if request.method == "GET" and request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        leaderboards = Leaderboard.objects.all()
+        return render(request, "edit_activity.html", {"activity": activity, "leaderboards": leaderboards})
+
+
+def update_activity(request, pk):
+    if request.method == "POST" and request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        title = request.POST.get("title")
+        points = request.POST.get("points")
+        description = request.POST.get("description")
+        address = request.POST.get("address")
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
+        event_date = request.POST.get("event_date")
+        end_date = request.POST.get("end_date")
+        uploaded_image_url = ""
+        if "photo" in request.FILES:
+            uploaded_image = cloudinary.uploader.upload(
+                request.FILES["photo"], quality="50", fetch_format="auto"
+            )
+            uploaded_image_url = uploaded_image["url"]
+        leaderboard_names = request.POST.getlist("leaderboards")
+        leaderboards = [
+            Leaderboard.objects.get_or_create(leaderboard_name=name)[0]
+            for name in leaderboard_names
+        ]
+        activity.title = title
+        activity.points = points
+        activity.description = description
+        activity.address = address
+        activity.latitude = latitude
+        activity.longitude = longitude
+        activity.event_date = event_date
+        activity.end_date = end_date
+        activity.photo = uploaded_image_url
+        activity.leaderboards.clear()
+        activity.leaderboards.add(*leaderboards)
+        activity.save()
+        return redirect("home")
+
+
+def delete_activity(request, pk):
+    if request.method == "DELETE" and request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        activity.delete()
+        return redirect("home")
+    
+
+def approve_activity(request, pk):
+    if request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        activity.is_approved = True
+        activity.save()
+        return redirect("home")
 
 
 def new_item(request):
@@ -226,9 +284,7 @@ def new_activity(request):
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
-            return redirect("home")
-        else:
-            return render(request, "activity_pending.html")
+        return redirect("home")
     else:
         return JsonResponse({"error": "Invalid request method"})
 

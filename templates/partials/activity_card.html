@@ -1,5 +1,5 @@
 {% load static %}
-<a href="{% url 'activity' activity.pk %}" id="activity-{{ activity.pk }}" class="px-1 py-4 md:p-4 group block border border-amber-100 rounded-2xl w-full hover:bg-amber-100 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-50 shadow-sm {% if not activity.is_active %}bg-stone-50 border-none hover:bg-stone-100{% endif %}">
+<a href="{% url 'activity' activity.pk %}" id="activity-{{ activity.pk }}" class="px-1 py-4 md:p-4 group block border border-amber-100 rounded-2xl w-full hover:bg-amber-100 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-50 shadow-sm {% if not activity.is_active %}bg-stone-50 border-none hover:bg-stone-100{% endif %} {% if not activity.is_approved %}border-rose-200 shadow-none hover:bg-white hover:border-rose-200{% endif %}">
     <div class="p-2 flex justify-between items-center space-x-3">
         <button type="button" 
                 hx-post="{% url 'bookmark_activity' activity.pk %}" 
@@ -7,8 +7,8 @@
                 hx-target="#activity-{{ activity.pk }}" 
                 onclick="event.preventDefault(); event.stopPropagation();"
                 class="flex-none p-2 border rounded-xl border-amber-100 hover:bg-white group-hover:bg-white shadow-sm {% if not activity.is_active %}grayscale{% endif %}"
-                {% if not activity.is_active %}disabled{% endif %}>
-            <img src="{% if request.user in activity.interested_users.all %}{% static 'icons/bookmark_saved.svg' %}{% else %}{% static 'icons/bookmark.svg' %}{% endif %}" alt="Bookmark Icon" class="w-6 h-6">
+                {% if not activity.is_active or not activity.is_approved %}disabled{% endif %}>
+            <img src="{% if request.user in activity.interested_users.all %}{% static 'icons/bookmark_saved.svg' %}{% elif not activity.is_approved %}{% static 'icons/hourglass.svg' %}{% else %}{% static 'icons/bookmark.svg' %}{% endif %}" alt="Bookmark Icon" class="w-6 h-6">
         </button>
 
         <div class="flex-grow flex items-center justify-start">
@@ -57,6 +57,31 @@
             {% endif %}
         </div>
 
+        {% if request.user.is_staff %}
+            <div class="relative">
+                <button type="button" data-activity="{{ activity.pk }}" class="kebab-button h-6 w-6 filter hover:contrast-200" aria-expanded="true" aria-haspopup="true" onclick="event.preventDefault(); event.stopPropagation();">
+                    <img src="{% static 'icons/kebab.svg' %}" class="">
+                </button>
+
+                <ul class="hidden absolute left-1/2 transform -translate-x-1/2 bg-white rounded-2xl border border-amber-200 shadow-md text-stone-600 font-bold z-10 w-auto min-w-max" id="kebab-menu-{{ activity.pk }}">
+                    {% if not activity.is_approved %}
+                    <li hx-post="{% url 'approve_activity' activity.pk %}" hx-target=".htmx-body" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 rounded-t-2xl">
+                        <img src="{% static 'icons/approve.svg' %}" class="h-5 w-5 mr-2"> 
+                        <span>approve</span>
+                    </li>
+                    {% endif %}
+                    <li hx-get="{% url 'edit_activity' activity.pk %}" hx-target=".htmx-body" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2">
+                        <img src="{% static 'icons/edit.svg' %}" class="h-5 w-5 mr-2">
+                        <span>edit</span>
+                    </li>
+                    <li hx-delete="{% url 'delete_activity' activity.pk %}" hx-target=".htmx-body" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 rounded-b-2xl">
+                        <img src="{% static 'icons/delete.svg' %}" class="h-5 w-5 mr-2">
+                        <span>delete</span>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+          
         <img src="{% static 'icons/right-arrow.svg' %}" alt="Icon" class="w-7 h-7 text-stone-950 hidden md:block {% if not activity.is_active %}grayscale{% endif %}">
     </div>
 </a>
