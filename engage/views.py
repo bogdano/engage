@@ -142,7 +142,7 @@ def bookmark_activity_from_activity(request, pk):
 
 
 def edit_activity(request, pk):
-    if request.method == "GET" and request.user.is_staff:
+    if request.user.is_staff:
         activity = Activity.objects.get(pk=pk)
         leaderboards = Leaderboard.objects.all()
         return render(request, "edit_activity.html", {"activity": activity, "leaderboards": leaderboards})
@@ -159,7 +159,7 @@ def update_activity(request, pk):
         longitude = request.POST.get("longitude")
         event_date = request.POST.get("event_date")
         end_date = request.POST.get("end_date")
-        uploaded_image_url = ""
+        uploaded_image_url = activity.photo
         if "photo" in request.FILES:
             uploaded_image = cloudinary.uploader.upload(
                 request.FILES["photo"], quality="50", fetch_format="auto"

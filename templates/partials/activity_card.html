@@ -61,7 +61,6 @@
             <div class="relative">
                 <button 
                     type="button" 
-                    data-activity="{{ activity.pk }}" 
                     onclick="openKebab({{ activity.pk }}); event.preventDefault(); event.stopPropagation();" 
                     id="kebab-button-{{ activity.pk }}" 
                     class="kebab-button h-6 w-6 filter hover:contrast-200" 
@@ -70,14 +69,14 @@
                     <img src="{% static 'icons/kebab.svg' %}" class="">
                 </button>
 
-                <ul class="hidden absolute right-0 md:left-1/2 md:transform md:-translate-x-1/2 bg-white rounded-2xl border border-amber-200 shadow-md text-stone-600 font-bold z-10 w-auto min-w-max" id="kebab-menu-{{ activity.pk }}">
+                <ul class="kebab-menu hidden absolute right-0 md:left-1/2 md:transform md:-translate-x-1/2 bg-white rounded-2xl border border-amber-200 shadow-md text-stone-600 font-bold z-10 w-auto min-w-max" id="kebab-menu-{{ activity.pk }}">
                     {% if not activity.is_approved %}
                     <li hx-post="{% url 'approve_activity' activity.pk %}" hx-target=".htmx-body" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 rounded-t-2xl">
                         <img src="{% static 'icons/approve.svg' %}" class="h-5 w-5 mr-2"> 
                         <span>approve</span>
                     </li>
                     {% endif %}
-                    <li hx-get="{% url 'edit_activity' activity.pk %}" hx-target=".htmx-body" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 {% if activity.is_approved %}rounded-t-2xl{% endif %}">
+                    <li hx-get="{% url 'edit_activity' activity.pk %}" hx-target=".htmx-body" hx-replace-url="true" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 {% if activity.is_approved %}rounded-t-2xl{% endif %}">
                         <img src="{% static 'icons/edit.svg' %}" class="h-5 w-5 mr-2">
                         <span>edit</span>
                     </li>
@@ -99,7 +98,7 @@ function openKebab(id) {
     const menu = document.getElementById(menuId);
     const isMenuVisible = menu.style.display === 'block';
     // hide all menus
-    document.querySelectorAll('ul[id^="kebab-menu-"]').forEach((el) => {
+    document.querySelectorAll('.kebab-menu').forEach((el) => {
         el.style.display = 'none';
     });
     // toggle this menu
@@ -108,7 +107,7 @@ function openKebab(id) {
     document.addEventListener('click', function(event) {
         const isClickInsideKebab = event.target.closest('.kebab-button');
         if (!isClickInsideKebab) {
-            document.querySelectorAll('ul[id^="kebab-menu-"]').forEach((menu) => {
+            document.querySelectorAll('.kebab-menu').forEach((menu) => {
                 menu.style.display = 'none';
             });
         }
