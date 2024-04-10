@@ -4,8 +4,6 @@
 {% block title %}{{ activity.title }}{% endblock %}
 
 {% block content %}
-<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
-
 <!-- add a back button, maybe? -->
 <!-- <button onclick="window.history.back()">go back</button> -->
 
@@ -73,12 +71,14 @@
     </div>
 </div>
 
-<div class="relative flex justify-center items-center bg-slate-100 mt-8 md:rounded-2xl h-72">
-    <div id="map" class="md:rounded-2xl w-full h-full cursor-pointer"></div>
+<a href="https://www.google.com/maps/search/?api=1&query={{ activity.latitude }},{{ activity.longitude }}" class="relative flex justify-center items-center bg-slate-100 mt-8 md:rounded-2xl h-72">
+    <img 
+        src="https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-l+e85151({{ activity.longitude }},{{ activity.latitude }})/{{ activity.longitude }},{{ activity.latitude }},15.2,0/1152x288@2x?access_token=pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w"
+        class="w-full h-full mx-0 md:mx-2 md:rounded-2xl object-cover object-center">
     <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-2 py-1 md:px-4 md:py-2 text-sm md:text-base rounded-2xl font-bold text-stone-600">
         @ {{ activity.address }}
     </span>
-</div>  
+</a>
 
 <p class="my-10 text-md md:text-lg px-6 text-center">{{ activity.description }}</p>
 
@@ -118,41 +118,5 @@ function awardPoints() {
     audio.play()
     console.log('Awarded points!')
 }   
-
-// Check if Mapbox GL JS is already loaded
-if (typeof mapboxgl === 'undefined') {
-    // Create a new script element to load Mapbox GL JS
-    var script = document.createElement('script');
-    script.onload = function() {
-        // Once loaded, set the access token and initialize the map
-        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
-        initializeMap();
-    };
-    script.src = 'https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js';
-    document.head.appendChild(script);
-} else {
-    // Mapbox GL JS is already loaded, just initialize the map
-    initializeMap();
-}
-function initializeMap() {
-    // Ensuring mapboxgl is defined and the map container exists
-    if (typeof mapboxgl !== 'undefined' && document.getElementById('map')) {
-        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
-        const map = new mapboxgl.Map({
-            container: 'map',
-            center: ["{{ activity.longitude }}", "{{ activity.latitude }}"],
-            zoom: 15,
-            interactive: false,
-        });
-
-        new mapboxgl.Marker({ "color": "#e85151" })
-            .setLngLat(["{{ activity.longitude }}", "{{ activity.latitude }}"])
-            .addTo(map);
-
-        map.on('click', function() {
-            window.location.href = `https://www.google.com/maps/search/?api=1&query={{ activity.latitude }},{{ activity.longitude }}`;
-        });
-    }
-}
 </script>  
 {% endblock %}

@@ -19,11 +19,6 @@
     view-transition-name: slide-it;
 }
 
-.drag-over {
-  background-color: #ecfce7; 
-  border-color: #2a4800; 
-}
-
 .loading-bar {
   z-index: 100;
   opacity: 0;
@@ -89,29 +84,4 @@
 
 .htmx-request.loading-blob {
   opacity: 1;
-}
-
-
-
-.ts-control {
-  padding: 0 !important;
-  border: none !important;
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-} .ts-control input {
-  font-size: 1rem !important;
-} .ts-control .item {
-  background-color: #f59e0b !important;
-  color: white !important;
-  font-weight: bold !important;
-  border-radius: 0.25rem !important;
-}
-.focus {
-  border-color: #fbbf24;
-}
-.ts-dropdown {
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 0.375rem !important;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-  margin-top: 0.5rem !important;
 }
