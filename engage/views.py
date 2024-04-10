@@ -146,6 +146,8 @@ def edit_activity(request, pk):
         activity = Activity.objects.get(pk=pk)
         leaderboards = Leaderboard.objects.all()
         return render(request, "edit_activity.html", {"activity": activity, "leaderboards": leaderboards})
+    else:
+        return redirect("home")
 
 
 def update_activity(request, pk):
@@ -162,7 +164,7 @@ def update_activity(request, pk):
         uploaded_image_url = activity.photo
         if "photo" in request.FILES:
             uploaded_image = cloudinary.uploader.upload(
-                request.FILES["photo"], quality="50", fetch_format="auto"
+                request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
             )
             uploaded_image_url = uploaded_image["url"]
         leaderboard_names = request.POST.getlist("leaderboards")
@@ -182,7 +184,7 @@ def update_activity(request, pk):
         activity.leaderboards.clear()
         activity.leaderboards.add(*leaderboards)
         activity.save()
-        return redirect("home")
+        return redirect("activity", pk=pk)
 
 
 def delete_activity(request, pk):
@@ -250,7 +252,7 @@ def new_activity(request):
         uploaded_image_url = ""
         if "photo" in request.FILES:
             uploaded_image = cloudinary.uploader.upload(
-                request.FILES["photo"], quality="50", fetch_format="auto"
+                request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
             )
             uploaded_image_url = uploaded_image["url"]
 
@@ -278,7 +280,7 @@ def new_activity(request):
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
-        return redirect("home")
+        return redirect("activity", pk=activity.pk)
     else:
         return JsonResponse({"error": "Invalid request method"})
 
