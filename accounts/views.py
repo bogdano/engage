@@ -57,7 +57,7 @@ def login_with_link(request, uidb64, token):
         token_record = LoginToken.objects.get(user=user, token=token)
         print('Found token:', token_record.token)
         # Check if the token is expired 
-        if timezone.now() > token_record.expiration_date:
+        if timezone.now() > token_record.expiration_date or token_record.used == True:
             print('Token expired')
             token_record.delete()
             return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
@@ -127,11 +127,11 @@ def register(request):
 
 def logout_view(request):
     # get all expired tokens and all used tokens
-    tokens_query = LoginToken.objects.filter(Q(expiration_date__lt=timezone.now()) | Q(used=True))
-    expired_or_used_tokens = tokens_query.all()
-    # delete all expired tokens
-    for token in expired_or_used_tokens:
-        token.delete()
+    # tokens_query = LoginToken.objects.filter(Q(expiration_date__lt=timezone.now()) | Q(used=True))
+    # expired_or_used_tokens = tokens_query.all()
+    # # delete all expired tokens
+    # for token in expired_or_used_tokens:
+    #     token.delete()
         
     logout(request)
     return redirect('home') 

@@ -39,7 +39,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 
 # SET DEFAULT TO FALSE, FOR DEPLOYMENT !!!!!!!!!!!
 # DEBUG = env.bool("DEBUG", default=False)
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [".fly.dev", "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = ["https://*.fly.dev"]

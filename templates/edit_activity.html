@@ -20,7 +20,7 @@
         </div>
         
         <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
-        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Should points go to a leaderboard?" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Contributes to which leaderboards?" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
             {% for leaderboard in leaderboards %}
                 <option value="{{ leaderboard.leaderboard_name }}" {% if leaderboard in activity.leaderboards.all %}selected{% endif %}>{{ leaderboard.leaderboard_name }}</option>
             {% endfor %}
