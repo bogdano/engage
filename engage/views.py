@@ -24,7 +24,7 @@ def home(request):
         return redirect("send_login_link")
     else:
         # fetch approved and active activities
-        activities = Activity.objects.filter(is_approved=True, is_active=True).order_by(
+        activities = Activity.objects.filter(is_active=True).order_by(
             "event_date"
         )
         # set the date range
@@ -41,6 +41,7 @@ def home(request):
             .filter(
                 event_date__date__gte=start_date.date(),
                 event_date__date__lte=end_date.date(),
+                is_approved=True,
             )
             .values("date")
             .annotate(total_activities=Count("id"))
@@ -70,9 +71,7 @@ def home(request):
         # filter activities by date if query_date is present
         query_date = request.GET.get("query_date", None)
         if query_date is not None:
-            activities = Activity.objects.filter(
-                is_approved=True, event_date__date=query_date
-            ).order_by("event_date")
+            activities = Activity.objects.filter(event_date__date=query_date).order_by("event_date")
             # format in 'A, d, B' format
             query_date = datetime.strptime(query_date, "%Y-%m-%d").strftime("%A, %d %B")
         else:
@@ -142,6 +141,67 @@ def bookmark_activity_from_activity(request, pk):
     return render(request, "partials/bookmark_button.html", {"activity": activity})
 
 
+def edit_activity(request, pk):
+    if request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        leaderboards = Leaderboard.objects.all()
+        return render(request, "edit_activity.html", {"activity": activity, "leaderboards": leaderboards})
+    else:
+        return redirect("home")
+
+
+def update_activity(request, pk):
+    if request.method == "POST" and request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        title = request.POST.get("title")
+        points = request.POST.get("points")
+        description = request.POST.get("description")
+        address = request.POST.get("address")
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
+        event_date = request.POST.get("event_date")
+        end_date = request.POST.get("end_date")
+        uploaded_image_url = activity.photo
+        if "photo" in request.FILES:
+            uploaded_image = cloudinary.uploader.upload(
+                request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
+            )
+            uploaded_image_url = uploaded_image["url"]
+        leaderboard_names = request.POST.getlist("leaderboards")
+        leaderboards = [
+            Leaderboard.objects.get_or_create(leaderboard_name=name)[0]
+            for name in leaderboard_names
+        ]
+        activity.title = title
+        activity.points = points
+        activity.description = description
+        activity.address = address
+        activity.latitude = latitude
+        activity.longitude = longitude
+        activity.event_date = event_date
+        activity.end_date = end_date
+        activity.photo = uploaded_image_url
+        activity.leaderboards.clear()
+        activity.leaderboards.add(*leaderboards)
+        activity.save()
+        return redirect("activity", pk=pk)
+
+
+def delete_activity(request, pk):
+    if request.method == "DELETE" and request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        activity.delete()
+        return redirect("home")
+    
+
+def approve_activity(request, pk):
+    if request.user.is_staff:
+        activity = Activity.objects.get(pk=pk)
+        activity.is_approved = True
+        activity.save()
+        return redirect("home")
+
+
 def new_item(request):
     if request.method == "POST":
         name = request.POST.get("itemName")
@@ -168,19 +228,13 @@ def add_item(request):
 def load_more_activities(request):
     offset = int(request.GET.get("offset", 0))
     next_offset = offset + 5
+    user_participations = UserParticipated.objects.filter(activity=OuterRef("pk"), user=request.user)
     past_activities = Activity.objects.filter(
         is_approved=True, is_active=False
-    ).order_by("-event_date")[offset:next_offset]
+    ).order_by("-event_date")[offset:next_offset].annotate(user_has_participated=Exists(user_participations))
     if not past_activities or len(past_activities) < 5:
-        html = render_to_string(
-            "partials/past_activities.html",
-            {"past_activities": past_activities, "no_more_activities": True},
-        )
-        return HttpResponse(html)
-    html = render_to_string(
-        "partials/past_activities.html", {"past_activities": past_activities}
-    )
-    return HttpResponse(html)
+        return render(request, "partials/past_activities.html", {"past_activities": past_activities, "no_more_activities": True})
+    return render(request, "partials/past_activities.html", {"past_activities": past_activities})
 
 
 def new_activity(request):
@@ -198,7 +252,7 @@ def new_activity(request):
         uploaded_image_url = ""
         if "photo" in request.FILES:
             uploaded_image = cloudinary.uploader.upload(
-                request.FILES["photo"], quality="50", fetch_format="auto"
+                request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
             )
             uploaded_image_url = uploaded_image["url"]
 
@@ -226,9 +280,7 @@ def new_activity(request):
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
-            return redirect("home")
-        else:
-            return render(request, "activity_pending.html")
+        return redirect("activity", pk=activity.pk)
     else:
         return JsonResponse({"error": "Invalid request method"})
 
@@ -236,14 +288,15 @@ def new_activity(request):
 def activity(request, pk):
     if not request.user.is_authenticated:
         return redirect("send_login_link")
-    activity = Activity.objects.get(pk=pk)
+    try:
+        activity = Activity.objects.get(pk=pk)
+    except Activity.DoesNotExist:
+        return redirect("home")
     other_interested_users = activity.interested_users.all().exclude(pk=request.user.pk)
     user_has_participated = activity.participated_users.filter(
         pk=request.user.pk
     ).exists()
-    return render(
-        request,
-        "activity.html",
+    return render(request, "activity.html", 
         {
             "activity": activity,
             "other_interested_users": other_interested_users,
@@ -261,7 +314,6 @@ def additional_users(request, pk):
     return render(request, "partials/additional_users.html", {"users": users})
 
 
-# MAX, THIS IS WHERE YOU NEED TO ADD THE LOGIC TO UPDATE TEAM/LEADERBOARD POINTS
 def award_participation_points(request, pk):
     user = request.user
     activity = Activity.objects.get(pk=pk)

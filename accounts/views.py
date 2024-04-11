@@ -26,12 +26,12 @@ def send_login_link(request):
             print('Creating token for user', user)
             token = LoginToken.objects.create(user=user, token=uuid.uuid4())
             token.save()
-            print('Token:', token.token)
 
             # Create a unique link for the user to log in
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             domain = get_current_site(request).domain
             login_link = f'http://{domain}/accounts/login/{uid}/{token.token}/'  # Use the token's string representation
+            print('Login link:', login_link)
             
             # Send the login link via email
             subject = 'Your Login Link'

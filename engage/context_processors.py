@@ -6,15 +6,15 @@ def current_section(request):
     path = request.path
     if '/' == path:
         return {'current_section': 'home'}
-    elif '/add_activity/' in path or '/activity/' in path:
+    elif '/add_activity/' in path or '/activity/' in path or '/edit_activity/' in path:
         return {'current_section': 'home'}
     elif '/leaderboard/' in path:
         return {'current_section': 'leaderboard'}
-    elif '/store/' in path:
+    elif '/store/' in path or '/item/' in path or '/add_item/' in path or '/cart/' in path:
         return {'current_section': 'store'}
     elif '/notifications/' in path:
         return {'current_section': 'notifications'}
-    elif '/profile/' in path:
+    elif '/profile/' in path or '/edit_profile/' in path or '/outside_profile/' in path or '/teams/' in path:
         return {'current_section': 'profile'}
     # Add more conditions as necessary
     else:
