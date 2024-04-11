@@ -38,11 +38,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env.str("SECRET_KEY")
 
 # SET DEFAULT TO FALSE, FOR DEPLOYMENT !!!!!!!!!!!
-# DEBUG = env.bool("DEBUG", default=False)
-DEBUG = False
+DEBUG = env.bool("DEBUG", default=False)
+# DEBUG = False
 
-ALLOWED_HOSTS = [".fly.dev", "localhost", "127.0.0.1"]
-CSRF_TRUSTED_ORIGINS = ["https://*.fly.dev"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "engage.bogz.dev"]
+CSRF_TRUSTED_ORIGINS = ["https://engage.bogz.dev"]
 
 SESSION_COOKIE_AGE = 864000
 CART_SESSION_ID = "cart"
@@ -179,7 +179,7 @@ else:
         "MAILJET_SENDER_DOMAIN": "bogz.dev",
     }
     EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"
-    DEFAULT_FROM_EMAIL = "atg-engage@bogz.dev"
+    DEFAULT_FROM_EMAIL = "noreply@engage.bogz.dev"
 
 
 AUTH_USER_MODEL = "accounts.CustomUser"  # new

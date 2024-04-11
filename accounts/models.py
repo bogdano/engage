@@ -51,12 +51,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.first_name + " " + self.last_name + " (" + self.email + ")"
 
-def fifteen_minutes_from_now():
-    return timezone.now() + timezone.timedelta(minutes=15)
+def ten_minutes_from_now():
+    return timezone.now() + timezone.timedelta(minutes=10)
 class LoginToken(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=False, blank=False)
     date_created = models.DateTimeField(auto_now_add=True)
     # set expiration date to 15 minutes from now on creation
-    expiration_date = models.DateTimeField(default=fifteen_minutes_from_now, null=False)
+    expiration_date = models.DateTimeField(default=ten_minutes_from_now, null=False)
     used = models.BooleanField(default=False)

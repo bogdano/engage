@@ -93,7 +93,7 @@ def email_order(request):
     message = render_to_string(
         "cart/partials/order_message.html", {"user": user, "cart": cart}
     )
-    from_email = "atg-engage@bogz.dev"
+    from_email = "noreply@engage.bogz.dev"
     send_mail(subject, message, from_email, [email])
 
 
