@@ -68,7 +68,7 @@
   left: 50%;
   margin-left: -50px;
   transition: opacity 0.3s;
-  transition-delay: 0.1s;
+  transition-delay: 0.05s;
 }
 
 .tooltip:hover .tooltiptext {

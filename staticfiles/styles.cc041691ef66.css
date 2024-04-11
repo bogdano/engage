@@ -115,3 +115,10 @@
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
   margin-top: 0.5rem !important;
 }
+
+.htmx-settling img {
+  opacity: 0;
+}
+img {
+ transition: opacity 300ms ease-in;
+}
