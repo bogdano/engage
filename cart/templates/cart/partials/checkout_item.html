@@ -1,4 +1,6 @@
 <div class="items mb-6 flex pr-6" id="cart-item-{{ item.item.id }}">
+    {% load static %}
+
     <a href="#" class="w-1/4">
         <img class="hover:shadow-lg rounded-xl" src="{{ item.item.image }}">
     </a>
@@ -7,7 +9,13 @@
         <div class="flex justify-between">
             <a href="#" class="text-lg">{{item.item.name}}</a>
 
-            <span class="mb-6 pt-1 text-gray-600">{{item.total_price}}</span>
+            <span class="mb-6 pt-1 text-gray-600">
+                <div class="flex">
+                    <p class="px-1">{{item.total_price|floatformat:0}}</p>
+                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+                </div>
+            </span>
+
         </div>
 
         <hr>

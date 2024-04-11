@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Cart{% endblock %}
 
@@ -24,8 +25,10 @@
 
         <div class="mb-6 flex justify-between">
             <span class="font-semibold">Balance</span>
-            <span>
-                {{ user.balance }}
+            <span class="flex">
+                <p class="px-1">{{ user.balance }}</p>
+                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+
             </span>
         </div>
         <div>
