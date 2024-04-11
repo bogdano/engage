@@ -1,10 +1,15 @@
+{% load static %}
+
 <div class="h-50 p-4 relative">
     <a href="{% url 'item' item.pk %}">
         <img src='{{item.image}}' class="rounded-lg mb-2">
         </p>
         <div class="flex justify-between">
             <b>{{item.name}}</b>
-            <p">{{item.price|floatformat:0}}</p>
+            <div class="flex">
+                <p class="px-1">{{item.price|floatformat:0}}</p>
+                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            </div>
         </div>
     </a>
 </div>
