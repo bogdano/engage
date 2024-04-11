@@ -3,16 +3,13 @@ from .forms import TeamCreateForm, JoinTeamForm
 from accounts.models import CustomUser
 from django.db.models import Sum, Count, Exists, OuterRef, Prefetch, Q
 from django.db.models.functions import TruncDay
-from django.http import HttpRequest
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
-from django.utils.timezone import make_aware
-from django.template.loader import render_to_string
-from django.views.generic.base import TemplateView
 from django.contrib import messages
+import dateutil.parser
 
 # class ServiceWorker(TemplateView):
 #     template_name = "sw.js"
@@ -75,7 +72,7 @@ def home(request):
             # format in 'A, d, B' format
             query_date = datetime.strptime(query_date, "%Y-%m-%d").strftime("%A, %d %B")
         else:
-            today = make_aware(datetime.today())
+            today = timezone.make_aware(datetime.today())
             tomorrow = today + timedelta(days=1)
             upcoming_start = tomorrow + timedelta(days=1)
 
@@ -246,8 +243,13 @@ def new_activity(request):
         address = request.POST.get("address")
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
-        event_date = request.POST.get("event_date")
-        end_date = request.POST.get("end_date")
+        
+        event_date_naive = dateutil.parser.parse(request.POST.get("event_date"))
+        end_date_naive = dateutil.parser.parse(request.POST.get("end_date"))
+
+        event_date = timezone.make_aware(event_date_naive, timezone.get_default_timezone())
+        end_date = timezone.make_aware(end_date_naive, timezone.get_default_timezone())
+
         # upload photo to cloudinary and store URL in database
         uploaded_image_url = ""
         if "photo" in request.FILES:

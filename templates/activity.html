@@ -119,7 +119,7 @@
 {% endif %}
 
 <div class="absolute bottom-0 w-full">
-    <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
+    <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ activity.creator.email }} on {{ activity.created_at }}</p>
 </div>
 <audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
 {% endblock %}

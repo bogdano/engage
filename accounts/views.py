@@ -36,7 +36,7 @@ def send_login_link(request):
             # Send the login link via email
             subject = 'Your Login Link'
             message = render_to_string('auth/login_link.html', {'login_link': login_link})
-            from_email = 'atg-engage@bogz.dev'
+            from_email = 'noreply@engage.bogz.dev'
             send_mail(subject, message, from_email, [email])
             return render(request, 'auth/send_login_link.html',  {'success': 'An email with your login link has been sent to ' + email + '. Please check your inbox.'})
         else:
@@ -57,15 +57,16 @@ def login_with_link(request, uidb64, token):
         token_record = LoginToken.objects.get(user=user, token=token)
         print('Found token:', token_record.token)
         # Check if the token is expired 
-        if timezone.now() > token_record.expiration_date or token_record.used == True:
+        if timezone.now() > token_record.expiration_date: # or token_record.used == True:
             print('Token expired')
             token_record.delete()
             return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
         else:
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
-            # delete the aleady used token (breaks local if I don't delete, breaks deployed if I do)
-            print(f"deleting token {token}")
+            # delete the aleady used token (links sent to Microsoft Defender servers which use 
+            # Safelinks to scan links, thereby deleting the token before the user can use it to login)
+            # print(f"deleting token {token}")
             token_record.used = True
             token_record.save()
             return redirect('home')
@@ -116,7 +117,7 @@ def register(request):
         # Send the login link via email
         subject = 'Welcome! Use this link to log in'
         message = render_to_string('auth/login_link.html', {'login_link': login_link})
-        send_mail(subject, message, 'atg-engage@bogz.dev', [email])
+        send_mail(subject, message, 'noreply@engage.bogz.dev', [email])
 
         # Redirect or return a success message
         return render(request, 'auth/email_sent.html')
@@ -127,11 +128,11 @@ def register(request):
 
 def logout_view(request):
     # get all expired tokens and all used tokens
-    # tokens_query = LoginToken.objects.filter(Q(expiration_date__lt=timezone.now()) | Q(used=True))
-    # expired_or_used_tokens = tokens_query.all()
-    # # delete all expired tokens
-    # for token in expired_or_used_tokens:
-    #     token.delete()
+    tokens_query = LoginToken.objects.filter(Q(expiration_date__lt=timezone.now()) | Q(used=True))
+    expired_or_used_tokens = tokens_query.all()
+    # delete all expired tokens
+    for token in expired_or_used_tokens:
+        token.delete()
         
     logout(request)
     return redirect('home') 

@@ -1,7 +1,7 @@
 {
-    "name": "ATG Engage",
+    "name": "Engage",
     "short_name": "Engage",
-    "description": "Do fun shit. Get doubloons. Spend 'em.",
+    "description": "Do fun stuff. Get doubloons. Spend 'em.",
     "start_url": "/",
     "display": "standalone",
     "scope": "/",
@@ -13,7 +13,7 @@
     "lang": "en-US",
     "shortcuts": [
       {
-        "name": "Add activity",
+        "name": "Add Activity",
         "url": "/add_activity",
         "description": "Create a new event"
       },
