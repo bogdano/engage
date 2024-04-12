@@ -37,13 +37,13 @@ urlpatterns = [
     path("leaderboard/", views.leaderboard_view, name="leaderboard"),
     path("leaderboard/individual/", views.individual_leaderboard_view, name="individual_leaderboard"),
     path("leaderboard/team/", views.team_leaderboard_view, name="team_leaderboard"),
-
-    path("teams/", views.list_teams, name="list_teams"),
-    path("teams/create/", views.create_team, name="create_team"),
-    path("teams/join/", views.join_team, name="join_team"),
-
-    path("notifications/", views.notifications, name="notifications"),
-
+    path('teams/', views.list_teams, name='list_teams'),
+    path('teams/create/', views.create_team, name='create_team'),
+    path('teams/join/', views.join_team, name='join_team'),
+    path('edit-leaderboard/', views.edit_leaderboard, name='edit_leaderboard'),
+    path('edit-leaderboard/<int:pk>/', views.edit_leaderboard_detail, name='edit_leaderboard_detail'),
+    path('notifications/', include('notifications.urls')),
+  
     path("profile/", views.profile, name="profile"),
     path("edit_profile/", views.edit_profile, name="edit_profile"),
     path("outside_profile/", views.outside_profile, name="outside_profile"),
