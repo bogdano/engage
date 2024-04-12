@@ -42,8 +42,6 @@ urlpatterns = [
     path("teams/create/", views.create_team, name="create_team"),
     path("teams/join/", views.join_team, name="join_team"),
 
-    path("store/", views.store, name="store"),
-
     path("notifications/", views.notifications, name="notifications"),
 
     path("profile/", views.profile, name="profile"),
@@ -64,7 +62,10 @@ urlpatterns = [
     path("additional_users/<int:pk>/", views.additional_users, name="additional_users"),
 
     # service worker for offline PWA
-    # path('sw.js', views.ServiceWorker.as_view(), name="sw"),
+    path('sw.js', views.ServiceWorker.as_view(), name="sw"),
+    path('offline/', views.offline, name="offline"),
+
+    path("store/", views.store, name="store"),
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),

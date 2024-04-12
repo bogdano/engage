@@ -10,10 +10,14 @@ import cloudinary.uploader
 from datetime import datetime, timedelta
 from django.contrib import messages
 import dateutil.parser
+from django.views.generic import TemplateView
 
-# class ServiceWorker(TemplateView):
-#     template_name = "sw.js"
-#     content_type = "application/javascript"
+class ServiceWorker(TemplateView):
+    template_name = "sw.js"
+    content_type = "application/javascript"
+
+def offline(request):
+    return render(request, "offline.html")
 
 
 def home(request):
