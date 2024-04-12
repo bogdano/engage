@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-semibold mb-4">Edit Leaderboards</h1>
+    <div class="space-y-4">
+        {% for leaderboard in leaderboards %}
+        <div class="flex justify-between items-center bg-white p-4 shadow rounded">
+            <div>{{ leaderboard.leaderboard_name }}</div>
+            <a href="{% url 'edit_leaderboard_detail' leaderboard.id %}" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Edit</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

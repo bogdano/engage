@@ -1,15 +1,19 @@
-from .models import Team, Activity, Leaderboard, Item, UserParticipated
-from .forms import TeamCreateForm, JoinTeamForm
+from .models import Team, Activity, Leaderboard, Item, UserParticipated, Notification
+from .forms import TeamCreateForm, JoinTeamForm, LeaderboardForm
+from notifications.views import *
 from accounts.models import CustomUser
 from django.db.models import Sum, Count, Exists, OuterRef, Prefetch, Q
 from django.db.models.functions import TruncDay
+from django.http import HttpRequest, JsonResponse
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 import dateutil.parser
+from django.urls import reverse
 
 # class ServiceWorker(TemplateView):
 #     template_name = "sw.js"
@@ -191,11 +195,32 @@ def delete_activity(request, pk):
         return redirect("home")
     
 
+@login_required
 def approve_activity(request, pk):
     if request.user.is_staff:
+        # Retrieve the activity based on primary key (pk)
         activity = Activity.objects.get(pk=pk)
         activity.is_approved = True
         activity.save()
+
+        # Fetch all users to notify them about the approval
+        users = CustomUser.objects.all()  # Consider excluding the activity creator if needed
+
+        activity_url = request.build_absolute_uri(reverse('activity', args=[activity.pk]))
+
+        # Create a notification for each user
+        notifications = [
+            Notification(
+                recipient=user,
+                title=f"New Activity Posted: {activity.title}",
+                message=f"The activity titled '<a href=\"{activity_url}\">{activity.title}</a>' has been approved and is now live!",
+                read=False
+            )
+            for user in users
+        ]
+        Notification.objects.bulk_create(notifications)  # Use bulk_create for efficiency
+
+        # Redirect to the homepage or another appropriate page
         return redirect("home")
 
 
@@ -369,7 +394,6 @@ def leaderboard(request):
 
     return render(request, "leaderboard.html")
 
-
 def individual_leaderboard_view(request):
     leaderboards = Leaderboard.objects.all()
     selected_leaderboard_id = request.GET.get('leaderboard_id', None)
@@ -378,7 +402,7 @@ def individual_leaderboard_view(request):
     # Default to None, will be used to filter by date if specified
     start_date = None
 
-    now = datetime.now() 
+    now = datetime.now()
     if date_filter == "this_year":
         start_date = datetime(now.year, 1, 1)
     elif date_filter == "this_month":
@@ -391,19 +415,26 @@ def individual_leaderboard_view(request):
 
     if selected_leaderboard_id:
         user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
-    
+
     users_with_points = user_participations.values(
         'user__id', 'user__first_name', 'user__last_name'
     ).annotate(
         total_points=Sum('activity__points')
     ).order_by('-total_points')
 
-    return render(request, "leaderboard.html", {
-        "users_with_points": users_with_points,
-        "leaderboards": leaderboards,
-        "selected_leaderboard_id": selected_leaderboard_id,
-        "date_filter": date_filter
-    })
+    if request.headers.get('HX-Request', False):
+        # If HTMX request, only return the necessary partial
+        return render(request, "partials/individual_leaderboard.html", {
+            "users_with_points": users_with_points
+        })
+    else:
+        # Return the full page for normal requests
+        return render(request, "leaderboard.html", {
+            "users_with_points": users_with_points,
+            "leaderboards": leaderboards,
+            "selected_leaderboard_id": selected_leaderboard_id,
+            "date_filter": date_filter
+        })
 
 
 def team_leaderboard_view(request):
@@ -467,6 +498,22 @@ def leaderboard_view(request):
 
     return render(request, "leaderboard.html", context)
 
+def edit_leaderboard(request):
+    leaderboards = Leaderboard.objects.all()
+    return render(request, 'edit_leaderboard.html', {'leaderboards': leaderboards})
+
+def edit_leaderboard_detail(request, pk):
+    leaderboard = get_object_or_404(Leaderboard, pk=pk)
+    if request.method == 'POST':
+        form = LeaderboardForm(request.POST, instance=leaderboard)
+        if form.is_valid():
+            form.save()
+            # Redirect to a new URL:
+            return redirect('edit_leaderboard')
+    else:
+        form = LeaderboardForm(instance=leaderboard)
+    return render(request, 'edit_leaderboard_detail.html', {'form': form, 'leaderboard': leaderboard})
+
 def list_teams(request):
     teams = Team.objects.all()
     join_form = JoinTeamForm()
@@ -500,10 +547,6 @@ def join_team(request):
 def store(request):
     items = Item.objects.all()
     return render(request, "store.html", {"items": items})
-
-
-def notifications(request):
-    return render(request, "notifications.html")
 
 
 def profile(request):

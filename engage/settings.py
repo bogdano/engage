@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     "theme",
     "anymail",
     "cart",
+    "leaderboard",
+    "notifications"
 ]
 
 if DJANGO_ENVIRONMENT == "local":
