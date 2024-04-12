@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import dateutil.parser
+from django.urls import reverse
 
 # class ServiceWorker(TemplateView):
 #     template_name = "sw.js"
@@ -194,11 +195,32 @@ def delete_activity(request, pk):
         return redirect("home")
     
 
+@login_required
 def approve_activity(request, pk):
     if request.user.is_staff:
+        # Retrieve the activity based on primary key (pk)
         activity = Activity.objects.get(pk=pk)
         activity.is_approved = True
         activity.save()
+
+        # Fetch all users to notify them about the approval
+        users = CustomUser.objects.all()  # Consider excluding the activity creator if needed
+
+        activity_url = request.build_absolute_uri(reverse('activity', args=[activity.pk]))
+
+        # Create a notification for each user
+        notifications = [
+            Notification(
+                recipient=user,
+                title=f"New Activity Posted: {activity.title}",
+                message=f"The activity titled '<a href=\"{activity_url}\">{activity.title}</a>' has been approved and is now live!",
+                read=False
+            )
+            for user in users
+        ]
+        Notification.objects.bulk_create(notifications)  # Use bulk_create for efficiency
+
+        # Redirect to the homepage or another appropriate page
         return redirect("home")
 
 
@@ -380,7 +402,7 @@ def individual_leaderboard_view(request):
     # Default to None, will be used to filter by date if specified
     start_date = None
 
-    now = datetime.now() 
+    now = datetime.now()
     if date_filter == "this_year":
         start_date = datetime(now.year, 1, 1)
     elif date_filter == "this_month":
@@ -393,19 +415,26 @@ def individual_leaderboard_view(request):
 
     if selected_leaderboard_id:
         user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
-    
+
     users_with_points = user_participations.values(
         'user__id', 'user__first_name', 'user__last_name'
     ).annotate(
         total_points=Sum('activity__points')
     ).order_by('-total_points')
 
-    return render(request, "leaderboard.html", {
-        "users_with_points": users_with_points,
-        "leaderboards": leaderboards,
-        "selected_leaderboard_id": selected_leaderboard_id,
-        "date_filter": date_filter
-    })
+    if request.headers.get('HX-Request', False):
+        # If HTMX request, only return the necessary partial
+        return render(request, "partials/individual_leaderboard.html", {
+            "users_with_points": users_with_points
+        })
+    else:
+        # Return the full page for normal requests
+        return render(request, "leaderboard.html", {
+            "users_with_points": users_with_points,
+            "leaderboards": leaderboards,
+            "selected_leaderboard_id": selected_leaderboard_id,
+            "date_filter": date_filter
+        })
 
 
 def team_leaderboard_view(request):

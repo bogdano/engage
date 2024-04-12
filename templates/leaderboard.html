@@ -36,6 +36,9 @@
             <a href="{% url 'edit_leaderboard_detail' selected_leaderboard_id %}" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg">Edit Leaderboard</a>
         </div>
         {% endif %}
+        <!-- Add this inside your HTML body where you want the button to appear -->
+        <a href="{% url 'list_teams' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">View Joinable Teams</a>
+
     </div>
 </body>
 <body class="bg-gray-50">

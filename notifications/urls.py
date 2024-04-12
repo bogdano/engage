@@ -4,5 +4,5 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path("notifications/", views.notifications, name="notifications"),
+    path("", views.notifications, name="notifications"),
 ]
