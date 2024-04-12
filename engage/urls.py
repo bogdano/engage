@@ -43,7 +43,7 @@ urlpatterns = [
     path('edit-leaderboard/', views.edit_leaderboard, name='edit_leaderboard'),
     path('edit-leaderboard/<int:pk>/', views.edit_leaderboard_detail, name='edit_leaderboard_detail'),
     path('notifications/', include('notifications.urls')),
-    path("store/", views.store, name="store"),
+  
     path("profile/", views.profile, name="profile"),
     path("edit_profile/", views.edit_profile, name="edit_profile"),
     path("outside_profile/", views.outside_profile, name="outside_profile"),
@@ -62,7 +62,10 @@ urlpatterns = [
     path("additional_users/<int:pk>/", views.additional_users, name="additional_users"),
 
     # service worker for offline PWA
-    # path('sw.js', views.ServiceWorker.as_view(), name="sw"),
+    path('sw.js', views.ServiceWorker.as_view(), name="sw"),
+    path('offline/', views.offline, name="offline"),
+
+    path("store/", views.store, name="store"),
     path("new_item/", views.new_item, name="new_item"),
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),

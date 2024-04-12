@@ -182,5 +182,18 @@ function initializeDraggableContainer() {
     });
 }
 initializeDraggableContainer()    
+
+// register service worker for offline support in PWA
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('{% url "sw" %}').then(function(registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+}
 </script>
 {% endblock %}

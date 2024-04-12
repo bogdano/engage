@@ -39,7 +39,6 @@ SECRET_KEY = env.str("SECRET_KEY")
 
 # SET DEFAULT TO FALSE, FOR DEPLOYMENT !!!!!!!!!!!
 DEBUG = env.bool("DEBUG", default=False)
-# DEBUG = False
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "engage.bogz.dev"]
 CSRF_TRUSTED_ORIGINS = ["https://engage.bogz.dev"]

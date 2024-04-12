@@ -13,11 +13,15 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import dateutil.parser
+from django.views.generic import TemplateView
 from django.urls import reverse
 
-# class ServiceWorker(TemplateView):
-#     template_name = "sw.js"
-#     content_type = "application/javascript"
+class ServiceWorker(TemplateView):
+    template_name = "sw.js"
+    content_type = "application/javascript"
+
+def offline(request):
+    return render(request, "offline.html")
 
 
 def home(request):

@@ -13,6 +13,8 @@ import uuid
 from django.db.models import Q
 
 def send_login_link(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
@@ -66,6 +68,7 @@ def login_with_link(request, uidb64, token):
             login(request, user)
             # delete the aleady used token (links sent to Microsoft Defender servers which use 
             # Safelinks to scan links, thereby deleting the token before the user can use it to login)
+            # that's why the .used == true condition before token deletion is commented out above
             # print(f"deleting token {token}")
             token_record.used = True
             token_record.save()
@@ -130,7 +133,7 @@ def logout_view(request):
     # get all expired tokens and all used tokens
     tokens_query = LoginToken.objects.filter(Q(expiration_date__lt=timezone.now()) | Q(used=True))
     expired_or_used_tokens = tokens_query.all()
-    # delete all expired tokens
+    # delete all expired tokens periodically, on logout because we can't delete tokens on access cause of Microsoft
     for token in expired_or_used_tokens:
         token.delete()
         
