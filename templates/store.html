@@ -1,43 +1,52 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 
 {% block content %}
 
 {% if user.is_staff %}
-<a href="{% url 'add_item' %}"
-    class="fixed bottom-24 right-4 md:right-72 md:bottom-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center z-50">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-    </svg>
-    {% endif %}
+<div>
+    <a href="{% url 'add_item' %}"
+        class="fixed bottom-24 right-4 md:right-72 md:bottom-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+    </a>
+</div>
+{% endif %}
 
-    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-green-300">
-        <a href="./home.html" class="text-xl text-black">Back</a>
-        <p class="text-3xl">Store</p>
-        <p>Balance: {{user.balance}}</p>
-        <div hx-get="{% url 'hx_menu_cart' %}" hx-trigger="update-menu-cart from:body" hx-swap="innerHTML">
+
+<h1 class="text-4xl md:text-5xl font-extrabold text-center mt-12 ml-5 mb-5">Store</h1>
+<div class="relative">
+    <div class="flex">
+        <p class="px-1 text-2xl md:text-3xl font-extrabold text-center ml-5 mb-5">Balance: {{user.balance}}</p>
+        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+        <div class="fixed top-24 right-4 md:right-72 md:top-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-full shadow-lg flex items-center justify-center z-50"
+            hx-get="{% url 'hx_menu_cart' %}" hx-trigger="update-menu-cart from:body" hx-swap="innerHTML">
             {% include 'cart/menu_cart.html' %}
         </div>
-    </nav>
+    </div>
+</div>
 
 
-    <div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
-        <div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-gray-200 rounded-xl">
-            <div>
-                <div class="grid grid-cols-[repeat(auto-fill,10rem)] gap-2 justify-between ">
-                    {% for item in items %}
-                    {% include 'partials/item_card.html' %}
-                    {% endfor %}
-                </div>
+
+
+<div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
+    <div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-gray-200 rounded-xl">
+        <div>
+            <div class="grid grid-cols-[repeat(auto-fill,10rem)] gap-2 justify-between ">
+                {% for item in items %}
+                {% include 'partials/item_card.html' %}
+                {% endfor %}
             </div>
-
         </div>
-
-
 
     </div>
 
 
 
-    {% endblock %}
+</div>
+
+
+
+{% endblock %}

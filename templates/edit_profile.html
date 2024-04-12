@@ -3,22 +3,27 @@
 {% block title %} Profile {% endblock %}
 {% block content %}
 
-<body class="flex flex-col min-h-screen bg-yellow-100">
-    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
-        <a href="{% url 'edit_profile' %}"
-            class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit profile
-        </a>
+<body class="flex flex-col min-h-screen bg-white">
+    <nav class="flex py-6 justify-between shadow text-center px-4 py-6 bg-white">
+
 
         <div class="flex items-center">
             <div class="relative">
-                <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-12 w-12">
-                <p class="absolute bottom-0 left-0 right-0 text-center px-6 font-medium">
-                    {{ user.first_name }} {{ user.last_name }}</p>
+                <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-20 w-20">
+
             </div>
         </div>
+
+        <!-- this is the text for the user name-->
+        <p class="text-center px-6 font-bold text-lg">
+            {{ user.first_name }} {{ user.last_name }}</p>
+
         <!--
         <img src="/static/icons/coin.svg" alt="" class="rounded-full h-12 w-12"> -->
-        <p class=" px-6 font-medium text-black">Balance: {{ user.balance }}</p>
+        <div class="flex items-center ml-4">
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            <p class="text-yellow-500 font-bold text-2xl">{{ user.balance }}</p>
+        </div>
     </nav>
 
     <div class="flex flex-col justify-center items-center h-screen">

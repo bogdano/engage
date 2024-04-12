@@ -10,24 +10,29 @@
     <title>Profile</title>
 </head>-->
 
-<body class="flex flex-col min-h-screen bg-yellow-100">
-    <nav class="flex py-6 justify-between text-center px-4 py-6 bg-yellow-300">
-        <a href="{% url 'edit_profile' %}"
-            class="px-6 font-medium rounded-xl text-black bg-yellow-500 hover:bg-yellow-600">Edit Profile
-        </a>
+<body class="flex flex-col min-h-screen bg-white">
+    <nav class="flex py-6 justify-between shadow text-center px-4 py-6 bg-white">
 
 
         <div class="flex items-center">
             <div class="relative">
-                <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-12 w-12">
-                <p class="absolute bottom-0 left-0 right-0 text-center px-6 font-medium">
-                    {{ user.first_name }} {{ user.last_name }}</p>
+                <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-20 w-20">
+
             </div>
         </div>
 
+        <!-- this is the text for the user name-->
+        <p class="text-center px-6 font-bold text-lg">
+            {{ user.first_name }} {{ user.last_name }}</p>
+
         <!--
         <img src="/static/icons/coin.svg" alt="" class="rounded-full h-12 w-12"> -->
-        <p class=" px-6 font-medium text-black">Balance: {{ user.balance }}</p>
+        <div class="flex items-center ml-4">
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            <p class="text-yellow-500 font-bold text-2xl">{{ user.balance }}</p>
+        </div>
+
+
     </nav>
 
 
@@ -35,19 +40,16 @@
 
     <div class="flex-grow">
         <!-- this is the content of the page-->
-        <div class="w-4/5">
-            <p class="px-6 font-medium text-black uppercase">Team:</p>
-            <p class="px-6 font-medium text-black">Team Name Placeholder</p>
+        <div class="flex py-6 justify-between shadow text-center px-4 py-6 bg-white">
+            <p class="px-6 font-medium text-black uppercase text-lg">Team:</p>
+            <p class="px-6 font-medium text-black text-lg">Team Name Placeholder</p>
             <img src="/static/logo.png" alt=" " class="rounded-full h-12 w-12">
         </div>
-
-        <img src="#" alt=" " class="rounded-full h-12 w-12">
-
     </div>
 
-    <div class="flex-grow">
+    <div class="flex py-6 justify-between shadow text-center px-4 py-6 bg-white">
         <!-- this is the content of the page-->
-        <p class="px-6 font-medium text-black uppercase"> Lifetime Points: {{ user.lifetime_points }}</p>
+        <p class="px-6 font-medium text-black uppercase text-lg"> Lifetime Points: {{ user.lifetime_points }}</p>
     </div>
 
     <div class="flex-grow">
@@ -55,10 +57,22 @@
         <!-- here, when the user presses the edit button this pops up as the text to be entered
         <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
         -->
+        <!-- this is the About Me section that is filled into the Bio section of the register proses-->
+        <p class="flex py-6 justify-between shadow text-center px-4 py-6 bg-white"> About Me: {{ user.description }}</p>
 
-        <p class="px-6 fornt-medium text black"> About Me: {{ user.description }}</p>
-        <!-- This below is for when the edit is finished, not yet done-->
-        <!--<p class="px-6 font-medium text-black">{{ user.description }}</p>-->
+    </div>
+
+    <div class="flex justify-center pb-6">
+        <div class="p-10">
+            <!-- LOOK AT ME HERE! FIX BELOW! -->
+
+            <!-- I think that I will adapt this to the htmx I looked at the leaderboard.html and this is what I do next time-->
+
+            <a href="{% url 'edit_profile' %}"
+                class="h-14 p-4 border border-amber-500 rounded-2xl bg-amber-500 text-white hover:bg-amber-600">Edit
+                Profile
+            </a>
+        </div>
     </div>
 
 

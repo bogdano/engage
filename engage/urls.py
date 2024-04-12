@@ -33,6 +33,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.home, name="home"),
     path("accounts/", include("accounts.urls")),
+
     path("leaderboard/", views.leaderboard_view, name="leaderboard"),
     path("leaderboard/individual/", views.individual_leaderboard_view, name="individual_leaderboard"),
     path("leaderboard/team/", views.team_leaderboard_view, name="team_leaderboard"),
@@ -44,27 +45,22 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path("store/", views.store, name="store"),
     path("profile/", views.profile, name="profile"),
-    path("edit_profile", views.edit_profile, name="edit_profile"),
+    path("edit_profile/", views.edit_profile, name="edit_profile"),
+    path("outside_profile/", views.outside_profile, name="outside_profile"),
+
     path("add_activity/", views.add_activity, name="add_activity"),
     path("activity/<int:pk>/", views.activity, name="activity"),
     path("new_activity/", views.new_activity, name="new_activity"),
-    path(
-        "bookmark_activity/<int:pk>/", views.bookmark_activity, name="bookmark_activity"
-    ),
-    path(
-        "bookmark_activity_from_activity/<int:pk>/",
-        views.bookmark_activity_from_activity,
-        name="bookmark_activity_from_activity",
-    ),
-    path(
-        "load-more-activities/", views.load_more_activities, name="load_more_activities"
-    ),
-    path(
-        "award_participation_points/<int:pk>/",
-        views.award_participation_points,
-        name="award_participation_points",
-    ),
+    path("bookmark_activity/<int:pk>/", views.bookmark_activity, name="bookmark_activity"),
+    path("bookmark_activity_from_activity/<int:pk>/", views.bookmark_activity_from_activity, name="bookmark_activity_from_activity"),
+    path("load-more-activities/", views.load_more_activities, name="load_more_activities"),
+    path("award_participation_points/<int:pk>/", views.award_participation_points, name="award_participation_points"),
+    path("edit_activity/<int:pk>/", views.edit_activity, name="edit_activity"),
+    path("update_activity/<int:pk>/", views.update_activity, name="update_activity"),
+    path("delete_activity/<int:pk>/", views.delete_activity, name="delete_activity"),
+    path("approve_activity/<int:pk>/", views.approve_activity, name="approve_activity"),
     path("additional_users/<int:pk>/", views.additional_users, name="additional_users"),
+
     # service worker for offline PWA
     # path('sw.js', views.ServiceWorker.as_view(), name="sw"),
     path("new_item/", views.new_item, name="new_item"),
@@ -77,7 +73,6 @@ urlpatterns = [
     path("hx_cart_total/", hx_cart_total, name="hx_cart_total"),
     path("checkout/", checkout, name="checkout"),
     path("clear_cart/", clear_cart, name="clear_cart"),
-    # path('', include('pwa.urls')),
 ]
 
 if settings.DJANGO_ENVIRONMENT == "local":

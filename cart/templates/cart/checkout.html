@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Checkout{% endblock %}
 
@@ -9,11 +10,17 @@
         {% for item in cart %}
         {% include 'cart/partials/checkout_item.html' %}
         {% endfor %}
-        <h2 class="py-5 text-xl">Your order has been sent to an admin for processing.
-        </h2>
+        <div class="flex py-5">
+            <h2 class="text-xl px-1">Your order has been sent to an admin for processing. Your new balance is
+                {{user.balance|floatformat:0}}
+            </h2>
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            <p>.</p>
+
+        </div>
     </div>
 
 </div>
 
-<a href="{% url 'clear_cart' %}" class="px-8 py-4 rounded-xl bg-purple-500 hover:bg-purple-700 text-white">Back</a>
+<a href="{% url 'clear_cart' %}" class="px-8 py-4 rounded-xl bg-amber-400 hover:bg-amber-600 text-white">Back</a>
 {% endblock %}

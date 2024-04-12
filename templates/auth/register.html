@@ -3,13 +3,13 @@
 {% block title %}Register{% endblock %}
 {% block content %}
 <div class="flex flex-col justify-center items-center h-screen px-4 my-12">
-    <img src="{% static '/logo.webp' %}" alt="logo" class="w-60 h-60 mb-8">
+    <img src="{% static 'logo.webp' %}" alt="logo" class="w-60 h-60 mb-8">
     <h1 class="text-5xl font-extrabold mb-4">Register</h1>
     {% if error %}
         <p class="text-red-500 mb-4 italic text-center">{{ error }}</p>
     {% endif %}
     <a href="{% url 'send_login_link' %}" class="mb-5 text-slate-500 hover:underline">or, <span class="underline">login</span> here</a> 
-    <form hx-post="{% url 'register' %}" hx-target=".htmx-body" enctype="multipart/form-data" class="w-full max-w-md space-y-4">
+    <form hx-post="{% url 'register' %}" hx-target=".htmx-body" hx-indicator=".loading-bar" hx-disabled-elt="button" enctype="multipart/form-data" class="w-full max-w-md space-y-4">
         {% csrf_token %}
         <input type="email" name="email" placeholder="your@email.com" required class="w-full h-14 p-2 border border-gray-300 rounded-2xl  focus:border-amber-400 focus:outline-none focus:ring-0" autofocus>
         <div class="flex justify-between space-x-2">
@@ -20,14 +20,83 @@
         <input type="text" name="position" placeholder="Position" class="w-full p-2 h-14 border border-gray-300 rounded-2xl focus:border-amber-400 focus:outline-none focus:ring-0">
         <textarea name="description" placeholder="Bio" class="w-full p-2 h-20 border border-gray-300 rounded-2xl resize-y focus:border-amber-400 focus:outline-none focus:ring-0"></textarea>
         
-        <label class="w-full flex h-14 items-center shadow justify-center p-2 border border-gray-300 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
-            <input type="file" name="profile_picture" id="fileInput" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
-            <span>Upload Profile Picture</span>
+        <label class="drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+            <input type="file" name="profile_picture" id="fileInputRegister" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
+            <span id="imageDroppedRegister" class="inline-flex">Upload profile picture</span>
         </label>
         
         <button type="submit" class="w-full h-14 p-2 border border-amber-500 rounded-2xl bg-amber-500 text-white hover:bg-amber-600">Register</button>
     </form>
 </div>   
 {% endblock %}
-    
+
+{% block scripts %}
+<script>
+function initializeAddActivity() {
+    if (document.getElementById('imageDroppedRegister') === null) return
+    // DRAG AND DROG FILE UPLOAD
+    const dropArea = document.querySelector('.drag-drop');
+    const fileLabel = document.getElementById('imageDroppedRegister');
+    const fileInput = document.getElementById('fileInputRegister');
+    fileInput.addEventListener('change', function() {
+        // Check if files were selected
+        if (fileInput.files.length > 0) {
+            // Update the label with the name of the first selected file
+            fileLabel.textContent = fileInput.files[0].name;
+            dropArea.classList.add('drag-over');
+        }
+    });
+
+    // Highlight drop area when file is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    // Unhighlight drop area when dragging leaves it or drops
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Prevent default behavior (prevent file from being opened)
+    dropArea.addEventListener('dragover', preventDefaults, false);
+    dropArea.addEventListener('dragenter', preventDefaults, false);
+    dropArea.addEventListener('dragleave', preventDefaults, false);
+    dropArea.addEventListener('drop', preventDefaults, false);
+
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        dropArea.classList.add('drag-over');
+    }
+
+    function unhighlight(e) {
+        dropArea.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        // Call a function to handle the files
+        // For this example, we'll just pass it to the input
+        fileInput.files = files;
+
+        // Optionally, you can emit a change event on the input
+        // if you need to trigger any 'change' event listeners
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+        fileLabel.innerText = files[0].name;
+        dropArea.classList.add('drag-over');
+    }
+}
+
+initializeAddActivity();
+</script>
+{% endblock %}
     

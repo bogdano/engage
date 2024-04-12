@@ -57,7 +57,11 @@
             <div class="w-full space-y-3 mb-4">
                 <h2 class="text-center text-xl text-amber-300 font-bold mb-4">{{ query_date }}</h2>
                 {% for activity in activities %}
-                    {% include 'partials/activity_card.html' %}
+                    {% if activity.is_approved %}
+                        {% include 'partials/activity_card.html' %}
+                    {% elif request.user.is_staff or request.user == activity.creator %}
+                        {% include 'partials/activity_card.html' %}
+                    {% endif %}
                 {% endfor %}
             </div>
         {% else %}
@@ -65,7 +69,11 @@
                 <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Today</h2>
                     {% for activity in today_activities %}
-                        {% include 'partials/activity_card.html' %}
+                        {% if activity.is_approved %}
+                            {% include 'partials/activity_card.html' %}
+                        {% elif request.user.is_staff or request.user == activity.creator %}
+                            {% include 'partials/activity_card.html' %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
@@ -73,7 +81,11 @@
                 <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Tomorrow</h2>
                     {% for activity in tomorrow_activities %}
-                        {% include 'partials/activity_card.html' %}
+                        {% if activity.is_approved %}
+                            {% include 'partials/activity_card.html' %}
+                        {% elif request.user.is_staff or request.user == activity.creator %}
+                            {% include 'partials/activity_card.html' %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
@@ -81,7 +93,11 @@
                 <div class="w-full space-y-3 mb-4">
                     <h2 class="text-center text-xl text-amber-300 font-bold mb-4">Upcoming</h2>
                     {% for activity in upcoming_activities %}
-                        {% include 'partials/activity_card.html' %}
+                        {% if activity.is_approved %}
+                            {% include 'partials/activity_card.html' %}
+                        {% elif request.user.is_staff or request.user == activity.creator %}
+                            {% include 'partials/activity_card.html' %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}

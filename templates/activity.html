@@ -4,15 +4,29 @@
 {% block title %}{{ activity.title }}{% endblock %}
 
 {% block content %}
-<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
-
 <!-- add a back button, maybe? -->
 <!-- <button onclick="window.history.back()">go back</button> -->
 
-<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12">
+<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12 px-2">
     <h1 class="mb-5 font-extrabold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
-    {% include 'partials/bookmark_button.html' %}
+    <div class="flex flex-row mb-6 space-x-2">
+        {% include 'partials/bookmark_button.html' %}
+        {% if request.user.is_staff %}
+            <button hx-post="{% url 'edit_activity' activity.pk %}" hx-replace-url="true" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 border rounded-xl border-amber-200 hover:bg-amber-50 shadow-md">
+                <img src="{% static 'icons/edit.svg' %}" alt="Edit Icon" class="w-6 h-6">
+            </button>
+            <button hx-delete="{% url 'delete_activity' activity.pk %}" hx-confirm="Are you sure you want to delete this activity?" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 border rounded-xl border-rose-200 hover:bg-rose-50 shadow-md">
+                <img src="{% static 'icons/delete.svg' %}" alt="Delete Icon" class="w-6 h-6">
+            </button>
+        {% endif %}
+    </div>
 </div>
+
+{% if not activity.is_approved %}
+    <div class="flex justify-center items-center mb-6">
+        <span class="px-4 py-1 bg-rose-300 font-extrabold text-sm text-white rounded-2xl">NOT YET APPROVED</span>
+    </div>
+{% endif %}
 
 {% if request.user in activity.interested_users.all and not user_has_participated and not activity.is_active %}
     <div id="points-button-container" class="flex justify-center items-center mb-5">
@@ -35,48 +49,64 @@
     {% if activity.leaderboards.all %}
     <div class="flex justify-center space-x-1">
         {% for leaderboard in activity.leaderboards.all %}
-            <a href="#" class="bg-amber-500 hover:bg-amber-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
+            <a href="{% url 'individual_leaderboard' %}?leaderboard_id={{ leaderboard.pk }}&date_filter=this_month" class="bg-amber-500 hover:bg-amber-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
         {% endfor %}
     </div>
     {% endif %}
 
     <div class="flex justify-center mt-5">
-        <div class="flex items-center space-x-3 border-amber-200 bg-amber-50 px-6 py-4 border rounded-2xl">
+        {% if activity.event_date|date:"d M" == activity.end_date|date:"d M" %}
+            <div class="flex flex-col border-amber-100 bg-amber-50 px-6 py-4 border rounded-2xl">
+                <p class="text-center font-extrabold text-2xl text-amber-800">{{ activity.event_date | date:"d M" }}</p>
+                <div class="flex items-center space-x-1">
+                    <p class="text-sm">{{ activity.event_date | date:"g:iA" }}</p> <!-- Format time -->
+                    <div class="text-2xl text-stone-500 self-center">
+                        <span>-</span>
+                    </div>
+                    <p class="text-sm">{{ activity.end_date | date:"g:iA" }}</p> <!-- Format time -->
+                </div>
+            </div>
+        {% else %}
+        <div class="flex items-center space-x-3 border-amber-100 bg-amber-50 px-6 py-4 border rounded-2xl">
             <div class="text-center">
-                <p class="font-extrabold text-xl text-stone-500">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="font-extrabold text-2xl text-amber-800">{{ activity.event_date | date:"d M" }}</p> <!-- Format date -->
                 <p class="text-sm">{{ activity.event_date | date:"g:iA" }}</p> <!-- Format time -->
             </div>
             <div class="text-2xl text-stone-500 self-center">
                 <span>-</span>
             </div>
             <div class="text-center">
-                <p class="font-extrabold text-xl text-stone-500">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
+                <p class="font-extrabold text-2xl text-amber-800">{{ activity.end_date | date:"d M" }}</p> <!-- Format date -->
                 <p class="text-sm">{{ activity.end_date | date:"g:iA" }}</p> <!-- Format time -->
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 
-<div class="relative flex justify-center items-center bg-slate-100 mt-8 md:rounded-2xl h-72">
-    <div id="map" class="md:rounded-2xl w-full h-full cursor-pointer"></div>
+<a href="https://www.google.com/maps/search/?api=1&query={{ activity.latitude }},{{ activity.longitude }}" class="relative flex justify-center items-center bg-stone-100 mt-8 md:rounded-2xl h-72">
+    <img 
+        src="https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-l+e85151({{ activity.longitude }},{{ activity.latitude }})/{{ activity.longitude }},{{ activity.latitude }},15.2,0/1152x288@2x?access_token=pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w"
+        class="w-full h-full mx-0 md:mx-2 md:rounded-2xl object-cover object-center"
+        loading="lazy">
     <span class="right-1.5 bottom-1.5 z-10 absolute bg-amber-300 px-2 py-1 md:px-4 md:py-2 text-sm md:text-base rounded-2xl font-bold text-stone-600">
         @ {{ activity.address }}
     </span>
-</div>  
+</a>
 
 <p class="my-10 text-md md:text-lg px-6 text-center">{{ activity.description }}</p>
 
 {% if other_interested_users.all %}
-<div class="mb-10 mx-4 p-3 bg-stone-50 rounded-2xl">
-    <p class="font-semibold text-stone-500 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
-    <div id="users-list" class="grid grid-cols-1 md:grid-cols-4 gap-2 text-sm px-2 md:text-md">
+<div class="mb-10 p-3 bg-amber-50 border border-amber-100 rounded-2xl w-fit min-w-96 mx-auto">
+    <p class="font-semibold text-amber-500 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
+    <div id="users-list" class="flex flex-wrap md:space-x-3 text-sm px-2 md:text-md">
         {% with users=other_interested_users.all|slice:":8" %}
             {% include 'partials/additional_users.html' %}
         {% endwith %}
     </div>
     {% if other_interested_users.all|length > 8 %}
         <div class="flex justify-center items-center pt-5">
-            <button class="show-more-button font-semibold text-stone-400 text-sm" hx-get="{% url 'additional_users' activity.pk %}" hx-target="#users-list" hx-swap="beforeend transition:true"  hx-on:htmx:after-request="this.remove()">Show all</button>
+            <button class="show-more-button font-semibold text-amber-400 text-sm" hx-get="{% url 'additional_users' activity.pk %}" hx-target="#users-list" hx-swap="beforeend transition:true"  hx-on:htmx:after-request="this.remove()">Show all</button>
         </div>
     {% endif %}
 </div>
@@ -84,12 +114,12 @@
 
 {% if activity.photo %}
 <div class="flex justify-center items-center rounded-2xl">
-    <img src="{{ activity.photo }}" alt="Activity Image" class="md:rounded-2xl max-w-full md:max-h-96 mb-16" loading="lazy">
+    <img src="{{ activity.photo }}" alt="Activity Image" class="md:rounded-2xl max-w-full md:max-h-96 mb-16 bg-stone-100" loading="lazy">
 </div>
 {% endif %}
 
 <div class="absolute bottom-0 w-full">
-    <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ user.email }} on {{ activity.created_at }}</p>
+    <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ activity.creator.email }} on {{ activity.created_at }}</p>
 </div>
 <audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
 {% endblock %}
@@ -102,41 +132,5 @@ function awardPoints() {
     audio.play()
     console.log('Awarded points!')
 }   
-
-// Check if Mapbox GL JS is already loaded
-if (typeof mapboxgl === 'undefined') {
-    // Create a new script element to load Mapbox GL JS
-    var script = document.createElement('script');
-    script.onload = function() {
-        // Once loaded, set the access token and initialize the map
-        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
-        initializeMap();
-    };
-    script.src = 'https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js';
-    document.head.appendChild(script);
-} else {
-    // Mapbox GL JS is already loaded, just initialize the map
-    initializeMap();
-}
-function initializeMap() {
-    // Ensuring mapboxgl is defined and the map container exists
-    if (typeof mapboxgl !== 'undefined' && document.getElementById('map')) {
-        mapboxgl.accessToken = 'pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w';
-        const map = new mapboxgl.Map({
-            container: 'map',
-            center: ["{{ activity.longitude }}", "{{ activity.latitude }}"],
-            zoom: 15,
-            interactive: false,
-        });
-
-        new mapboxgl.Marker({ "color": "#e85151" })
-            .setLngLat(["{{ activity.longitude }}", "{{ activity.latitude }}"])
-            .addTo(map);
-
-        map.on('click', function() {
-            window.location.href = `https://www.google.com/maps/search/?api=1&query={{ activity.latitude }},{{ activity.longitude }}`;
-        });
-    }
-}
 </script>  
 {% endblock %}

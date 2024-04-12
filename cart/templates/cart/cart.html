@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Cart{% endblock %}
 
@@ -22,8 +23,25 @@
             </span>
         </div>
 
-        <a href="{% url 'checkout' %}"
-            class="inline-block px-8 py-4 rounded-xl bg-purple-500 hover:bg-purple-700 text-white">Redeem</a>
+        <div class="mb-6 flex justify-between">
+            <span class="font-semibold">Balance</span>
+            <span class="flex">
+                <p class="px-1">{{ user.balance }}</p>
+                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+
+            </span>
+        </div>
+        <div>
+            {% include 'cart/partials/summary.html' %}
+            {% if insufficient_funds %}
+
+            <p class="text-red-500">You have insufficient currency for these items!</p>
+            {% endif %}
+            {% if empty_cart %}
+
+            <p class="text-red-500">Your cart is empty!</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

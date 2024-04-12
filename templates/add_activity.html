@@ -9,18 +9,18 @@
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
 
     <h1 class="text-4xl md:text-5xl font-extrabold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
-    <form action="{% url 'new_activity' %}" method="post" enctype="multipart/form-data" class="px-4 lg:px-0">
+    <form hx-post="{% url 'new_activity' %}" hx-indicator=".loading-bar" hx-target=".htmx-body" hx-disabled-elt="button" enctype="multipart/form-data" class="px-4 lg:px-0">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">
             <input type="text" name="title" placeholder="Title" required autofocus class=" focus:border-amber-400 focus:outline-none focus:ring-0 px-4 py-2 my-2 border border-gray-300 rounded-2xl text-2xl w-full md:w-auto md:flex-grow h-14">
             <div class="inline-flex">
-                <input type="number" name="points" placeholder="0" required class="focus:border-amber-400 focus:outline-none focus:ring-0 text-yellow-500 placeholder-yellow-500 px-4 py-2 my-2 border border-r-0 border-gray-300 rounded-l-2xl text-4xl w-full md:w-36 h-14">
+                <input type="number" min="1" name="points" placeholder="0" required class="focus:border-amber-400 focus:outline-none focus:ring-0 text-yellow-500 placeholder-yellow-500 px-4 py-2 my-2 border border-r-0 border-gray-300 rounded-l-2xl text-4xl w-full md:w-36 h-14">
                 <img src="{% static 'icons/coin.svg' %}" class="h-14 w-14 my-auto border border-amber-400 p-2 rounded-r-2xl bg-amber-200">
-              </div>
+            </div>
         </div>
         
         <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
-        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Should points go to a leaderboard?" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Contributes to which leaderboards?" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
             {% for leaderboard in leaderboards %}
                 <option value="{{ leaderboard.leaderboard_name }}">{{ leaderboard.leaderboard_name }}</option>
             {% endfor %}
@@ -49,7 +49,7 @@
 
         <label class="drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="photo" id="fileInput" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
-            <span id="imageDropped">Upload image for activity</span>
+            <span id="imageDropped" class="inline-flex">Upload image for activity</span>
         </label>
 
         {% if request.user.is_staff %}
@@ -61,33 +61,9 @@
         </div>
         {% endif %}
         <div class="flex justify-center">
-            <button type="submit" class="w-full md:w-80 px-4 py-4 my-2 bg-amber-300 text-white font-bold rounded-2xl shadow-lg hover:bg-amber-400">Add activity</button>
+            <button type="submit" class="w-full md:w-80 px-4 py-4  bg-amber-300 text-white font-bold rounded-2xl shadow-lg hover:bg-amber-400">Add activity</button>
         </div>
     </form>
-
-    <style>
-        .ts-control {
-            padding: 0;
-            border: none;
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-        } .ts-control input {
-            font-size: 1rem;
-        }
-        .focus {
-            border-color: #fbbf24;
-        }
-        .ts-dropdown {
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            margin-top: 0.5rem;
-        }
-        .drag-over {
-            background-color: #ecfce7; 
-            border-color: #2a4800; 
-        }
-    </style>
 {% endblock %}
 
 {% block scripts %}
@@ -151,7 +127,8 @@ function initializeMap() {
         center: [-114.01, 46.872],
         zoom: 15.2,
         scrollZoom: {around: 'center'},
-        touchZoomRotate: {around: 'center'}
+        touchZoomRotate: {around: 'center'},
+        style: 'mapbox://styles/mapbox/streets-v12',
     })
 
     // Add the control to the map.
@@ -279,14 +256,14 @@ function initializeAddActivity() {
 
         // Call a function to handle the files
         // For this example, we'll just pass it to the input
-        document.getElementById('fileInput').files = files;
+        fileInput.files = files;
 
         // Optionally, you can emit a change event on the input
         // if you need to trigger any 'change' event listeners
         const event = new Event('change', { bubbles: true });
-        document.getElementById('fileInput').dispatchEvent(event);
-        document.getElementById('imageDropped').innerText = files[0].name;
-        document.querySelector('.drag-drop').classList.add('drag-over');
+        fileInput.dispatchEvent(event);
+        fileLabel.innerText = files[0].name;
+        dropArea.classList.add('drag-over');
     }
 }
 
