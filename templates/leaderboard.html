@@ -9,12 +9,39 @@
     <!-- Ensure your static path to CSS is correct -->
     <link href="{% static 'css/tailwind.min.css' %}" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org" defer></script>
+    <style>
+        /* Dynamically set the background color if a leaderboard is selected */
+        {% if selected_leaderboard_color %}
+        body { background-color: {{ selected_leaderboard_color }}; }
+        {% endif %}
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="{% if selected_leaderboard_color %}custom-bg-color{% endif %} bg-gray-50">
     {% block content %}
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-4xl font-bold text-center mb-8">Leaderboard</h1>
 
+        <!-- Display the selected leaderboard's logo if available -->
+        {% if selected_leaderboard_logo %}
+        <div class="text-center mb-4">
+            <img src="{{ selected_leaderboard_logo }}" alt="Leaderboard Logo" class="mx-auto">
+        </div>
+        {% endif %}
+
+        <!-- Rest of your template content -->
+        
+        <!-- Edit button for the selected leaderboard -->
+        {% if selected_leaderboard_id %}
+        <div class="text-center mb-4">
+            <a href="{% url 'edit_leaderboard_detail' selected_leaderboard_id %}" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg">Edit Leaderboard</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">Leaderboard</h1>
+        
         <!-- Filtering Form -->
         <div class="mb-6">
             <form action="{% url 'individual_leaderboard' %}" method="get" class="flex justify-center gap-4">

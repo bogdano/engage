@@ -1,9 +1,10 @@
-from .models import Team, Activity, Leaderboard, Item, UserParticipated
-from .forms import TeamCreateForm, JoinTeamForm
+from .models import Team, Activity, Leaderboard, Item, UserParticipated, Notification
+from .forms import TeamCreateForm, JoinTeamForm, LeaderboardForm
+from notifications.views import *
 from accounts.models import CustomUser
 from django.db.models import Sum, Count, Exists, OuterRef, Prefetch, Q
 from django.db.models.functions import TruncDay
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
@@ -13,6 +14,7 @@ from django.utils.timezone import make_aware
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # class ServiceWorker(TemplateView):
 #     template_name = "sw.js"
@@ -315,7 +317,6 @@ def leaderboard(request):
 
     return render(request, "leaderboard.html")
 
-
 def individual_leaderboard_view(request):
     leaderboards = Leaderboard.objects.all()
     selected_leaderboard_id = request.GET.get('leaderboard_id', None)
@@ -413,6 +414,22 @@ def leaderboard_view(request):
 
     return render(request, "leaderboard.html", context)
 
+def edit_leaderboard(request):
+    leaderboards = Leaderboard.objects.all()
+    return render(request, 'edit_leaderboard.html', {'leaderboards': leaderboards})
+
+def edit_leaderboard_detail(request, pk):
+    leaderboard = get_object_or_404(Leaderboard, pk=pk)
+    if request.method == 'POST':
+        form = LeaderboardForm(request.POST, instance=leaderboard)
+        if form.is_valid():
+            form.save()
+            # Redirect to a new URL:
+            return redirect('edit_leaderboard')
+    else:
+        form = LeaderboardForm(instance=leaderboard)
+    return render(request, 'edit_leaderboard_detail.html', {'form': form, 'leaderboard': leaderboard})
+
 def list_teams(request):
     teams = Team.objects.all()
     join_form = JoinTeamForm()
@@ -446,10 +463,6 @@ def join_team(request):
 def store(request):
     items = Item.objects.all()
     return render(request, "store.html", {"items": items})
-
-
-def notifications(request):
-    return render(request, "notifications.html")
 
 
 def profile(request):

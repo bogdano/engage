@@ -1,5 +1,5 @@
 from django.contrib import admin
-from engage.models import Activity, Leaderboard, UserParticipated, Team, Item
+from engage.models import Activity, Leaderboard, UserParticipated, Team, Item, Notification
 from .models import CustomUser, LoginToken
 
 class ActivityAdmin(admin.ModelAdmin):
@@ -31,3 +31,4 @@ admin.site.register(Leaderboard, LeaderboardAdmin)
 admin.site.register(UserParticipated, UserParticipatedAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Item, ItemAdmin)
+admin.site.register(Notification)
