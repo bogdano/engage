@@ -7,8 +7,21 @@
     "scope": "/",
     "orientation": "portrait",
     "background_color": "#ffffff",
+    "theme_color": "#f59e0b",
     "status_bar": "default",
-    "icons": [{"src": "/static/favicons/android-chrome-192x192.png", "type": "image/png", "sizes": "192x192"}, {"src": "/static/favicons/android-chrome-512x512.png", "type": "image/png", "sizes": "512x512"}],
+    "icons": [
+      {
+        "src": "/static/favicons/android-chrome-192x192.png", "type": "image/png", "sizes": "192x192"
+      }, 
+      {
+        "src": "/static/favicons/android-chrome-512x512.png", "type": "image/png", "sizes": "512x512"
+      }
+    ],
+    "screenshots": [
+      {
+        "src": "/static/screenshots/desktop-activity.png", "type": "image/png", "sizes": "3840x1926"
+      }
+    ],
     "dir": "ltr",
     "lang": "en-US",
     "shortcuts": [
@@ -30,7 +43,7 @@
       {
         "name": "Notifications",
         "url": "/notifications",
-        "description": "wat"
+        "description": "Get Notified!"
       }
     ],
     "launch_handler": {

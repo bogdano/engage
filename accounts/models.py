@@ -31,7 +31,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    profile_picture = models.CharField(max_length=100, default="", blank=True)
+    profile_picture = models.CharField(max_length=200, default="", blank=True)
     description = models.TextField(default="", blank=True)
 
     # default fields - use is_active instead of deleting, is_staff allows user to access admin interface
