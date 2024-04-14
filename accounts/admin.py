@@ -23,8 +23,20 @@ class TeamAdmin(admin.ModelAdmin):
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'price')
 
-admin.site.register(CustomUser)
-admin.site.register(LoginToken)
+# display logintoken with user email and date/time of creation
+class LoginTokenAdmin(admin.ModelAdmin):
+    list_display = ('user_email', 'date_created', 'token')
+    def user_email(self, obj):
+        return obj.user.email
+    
+# display customusers with user.str, date joined, balance, and whether they are a superuser
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ('user_str', 'date_joined', 'balance', 'is_superuser')
+    def user_str(self, obj):
+        return obj.__str__()
+
+admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(LoginToken, LoginTokenAdmin)
 
 admin.site.register(Activity, ActivityAdmin)
 admin.site.register(Leaderboard, LeaderboardAdmin)

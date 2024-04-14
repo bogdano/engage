@@ -6,7 +6,6 @@ importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox
 
 // Add whichever assets you want to pre-cache here:
 const PRECACHE_ASSETS = [
-  '/static/',
   '/offline/',
 ]
 

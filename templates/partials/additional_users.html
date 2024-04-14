@@ -1,6 +1,6 @@
 {% load static %}
 {% for user in users %}
-<a href="#" class="flex flex-row min-w-full md:min-w-64 mx-auto my-1 p-1 rounded-2xl bg-white shadow-sm">
+<a href="#" class="flex flex-row w-full md:w-64 mx-auto my-1 p-1 rounded-2xl bg-white shadow-sm">
     <div class="flex flex-grow flex-row space-x-2">
         <div class="w-8 h-8 rounded-full bg-amber-200">
             {% if user.profile_picture %}<img src="{{ user.profile_picture }}" alt="Profile Picture" class="w-8 h-8 rounded-full">{% endif %}

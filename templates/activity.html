@@ -97,7 +97,7 @@
 <p class="my-10 text-md md:text-lg px-6 text-center">{{ activity.description }}</p>
 
 {% if other_interested_users.all %}
-<div class="mb-10 p-3 bg-amber-50 border border-amber-100 rounded-2xl w-fit min-w-96 mx-auto">
+<div class="{% if activity.photo %}mb-10{% else %}mb-16{% endif %} p-3 bg-amber-50 border border-amber-100 md:rounded-2xl md:w-fit max-w-full md:min-w-96 mx-auto">
     <p class="font-semibold text-amber-500 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
     <div id="users-list" class="flex flex-wrap md:space-x-3 text-sm px-2 md:text-md">
         {% with users=other_interested_users.all|slice:":8" %}
@@ -118,9 +118,7 @@
 </div>
 {% endif %}
 
-<div class="absolute bottom-0 w-full">
-    <p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ activity.creator.email }} on {{ activity.created_at }}</p>
-</div>
+<p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ activity.creator.email }} on {{ activity.created_at }}</p>
 <audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
 {% endblock %}
 

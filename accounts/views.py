@@ -61,7 +61,7 @@ def login_with_link(request, uidb64, token):
         # Check if the token is expired 
         if timezone.now() > token_record.expiration_date: # or token_record.used == True:
             print('Token expired')
-            token_record.delete()
+            # token_record.delete()
             return render(request, 'auth/send_login_link.html', {'error': 'This login link has expired. Please request a new one.'})
         else:
             user.backend = 'django.contrib.auth.backends.ModelBackend'
@@ -97,7 +97,7 @@ def register(request):
         uploaded_image_url = ''
         if 'profile_picture' in request.FILES:
             uploaded_image = cloudinary.uploader.upload(request.FILES['profile_picture'], upload_preset="gj4yeadt")
-            uploaded_image_url = uploaded_image['url']
+            uploaded_image_url = uploaded_image['secure_url']
 
         # Create the user
         user = CustomUser.objects.create(

@@ -171,7 +171,7 @@ def update_activity(request, pk):
             uploaded_image = cloudinary.uploader.upload(
                 request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
             )
-            uploaded_image_url = uploaded_image["url"]
+            uploaded_image_url = uploaded_image["secure_url"]
         leaderboard_names = request.POST.getlist("leaderboards")
         leaderboards = [
             Leaderboard.objects.get_or_create(leaderboard_name=name)[0]
@@ -189,7 +189,11 @@ def update_activity(request, pk):
         activity.leaderboards.clear()
         activity.leaderboards.add(*leaderboards)
         activity.save()
-        return redirect("activity", pk=pk)
+        redirect_url = reverse("activity", args=[activity.pk])
+        response = HttpResponse("Redirecting...")
+        response['HX-Redirect'] = redirect_url
+        return response
+
 
 
 def delete_activity(request, pk):
@@ -233,8 +237,8 @@ def new_item(request):
         name = request.POST.get("itemName")
         points = request.POST.get("pointCost")
         description = request.POST.get("itemDescription")
-        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"])
-        uploaded_image_url = uploaded_image["url"]
+        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="50", fetch_format="webp")
+        uploaded_image_url = uploaded_image["secure_url"]
     item = Item.objects.create(
         name=name, description=description, price=points, image=uploaded_image_url
     )
@@ -285,7 +289,7 @@ def new_activity(request):
             uploaded_image = cloudinary.uploader.upload(
                 request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
             )
-            uploaded_image_url = uploaded_image["url"]
+            uploaded_image_url = uploaded_image["secure_url"]
 
         leaderboard_names = request.POST.getlist("leaderboards")
         # Create new Leaderboard instances if necessary
@@ -311,7 +315,10 @@ def new_activity(request):
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
-        return redirect("activity", pk=activity.pk)
+        redirect_url = reverse("activity", args=[activity.pk])
+        response = HttpResponse("Redirecting...")
+        response['HX-Redirect'] = redirect_url
+        return response
     else:
         return JsonResponse({"error": "Invalid request method"})
 
@@ -374,9 +381,9 @@ def new_item(request):
         points = request.POST.get("pointCost")
         description = request.POST.get("itemDescription")
         uploaded_image = cloudinary.uploader.upload(
-            request.FILES["photo"], quality="50", fetch_format="auto"
+            request.FILES["photo"], quality="50", fetch_format="webp"
         )
-        uploaded_image_url = uploaded_image["url"]
+        uploaded_image_url = uploaded_image["secure_url"]
     item = Item.objects.create(
         name=name, description=description, price=points, image=uploaded_image_url
     )
@@ -588,9 +595,9 @@ def edit_profile(request):
                 user.profile_picture = request.FILES["profile_picture"]
                 # Handle profile picture upload if provided
                 # Upload the image to Cloudinary
-                uploaded_image = cloudinary.uploader.upload(request.FILES["profile_picture"])
+                uploaded_image = cloudinary.uploader.upload(request.FILES['profile_picture'], upload_preset="gj4yeadt")
                 # Get the URL of the uploaded image from Cloudinary
-                user.profile_picture = uploaded_image["url"]
+                user.profile_picture = uploaded_image["secure_url"]
                 # This part is up to you depending on how you handle profile picture uploads
                 pass
 

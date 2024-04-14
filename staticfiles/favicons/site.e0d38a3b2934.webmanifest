@@ -1,0 +1,56 @@
+{
+    "name": "Engage",
+    "short_name": "Engage",
+    "description": "Do fun stuff. Get doubloons. Spend 'em.",
+    "start_url": "/",
+    "display": "standalone",
+    "scope": "/",
+    "orientation": "portrait",
+    "background_color": "#ffffff",
+    "theme_color": "#f59e0b",
+    "status_bar": "default",
+    "icons": [
+      {
+        "src": "/static/favicons/android-chrome-192x192.png", "type": "image/png", "sizes": "192x192"
+      }, 
+      {
+        "src": "/static/favicons/android-chrome-512x512.png", "type": "image/png", "sizes": "512x512"
+      }
+    ],
+    "screenshots": [
+      {
+        "src": "/static/screenshots/mobile-home.png", "type": "image/png", "sizes": "778x1682"
+      }, 
+      {
+        "src": "/static/screenshots/mobile-activity.png", "type": "image/png", "sizes": "818x1770"
+      }
+    ],
+    "dir": "ltr",
+    "lang": "en-US",
+    "shortcuts": [
+      {
+        "name": "Add Activity",
+        "url": "/add_activity",
+        "description": "Create a new event"
+      },
+      {
+        "name": "Shop",
+        "url": "/store",
+        "description": "Get swag"
+      },
+      {
+        "name": "Leaderboards",
+        "url": "/leaderboard",
+        "description": "Compete"
+      },
+      {
+        "name": "Notifications",
+        "url": "/notifications",
+        "description": "Get Notified!"
+      }
+    ],
+    "launch_handler": {
+      "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred"
+}
