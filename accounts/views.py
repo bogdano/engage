@@ -122,7 +122,7 @@ def register(request):
         message = render_to_string('auth/login_link.html', {'login_link': login_link})
         send_mail(subject, message, 'noreply@engage.bogz.dev', [email])
 
-        # Redirect or return a success message
+        # Redirect to success message with hx-header
         return render(request, 'auth/email_sent.html')
     else:
         if request.user.is_authenticated:
