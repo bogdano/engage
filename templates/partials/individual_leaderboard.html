@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center p-4 bg-white rounded-lg shadow">
             <!-- Wrap user names with an anchor tag linking to their profile -->
             <div class="text-lg font-medium text-gray-900">
-                <a href="{% url 'user_profile' user.user__id %}">
+                <a href="{% url 'profile' user.user__id %}">
                     {{ user.user__first_name }} {{ user.user__last_name }}
                 </a>
             </div>
