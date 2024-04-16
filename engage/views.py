@@ -405,10 +405,15 @@ def store(request):
     return render(request, "store.html", {"items": items})
 
 
-def profile(request):
-    user = request.user
-    teams = Team.objects.all()
-    return render(request, "profile.html", {"user": user, "teams": teams})
+@login_required
+def profile(request, user_id=None):
+    if user_id:
+        user = get_object_or_404(CustomUser, pk=user_id)
+    else:
+        user = request.user  # Default to the logged-in user if no user_id is provided
+
+    teams = Team.objects.filter(member=user)  # Assume user is part of teams
+    return render(request, "profile.html", {"profile_user": user, "teams": teams})
 
 def outside_profile(request):
     user = request.user

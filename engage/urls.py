@@ -38,6 +38,7 @@ urlpatterns = [
     path('leaderboard/', include('leaderboard.urls')),
     path('notifications/', include('notifications.urls')),
   
+    path('profile/<int:user_id>/', views.profile, name='user_profile'),
     path("profile/", views.profile, name="profile"),
     path("edit_profile/", views.edit_profile, name="edit_profile"),
     path("outside_profile/", views.outside_profile, name="outside_profile"),
