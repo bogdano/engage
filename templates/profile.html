@@ -3,66 +3,66 @@
 {% block title %} Profile {% endblock %}
 {% block content %}
 
-
-<!--<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Profile</title>
-</head>-->
-
 <div class="flex justify-between shadow text-center px-4 py-6 bg-white">
-    <img src="{{ profile_user.profile_picture }}" alt="Profile Picture" class="rounded-full h-20 w-20">
-    <p class="text-center px-6 font-bold text-lg">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+
+
+    <div class="flex items-center">
+        <div class="relative">
+            <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-20 w-20">
+
+        </div>
+    </div>
+
+    <!-- this is the text for the user name-->
+    <p class="text-center px-6 font-bold text-lg">
+        {{ user.first_name }} {{ user.last_name }}</p>
+
+    <!--
+    <img src="/static/icons/coin.svg" alt="" class="rounded-full h-12 w-12"> -->
     <div class="flex items-center ml-4">
         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-        <p class="text-yellow-500 font-bold text-2xl">{{ profile_user.balance }}</p>
+        <p class="text-yellow-500 font-bold text-2xl">{{ user.balance }}</p>
     </div>
 
 
+</div>
 
 
-    <div class="flex-grow">
-        <!-- this is the content of the page-->
-        <div class="flex justify-between shadow text-center px-4 py-6 bg-white">
-            <p class="px-6 font-medium text-black uppercase text-lg">Team:</p>
-            <p class="px-6 font-medium text-black text-lg">Team Name Placeholder</p>
-            <img src="/static/logo.png" alt=" " class="rounded-full h-12 w-12">
-        </div>
-    </div>
-
+<div class="flex-grow">
+    <!-- this is the content of the page-->
     <div class="flex justify-between shadow text-center px-4 py-6 bg-white">
-        <!-- this is the content of the page-->
-        <p class="px-6 font-medium text-black uppercase text-lg"> Lifetime Points: {{ profile_user.lifetime_points }}</p>
-    </div>
-
-    <div class="flex-grow">
-
-        <!-- here, when the user presses the edit button this pops up as the text to be entered
-        <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
-        -->
-        <!-- this is the About Me section that is filled into the Bio section of the register proses-->
-        <p class="flex justify-between shadow text-center px-4 py-6 bg-white"> About Me: {{ profile_user.description }}</p>
-
-    </div>
-
-    <div class="flex justify-center pb-6">
-        <div class="p-10">
-            <!-- LOOK AT ME HERE! FIX BELOW! -->
-
-            <!-- I think that I will adapt this to the htmx I looked at the leaderboard.html and this is what I do next time-->
-
-            <a href="{% url 'edit_profile' %}"
-                class="h-14 p-4 border border-amber-500 rounded-2xl bg-amber-500 text-white hover:bg-amber-600">Edit
-                Profile
-            </a>
-        </div>
-    </div>
-
-    <div class="flex justify-center items-center mx-auto mt-20">
-        <a href="{% url 'logout' %}" class="text-center block px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold shadow-md rounded-xl">logout</a>
+        <p class="px-6 font-medium text-black uppercase text-lg">Team:</p>
+        <p class="px-6 font-medium text-black text-lg">Team Name Placeholder</p>
+        <img src="/static/logo.png" alt=" " class="rounded-full h-12 w-12">
     </div>
 </div>
 
-</body>
+<div class="flex justify-between shadow text-center px-4 py-6 bg-white">
+    <!-- this is the content of the page-->
+    <p class="px-6 font-medium text-black uppercase text-lg"> Lifetime Points: {{ user.lifetime_points }}</p>
+</div>
+
+<div class="flex-grow">
+    <!-- here, when the user presses the edit button this pops up as the text to be entered
+    <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
+    -->
+    <!-- this is the About Me section that is filled into the Bio section of the register proses-->
+    <p class="flex justify-between shadow text-center px-4 py-6 bg-white"> About Me: {{ user.description }}</p>
+
+</div>
+
+<div class="flex justify-center pb-6">
+    <div class="p-10">
+        <!-- LOOK AT ME HERE! FIX BELOW! -->
+        <!-- I think that I will adapt this to the htmx I looked at the leaderboard.html and this is what I do next time-->
+        <a href="{% url 'edit_profile' %}"
+            class="h-14 p-4 border border-amber-500 rounded-2xl bg-amber-500 text-white hover:bg-amber-600">Edit
+            Profile
+        </a>
+    </div>
+</div>
+<div class="flex justify-center items-center mx-auto mt-20">
+    <a href="{% url 'logout' %}" class="text-center block px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold shadow-md rounded-xl">logout</a>
+</div>
 
 {% endblock %}

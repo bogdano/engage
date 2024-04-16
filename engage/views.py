@@ -406,30 +406,24 @@ def store(request):
 
 
 @login_required
-def profile(request, user_id=None):
-    if user_id:
-        user = get_object_or_404(CustomUser, pk=user_id)
+def profile(request, pk=None):
+    if pk:
+        user = CustomUser.objects.get(pk=pk)
+        team = Team.objects.filter(member=user)
+        return render(request, "outside_profile.html", {"user": user, "team": team})
     else:
-        user = request.user  # Default to the logged-in user if no user_id is provided
-
-    teams = Team.objects.filter(member=user)  # Assume user is part of teams
-    return render(request, "profile.html", {"profile_user": user, "teams": teams})
-
-def outside_profile(request):
-    user = request.user
-    return render(request, "outside_profile.html", {"user": user})
+        user = request.user
+        team = Team.objects.filter(member=user)
+        return render(request, "profile.html", {"user": user, "team": team})
 
 def edit_profile(request):
     # This is to check if the user is authenticated before allowing the edit
     if not request.user.is_authenticated:
         return redirect("profile")
-
     else:
-
         if request.method == "POST":
             # Get the current user
             user = request.user
-
             # Update the user fields with the data from the form
             if "email" in request.POST and request.POST["email"]:
                 user.email = request.POST["email"]

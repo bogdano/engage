@@ -38,10 +38,9 @@ urlpatterns = [
     path('leaderboard/', include('leaderboard.urls')),
     path('notifications/', include('notifications.urls')),
   
-    path('profile/<int:user_id>/', views.profile, name='user_profile'),
+    path("profile/<int:pk>/", views.profile, name="profile"),
     path("profile/", views.profile, name="profile"),
     path("edit_profile/", views.edit_profile, name="edit_profile"),
-    path("outside_profile/", views.outside_profile, name="outside_profile"),
 
     path("add_activity/", views.add_activity, name="add_activity"),
     path("activity/<int:pk>/", views.activity, name="activity"),
