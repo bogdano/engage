@@ -1,5 +1,5 @@
 from django import forms
-from .models import Team, Leaderboard
+from engage.models import Team, Leaderboard
 
 class TeamCreateForm(forms.ModelForm):
     class Meta:
