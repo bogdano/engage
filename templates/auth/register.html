@@ -9,7 +9,7 @@
         <p class="text-red-500 mb-4 italic text-center">{{ error }}</p>
     {% endif %}
     <a href="{% url 'send_login_link' %}" class="mb-5 text-slate-500 hover:underline">or, <span class="underline">login</span> here</a> 
-    <form hx-post="{% url 'register' %}" hx-target=".htmx-body" hx-indicator=".loading-bar" hx-disabled-elt="button" enctype="multipart/form-data" class="w-full max-w-md space-y-4">
+    <form hx-post="{% url 'register' %}" hx-target=".htmx-body" hx-indicator=".loading-bar" hx-swap="transition:true" hx-disabled-elt="button" enctype="multipart/form-data" class="w-full max-w-md space-y-4">
         {% csrf_token %}
         <input type="email" name="email" placeholder="your@email.com" required class="w-full h-14 p-2 border border-gray-300 rounded-2xl  focus:border-amber-400 focus:outline-none focus:ring-0" autofocus>
         <div class="flex justify-between space-x-2">

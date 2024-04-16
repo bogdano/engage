@@ -3,7 +3,7 @@ from engage.models import Activity, Leaderboard, UserParticipated, Team, Item, N
 from .models import CustomUser, LoginToken
 
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ('title', 'event_date')
+    list_display = ('title', 'event_date', 'is_active')
 
 class LeaderboardAdmin(admin.ModelAdmin):
     list_display = ('leaderboard_name',)
