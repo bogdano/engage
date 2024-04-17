@@ -3,66 +3,81 @@
 {% block title %} Profile {% endblock %}
 {% block content %}
 
-<div class="flex justify-between shadow text-center px-4 py-6 bg-white">
+<div class="flex flex-col items-center justify-center w-full mx-auto pt-12">
+    <div class="relative mx-6 mb-6 border-4 border-rose-200 rounded-full max-w-96">
+        <img src="{% if user.profile_picture %}{{ user.profile_picture }}{% else %}{% static 'icons/default_profile.svg' %}{% endif %}" alt="Profile Picture" class="w-40 h-40 m-1 rounded-full">
+        {% if request.user == user %}
+            <button class="absolute bottom-0 left-0 p-2 bg-rose-400 rounded-full hover:bg-rose-300" hx-get="{% url 'edit_profile' %}" hx-swap="outerHTML" hx-target=".htmx-body">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                    <g id="SVGRepo_iconCarrier"> <path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </g>
+                </svg>
+            </button>
+            <button class="absolute bottom-0 right-0 p-2 bg-rose-400 rounded-full hover:bg-rose-300" hx-post="{% url 'logout' %}" hx-target=".htmx-body" hx-confirm="Are you sure you want to log out?">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6">
+                    <title>Logout</title>
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                    <g id="SVGRepo_iconCarrier"> <path d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2L16.0002 2C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8L22.0002 16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/> <path d="M15 12L2 12M2 12L5.5 9M2 12L5.5 15" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </g>
+                </svg>
+            </button>
+        {% endif %}
+    </div>
 
+    <div class="flex items-center justify-center flex-row flex-wrap space-x-3 align-middle">
+        <h1 class="font-extrabold text-4xl md:text-5xl">{{ user.first_name }} {{ user.last_name }}</h1>
+        <h2 class="self-end font-extrabold text-xl md:text-2xl uppercase text-rose-700">{{ user.position }}</h2>
+    </div>
 
-    <div class="flex items-center">
-        <div class="relative">
-            <img src="{{ user.profile_picture }}" alt=" " class="rounded-full h-20 w-20">
+    <p class="px-6 text-center font-bold text-lg">{{ user.team }}</p>
 
+    {% if request.user == user %}
+        <div class="flex items-center px-4 py-2 mt-4 space-x-2 border border-amber-300 rounded-2xl">
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            <p class="text-2xl font-bold text-yellow-500">{{ user.balance }}</p>
         </div>
-    </div>
+    {% endif %}
 
-    <!-- this is the text for the user name-->
-    <p class="text-center px-6 font-bold text-lg">
-        {{ user.first_name }} {{ user.last_name }}</p>
+    <p class="px-6 mt-6 md:max-w-screen-lg md:text-center">{{ user.description }}</p>
 
-    <!--
-    <img src="/static/icons/coin.svg" alt="" class="rounded-full h-12 w-12"> -->
-    <div class="flex items-center ml-4">
-        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-        <p class="text-yellow-500 font-bold text-2xl">{{ user.balance }}</p>
-    </div>
+    {% if interested %}<p class="px-6 mt-6 text-center font-bold text-rose-700">Participating in:</p>{% endif %}
 
+    {% for activity in interested %}
+        {% if activity.is_active %}
+            <div class="flex flex-col w-full mt-4 px-6 md:px-36">
+                <div class="flex justify-between w-full border border-rose-200 shadow-sm rounded-xl">
+                    <span class="my-auto pl-4 text-stone-400 font-bold uppercase text-xs">{{ activity.end_date | date:"F j" }}</span>
+                    <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 pl-3 my-auto text-sm">{{ activity.title }}</a>
+                    <div class="flex flex-row space-x-2 filter">
+                        <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-4 h-4 my-auto">
+                        <p class="my-auto text-stone-amber text-xs">{{ activity.points }}</p>                     
+                        <button hx-post="{% url 'leave_activity' activity.pk %}" hx-confirm="Are you sure you want to leave this activity?" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 hover:bg-rose-50 rounded-r-xl">
+                            <img src="{% static 'icons/delete.svg' %}" alt="Leave Icon" class="w-5 h-5 mr-1">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 
+    {% if participated %}<p class="px-6 mt-6 text-center font-bold text-rose-700">Lifetime points:</p>
+    <div class="flex items-center px-4 py-2 mt-4 space-x-2 border border-stone-200 rounded-2xl">
+        <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-7 h-7">
+        <p class="text-2xl font-bold text-stone-400">{{ user.lifetime_points }}</p>
+    </div>{% endif %}
+
+    {% for activity in participated %}
+        <div class="flex flex-col w-full mt-4 px-6 md:px-36">
+            <div class="flex w-full border border-stone-200 shadow-sm rounded-xl">
+                <span class="my-auto pl-4 text-stone-400 font-bold uppercase text-xs">{{ activity.end_date | date:"F j 'y" }}</span>
+                <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 pl-3 my-auto text-stone-700 text-sm">{{ activity.title }}</a>
+                <div class="flex flex-row space-x-2 filter grayscale mr-1">
+                    <p class="my-auto text-stone-400 text-xs mr-2 font-extrabold">+ {{ activity.points }}</p>
+                    <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 my-auto">
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 </div>
-
-
-<div class="flex-grow">
-    <!-- this is the content of the page-->
-    <div class="flex justify-between shadow text-center px-4 py-6 bg-white">
-        <p class="px-6 font-medium text-black uppercase text-lg">Team:</p>
-        <p class="px-6 font-medium text-black text-lg">Team Name Placeholder</p>
-        <img src="/static/logo.png" alt=" " class="rounded-full h-12 w-12">
-    </div>
-</div>
-
-<div class="flex justify-between shadow text-center px-4 py-6 bg-white">
-    <!-- this is the content of the page-->
-    <p class="px-6 font-medium text-black uppercase text-lg"> Lifetime Points: {{ user.lifetime_points }}</p>
-</div>
-
-<div class="flex-grow">
-    <!-- here, when the user presses the edit button this pops up as the text to be entered
-    <input type="text" name="title" class="title w-1/2 px-2 py-1 bg-gray-200 rounded-lg" placeholder="About me:">
-    -->
-    <!-- this is the About Me section that is filled into the Bio section of the register proses-->
-    <p class="flex justify-between shadow text-center px-4 py-6 bg-white"> About Me: {{ user.description }}</p>
-
-</div>
-
-<div class="flex justify-center pb-6">
-    <div class="p-10">
-        <!-- LOOK AT ME HERE! FIX BELOW! -->
-        <!-- I think that I will adapt this to the htmx I looked at the leaderboard.html and this is what I do next time-->
-        <a href="{% url 'edit_profile' %}"
-            class="h-14 p-4 border border-amber-500 rounded-2xl bg-amber-500 text-white hover:bg-amber-600">Edit
-            Profile
-        </a>
-    </div>
-</div>
-<div class="flex justify-center items-center mx-auto mt-20">
-    <a href="{% url 'logout' %}" class="text-center block px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white text-xs font-bold shadow-md rounded-xl">logout</a>
-</div>
-
 {% endblock %}

@@ -146,6 +146,13 @@ def bookmark_activity_from_activity(request, pk):
     return render(request, "partials/bookmark_button.html", {"activity": activity})
 
 
+def leave_activity(request, pk):
+    activity = Activity.objects.get(pk=pk)
+    user = request.user
+    activity.interested_users.remove(user)
+    return redirect("profile")
+
+
 def edit_activity(request, pk):
     if request.user.is_staff:
         activity = Activity.objects.get(pk=pk)
@@ -409,12 +416,12 @@ def store(request):
 def profile(request, pk=None):
     if pk:
         user = CustomUser.objects.get(pk=pk)
-        team = Team.objects.filter(member=user)
-        return render(request, "outside_profile.html", {"user": user, "team": team})
     else:
         user = request.user
-        team = Team.objects.filter(member=user)
-        return render(request, "profile.html", {"user": user, "team": team})
+    team = Team.objects.filter(member=user)
+    interested = Activity.objects.filter(interested_users=user)
+    participated = Activity.objects.filter(participated_users=user)
+    return render(request, "profile.html", {"user": user, "team": team, "interested": interested, "participated": participated})
 
 def edit_profile(request):
     # This is to check if the user is authenticated before allowing the edit
