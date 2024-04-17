@@ -420,13 +420,16 @@ def profile(request, pk=None):
         user = request.user
     team = Team.objects.filter(member=user)
     interested = Activity.objects.filter(interested_users=user)
+    # true if user is interested  in any activity that is active
+    show_interested = interested.filter(is_active=True).exists()
     participated = Activity.objects.filter(participated_users=user)
-    return render(request, "profile.html", {"user": user, "team": team, "interested": interested, "participated": participated})
+    return render(request, "profile.html", {"user": user, "team": team, "interested": interested, "participated": participated, "show_interested": show_interested})
 
+@login_required
 def edit_profile(request):
     # This is to check if the user is authenticated before allowing the edit
     if not request.user.is_authenticated:
-        return redirect("profile")
+        return redirect("home")
     else:
         if request.method == "POST":
             # Get the current user
