@@ -1,0 +1,11 @@
+{% load static %}
+{% for activity in activities %}
+<div class="flex w-full border border-stone-200 hover:bg-stone-50 shadow-sm rounded-xl mb-2">
+    <span class="my-auto pl-4 text-stone-400 font-bold uppercase text-xs">{{ activity.end_date | date:"m/j/y" }}</span>
+    <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 pl-3 my-auto text-stone-700 text-sm">{{ activity.title }}</a>
+    <div class="flex flex-row space-x-2 filter grayscale mr-1">
+        <p class="my-auto text-stone-400 text-xs mr-2 font-extrabold">+ {{ activity.points }}</p>
+        <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 my-auto">
+    </div>
+</div>
+{% endfor %}
