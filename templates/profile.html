@@ -26,12 +26,12 @@
         {% endif %}
     </div>
 
-    <div class="flex items-center justify-center flex-row flex-wrap space-x-3 align-middle">
+    <div class="flex items-center justify-center flex-row flex-wrap space-x-3 align-middle mx-3">
         <h1 class="font-extrabold text-4xl md:text-5xl">{{ user.first_name }} {{ user.last_name }}</h1>
         <h2 class="self-end font-extrabold text-xl md:text-2xl uppercase text-rose-700">{{ user.position }}</h2>
     </div>
 
-    <p class="px-6 text-center font-bold text-lg">{{ user.team }}</p>
+    <p class="px-6 text-center font-bold text-lg">{{ user.team.name }}</p>
 
     {% if request.user == user %}
         <div class="flex items-center px-4 py-2 mt-4 space-x-2 border border-amber-300 rounded-2xl">
@@ -42,43 +42,43 @@
 
     <p class="px-6 mt-6 md:max-w-screen-lg md:text-center">{{ user.description }}</p>
 
-    {% if show_interested %}<p class="px-6 mt-6 text-center font-bold text-rose-700">Participating in:</p>{% endif %}
-
-    {% for activity in interested %}
-        {% if activity.is_active %}
-            <div class="flex flex-col w-full mt-4 px-6 md:px-36">
-                <div class="flex justify-between w-full border border-rose-200 hover:bg-rose-50 shadow-sm rounded-xl">
-                    <span class="my-auto pl-4 text-stone-400 font-bold uppercase text-xs">{{ activity.end_date | date:"j/m" }}</span>
-                    <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 pl-3 my-auto text-sm">{{ activity.title }}</a>
-                    <div class="flex flex-row space-x-2 filter">
-                        <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-4 h-4 my-auto">
-                        <p class="my-auto text-stone-amber text-xs">{{ activity.points }}</p>                     
-                        <button hx-post="{% url 'leave_activity' activity.pk %}" hx-confirm="Are you sure you want to leave this activity?" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 hover:bg-rose-50 rounded-r-xl">
-                            <img src="{% static 'icons/delete.svg' %}" alt="Leave Icon" class="w-5 h-5 mr-1">
-                        </button>
+    {% if show_interested %}
+        <p class="px-6 mt-6 text-center font-bold text-rose-700">Participating in:</p>
+        <div class="flex flex-col w-full mt-4 px-6 md:px-36">
+            {% for activity in interested %}
+                {% if activity.is_active %}
+                    <div class="flex justify-between w-full border border-rose-200 hover:bg-rose-50 shadow-sm rounded-xl mb-2">
+                        <span class="my-auto pl-4 text-rose-300 font-bold uppercase text-xs">{{ activity.end_date | date:"m/j" }}</span>
+                        <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 pl-3 my-auto text-sm">{{ activity.title }}</a>
+                        <div class="flex flex-row space-x-2 filter">
+                            <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-4 h-4 my-auto">
+                            <p class="my-auto text-stone-amber text-xs">{{ activity.points }}</p>                     
+                            <button hx-post="{% url 'leave_activity' activity.pk %}" hx-confirm="Are you sure you want to leave this activity?" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 hover:bg-white rounded-r-xl font-extrabold text-xs md:text-base text-rose-300 pr-2 w-10">
+                                <span class="align-middle">✕</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if participated %}
+        <p class="px-6 mt-6 text-center font-bold text-rose-700">Lifetime points:</p>
+        <div class="flex items-center px-4 py-2 mt-4 space-x-2 border border-stone-200 rounded-2xl">
+            <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-7 h-7">
+            <p class="text-2xl font-bold text-stone-400">{{ user.lifetime_points }}</p>
+        </div>
+        <div id="past-activities" class="flex flex-col w-full mt-4 px-6 md:px-36">
+            {% with activities=participated.all|slice:":5" %}
+                {% include 'partials/additional_past_activities.html' %}
+            {% endwith %}
+        </div>
+        {% if participated.all|length == 5 %}
+            <div class="flex justify-center items-center pt-5">
+                <button class="show-more-button font-semibold text-rose-400 text-sm" hx-get="{% url 'additional_past_activities' user.pk %}" hx-target="#past-activities" hx-swap="beforeend transition:true"  hx-on:htmx:after-request="this.remove()">Show all</button>
             </div>
         {% endif %}
-    {% endfor %}
-
-    {% if participated %}<p class="px-6 mt-6 text-center font-bold text-rose-700">Lifetime points:</p>
-    <div class="flex items-center px-4 py-2 mt-4 space-x-2 border border-stone-200 rounded-2xl">
-        <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-7 h-7">
-        <p class="text-2xl font-bold text-stone-400">{{ user.lifetime_points }}</p>
-    </div>{% endif %}
-
-    {% for activity in participated %}
-        <div class="flex flex-col w-full mt-4 px-6 md:px-36">
-            <div class="flex w-full border border-stone-200 hover:bg-stone-50 shadow-sm rounded-xl">
-                <span class="my-auto pl-4 text-stone-400 font-bold uppercase text-xs">{{ activity.end_date | date:"j/m/y" }}</span>
-                <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 pl-3 my-auto text-stone-700 text-sm">{{ activity.title }}</a>
-                <div class="flex flex-row space-x-2 filter grayscale mr-1">
-                    <p class="my-auto text-stone-400 text-xs mr-2 font-extrabold">+ {{ activity.points }}</p>
-                    <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 my-auto">
-                </div>
-            </div>
-        </div>
-    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

@@ -422,8 +422,16 @@ def profile(request, pk=None):
     interested = Activity.objects.filter(interested_users=user)
     # true if user is interested  in any activity that is active
     show_interested = interested.filter(is_active=True).exists()
-    participated = Activity.objects.filter(participated_users=user)
+    participated = Activity.objects.filter(participated_users=user).order_by("-event_date")[:5]
     return render(request, "profile.html", {"user": user, "team": team, "interested": interested, "participated": participated, "show_interested": show_interested})
+
+
+def additional_past_activities(request, user_id):
+    user = CustomUser.objects.get(id=user_id)
+    # return past acttivities a user has participated in 
+    participated_activities = Activity.objects.filter(participated_users=user).order_by("-event_date")[5:]
+    return render(request, "partials/additional_past_activities.html", {"activities": participated_activities})
+
 
 @login_required
 def edit_profile(request):
