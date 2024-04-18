@@ -7,15 +7,15 @@
 <!-- add a back button, maybe? -->
 <!-- <button onclick="window.history.back()">go back</button> -->
 
-<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12 px-2">
-    <h1 class="mb-5 font-extrabold text-4xl md:text-5xl text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
-    <div class="flex flex-row mb-6 space-x-2">
+<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12 mb-5 px-2">
+    <h1 class="font-extrabold text-4xl md:text-5xl mb-4 md:mb-0 text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
+    <div class="flex flex-row space-x-2">
         {% include 'partials/bookmark_button.html' %}
         {% if request.user.is_staff %}
-            <button hx-post="{% url 'edit_activity' activity.pk %}" hx-replace-url="true" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 border rounded-xl border-amber-200 hover:bg-amber-50 shadow-md">
+            <button hx-post="{% url 'edit_activity' activity.pk %}" hx-replace-url="true" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 border rounded-xl border-amber-400 hover:bg-amber-50 shadow">
                 <img src="{% static 'icons/edit.svg' %}" alt="Edit Icon" class="w-6 h-6">
             </button>
-            <button hx-delete="{% url 'delete_activity' activity.pk %}" hx-confirm="Are you sure you want to delete this activity?" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 border rounded-xl border-rose-200 hover:bg-rose-50 shadow-md">
+            <button hx-delete="{% url 'delete_activity' activity.pk %}" hx-confirm="Are you sure you want to delete this activity?" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 border rounded-xl border-amber-400 hover:bg-amber-50 shadow">
                 <img src="{% static 'icons/delete.svg' %}" alt="Delete Icon" class="w-6 h-6">
             </button>
         {% endif %}
