@@ -8,6 +8,7 @@ urlpatterns = [
     path('teams/', list_teams, name='list_teams'),
     path('teams/create/', create_team, name='create_team'),
     path('teams/join/', join_team, name='join_team'),
+    path('teams/leave/<int:team_id>/', leave_team, name='leave_team'),
     path('edit-leaderboard/', edit_leaderboard, name='edit_leaderboard'),
     path('edit-leaderboard/<int:pk>/', edit_leaderboard_detail, name='edit_leaderboard_detail'),
 ]

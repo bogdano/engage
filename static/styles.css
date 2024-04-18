@@ -127,3 +127,25 @@
 button:disabled {
   background-color: #fafaf9;
 }
+
+.team-action-btn:disabled {
+  background-color: #ccc; /* Light grey to indicate disabled, adjust as needed */
+  color: #666; /* Darker text to ensure readability */
+  cursor: not-allowed; /* Cursor to indicate action is not allowed */
+}
+
+.join-btn {
+  background-color: green;
+}
+
+.join-btn:hover {
+  background-color: darkgreen;
+}
+
+.leave-btn {
+  background-color: red;
+}
+
+.leave-btn:hover {
+  background-color: darkred;
+}
