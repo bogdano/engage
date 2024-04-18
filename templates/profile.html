@@ -27,7 +27,18 @@
     </div>
 
     <div class="flex items-center justify-center flex-row flex-wrap space-x-3 align-middle mx-3">
-        <h1 class="font-extrabold text-4xl md:text-5xl">{{ user.first_name }} {{ user.last_name }}</h1>
+        <h1 class="font-extrabold text-4xl md:text-5xl">
+            {{ user.first_name }} {{ user.last_name }}
+            <!--Add later cant figure out positioning
+                {% if request.user == user %}
+                <button class="ml-4 p-3 bg-rose-400 rounded-full hover:bg-rose-300"
+                        hx-get="{% url 'list_teams' %}" hx-target=".htmx-body">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-3-3h-4a3 3 0 00-3 3v2h5m-6 0H6v-2a3 3 0 00-3-3H0a3 3 0 00-3 3v2h6m6-10a3 3 0 11-6 0 3 3 0 016 0zm6 1a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </button>
+            {% endif %}-->
+        </h1>
         <h2 class="self-end font-extrabold text-xl md:text-2xl uppercase text-rose-700">{{ user.position }}</h2>
     </div>
 
