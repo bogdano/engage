@@ -165,8 +165,11 @@ def edit_leaderboard_detail(request, pk):
 
 def list_teams(request):
     teams = Team.objects.all()
+    for team in teams:
+        team.is_member = request.user in team.member.all()
     join_form = JoinTeamForm()
     return render(request, 'list_teams.html', {'teams': teams, 'join_form': join_form})
+
 
 def create_team(request):
     if request.method == 'POST':
@@ -175,6 +178,7 @@ def create_team(request):
             team = form.save(commit=False)
             team.leader = request.user
             team.save()
+            team.member.add(request.user)  # Auto-add the creator as a member
             messages.success(request, 'Team created successfully.')
             return redirect('list_teams')
     else:
@@ -187,8 +191,25 @@ def join_team(request):
         if form.is_valid():
             team_id = form.cleaned_data['team_id']
             team = get_object_or_404(Team, id=team_id)
-            team.member.add(request.user)
-            messages.success(request, 'Join request sent.')
+            # Check if the user is already in a team
+            if not request.user.team_member.exists():
+                team.member.add(request.user)
+                messages.success(request, 'You have joined the team.')
+            else:
+                messages.error(request, 'You are already in a team.')
             return redirect('list_teams')
+    else:
+        return redirect('list_teams')
+    
+def leave_team(request, team_id):
+    if request.method == 'POST':
+        team = get_object_or_404(Team, id=team_id)
+        # Check if the user is a member of the team
+        if request.user in team.member.all():
+            team.member.remove(request.user)
+            messages.success(request, 'You have left the team.')
+        else:
+            messages.error(request, 'You are not a member of this team.')
+        return redirect('list_teams')
     else:
         return redirect('list_teams')

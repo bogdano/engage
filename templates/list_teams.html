@@ -15,11 +15,13 @@
         {% for team in teams %}
         <div class="bg-white rounded-lg shadow-lg p-5 relative">
             <div class="flex justify-between items-center mb-2">
-                <button onclick="togglePopup('{{ team.id }}')" class="font-semibold text-xl">{{ team.name }}</button>
-                <form action="{% url 'join_team' %}" method="post" class="inline">
+                <h3 class="font-semibold text-xl">{{ team.name }}</h3>
+                <form action="{% if team.is_member %}{% url 'leave_team' team.id %}{% else %}{% url 'join_team' %}{% endif %}" method="post" class="inline">
                     {% csrf_token %}
                     <input type="hidden" name="team_id" value="{{ team.id }}">
-                    <button type="submit" class="px-4 py-2 bg-green-500 hover:bg-green-700 text-white font-bold rounded-lg">Join</button>
+                    <button type="submit" class="team-action-btn px-4 py-2 {% if team.is_member %}leave-btn bg-red-500 hover:bg-red-700{% else %}join-btn bg-green-500 hover:bg-green-700{% endif %} text-white font-bold rounded-lg">
+                        {% if team.is_member %}Leave{% else %}Join{% endif %}
+                    </button>
                 </form>
             </div>
             <!-- Popup for team members -->
