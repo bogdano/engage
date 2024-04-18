@@ -9,13 +9,15 @@
 </head>
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-center mb-8">Teams</h1>
-    <a href="{% url 'create_team' %}" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white font-bold">Create a New Team</a>
+    <h1 class="text-4xl font-bold text-center mb-4">Teams</h1>
+    <div class="text-center mb-8">
+        <a href="{% url 'create_team' %}" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white font-bold">Create a New Team</a>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for team in teams %}
-        <div class="bg-white rounded-lg shadow-lg p-5 relative">
+        <div class="bg-stone-100 rounded-lg shadow-lg p-5 relative">
             <div class="flex justify-between items-center mb-2">
-                <h3 class="font-semibold text-xl">{{ team.name }}</h3>
+                <h3 class="font-semibold text-xl cursor-pointer" onclick="togglePopup('{{ team.id }}')">{{ team.name }}</h3>
                 <form action="{% if team.is_member %}{% url 'leave_team' team.id %}{% else %}{% url 'join_team' %}{% endif %}" method="post" class="inline">
                     {% csrf_token %}
                     <input type="hidden" name="team_id" value="{{ team.id }}">
@@ -25,8 +27,8 @@
                 </form>
             </div>
             <!-- Popup for team members -->
-            <div id="popup-{{ team.id }}" class="hidden absolute top-full mt-2 left-0 bg-white border rounded shadow-lg p-4 z-10 w-64">
-                <h3 class="font-semibold text-lg mb-2">Team Members:</h3>
+            <div id="popup-{{ team.id }}" class="hidden absolute top-full mt-2 left-0 bg-stone-100 border border-stone-200 rounded shadow-lg p-4 z-10 w-64">
+                <h3 class="font-semibold text-lg mb-2 text-center">Team Members:</h3>
                 <ul>
                     {% for member in team.member.all %}
                     <li>{{ member.first_name }} {{ member.last_name }}</li>
