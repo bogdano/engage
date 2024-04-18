@@ -22,8 +22,8 @@ def leaderboard(request):
 
 def individual_leaderboard_view(request):
     leaderboards = Leaderboard.objects.all()
-    selected_leaderboard_id = request.GET.get('leaderboard_id', None)
-    date_filter = request.GET.get('date_filter', None)
+    selected_leaderboard_id = request.GET.get('leaderboard_id', '')
+    date_filter = request.GET.get('date_filter', 'this_month')
 
     # Default to None, will be used to filter by date if specified
     start_date = None
@@ -65,61 +65,83 @@ def individual_leaderboard_view(request):
 
 def team_leaderboard_view(request):
     leaderboards = Leaderboard.objects.all()
-    selected_leaderboard_id = request.GET.get('leaderboard_id')
-    teams_query = Team.objects.prefetch_related(
-        Prefetch(
-            "member",
-            queryset=CustomUser.objects.annotate(total_points=Sum("lifetime_points"))
-        )
-    )
+    selected_leaderboard_id = request.GET.get('leaderboard_id', '')
+    date_filter = request.GET.get('date_filter', 'this_month')
 
-    # Filtering by leaderboard type
-    leaderboard_id = request.GET.get('leaderboard_id')
-    if leaderboard_id:
-        teams_query = teams_query.filter(activities__leaderboards__id=leaderboard_id)
-
-    # Filtering by date
-    date_filter = request.GET.get('date_filter')
+    start_date = None
     now = timezone.now()
-
     if date_filter == "this_year":
-        start_of_year = datetime(now.year, 1, 1)
-        start_date = timezone.make_aware(start_of_year)
+        start_date = datetime(now.year, 1, 1)
     elif date_filter == "this_month":
-        start_of_month = datetime(now.year, now.month, 1)
-        start_date = timezone.make_aware(start_of_month)
+        start_date = datetime(now.year, now.month, 1)
+
+    # Simplified user participation query
+    user_participations = UserParticipated.objects.filter(date_participated__gte=timezone.make_aware(start_date))
+    if selected_leaderboard_id:
+        user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
+
+    # Simplify the aggregation of points
+    teams = Team.objects.annotate(
+        team_points=Sum('member__userparticipated__activity__points', filter=Q(member__userparticipated__in=user_participations))
+    ).order_by('-team_points')
+
+    if request.headers.get('HX-Request', False):
+        return render(request, "partials/team_leaderboard.html", {
+            "teams": teams,
+            "leaderboards": leaderboards
+        })
     else:
-        start_date = timezone.make_aware(datetime(1, 1, 1)) 
-
-    end_date = now
-
-    teams = teams_query.annotate(team_points=Sum("member__lifetime_points")).order_by("-team_points")
-
-    return render(request, "partials/team_leaderboard.html", {
-        "teams": teams,
-        "leaderboards": leaderboards,
-        "selected_leaderboard_id": selected_leaderboard_id,
-        "date_filter": date_filter
-    })
+        return render(request, "leaderboard.html", {
+            "teams": teams,
+            "leaderboards": leaderboards,
+            "selected_leaderboard_id": selected_leaderboard_id,
+            "date_filter": date_filter
+        })
 
 
 def leaderboard_view(request):
-    # Determine the mode (individual or team) based on a parameter
     leaderboard_mode = request.GET.get('leaderboard_mode', 'individual')
+    selected_leaderboard_id = request.GET.get('leaderboard_id', None)
+    date_filter = request.GET.get('date_filter', 'this_month')
+
+    leaderboards = Leaderboard.objects.all()
+    now = timezone.now()
+    start_date = datetime(now.year, now.month, 1) if date_filter == "this_month" else datetime(now.year, 1, 1)
 
     context = {
         'leaderboard_mode': leaderboard_mode,
-        'leaderboards': Leaderboard.objects.all(),
+        'leaderboards': leaderboards,
+        'selected_leaderboard_id': selected_leaderboard_id,
+        'date_filter': date_filter,
     }
 
-    # Logic for individual leaderboard
     if leaderboard_mode == 'individual':
-        users = CustomUser.objects.annotate(total_points=Sum("lifetime_points")).order_by("-total_points")
+        user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
+        if selected_leaderboard_id:
+            user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
+
+        users = user_participations.values(
+            'user__id', 'user__first_name', 'user__last_name'
+        ).annotate(
+            total_points=Sum('activity__points')
+        ).order_by('-total_points')
         context['users'] = users
 
-    # Logic for team leaderboard
     elif leaderboard_mode == 'team':
-        teams = Team.objects.annotate(team_points=Sum("member__lifetime_points")).order_by("-team_points")
+        user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
+        if selected_leaderboard_id:
+            user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
+
+        teams = Team.objects.prefetch_related(
+            Prefetch(
+                "member",
+                queryset=CustomUser.objects.filter(
+                    id__in=user_participations.values('user__id')
+                ).annotate(
+                    total_points=Sum('userparticipated__activity__points')
+                )
+            )
+        ).annotate(team_points=Sum('member__total_points')).order_by('-team_points')
         context['teams'] = teams
 
     return render(request, "leaderboard.html", context)

@@ -43,37 +43,38 @@
 </body>
 <body class="bg-gray-50">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold text-center mb-8">Leaderboard</h1>
         
         <!-- Filtering Form -->
-        <div class="mb-6">
-            <form action="{% url 'individual_leaderboard' %}" method="get" class="flex justify-center gap-4">
-                <!-- Leaderboard Type Filter -->
-                <select name="leaderboard_id" class="border-2 border-gray-300 rounded-lg p-2" onchange="this.form.submit();">
-                    <option value="">Select Leaderboard Type</option>
-                    {% for leaderboard in leaderboards %}
+        <form action="{% url 'individual_leaderboard' %}" method="get" class="flex justify-center gap-4">
+            <!-- Hidden input to store current leaderboard context -->
+            <input type="hidden" name="leaderboard_context" value="{{ leaderboard_context }}">
+        
+            <!-- Leaderboard Type Filter -->
+            <select name="leaderboard_id" class="border-2 border-gray-300 rounded-lg p-2" onchange="this.form.submit();">
+                <option value="">All Activities</option>
+                {% for leaderboard in leaderboards %}
                     <option value="{{ leaderboard.id }}" {% if request.GET.leaderboard_id == leaderboard.id|stringformat:"s" %}selected{% endif %}>
                         {{ leaderboard.leaderboard_name }}
                     </option>
-                    {% endfor %}
-                </select>
+                {% endfor %}
+            </select>
         
-                <!-- Date Filter -->
-                <select name="date_filter" class="border-2 border-gray-300 rounded-lg p-2" onchange="this.form.submit();">
-                    <option value="">Select Time Frame</option>
-                    <option value="all_time" {% if request.GET.date_filter == "all_time" %}selected{% endif %}>All Time</option>
-                    <option value="this_year" {% if request.GET.date_filter == "this_year" %}selected{% endif %}>This Year</option>
-                    <option value="this_month" {% if request.GET.date_filter == "this_month" %}selected{% endif %}>This Month</option>
-                </select>
-            </form>
-        </div>
+            <!-- Date Filter -->
+            <select name="date_filter" class="border-2 border-gray-300 rounded-lg p-2" onchange="this.form.submit();">
+                <option value="all_time" {% if request.GET.date_filter == "all_time" %}selected{% endif %}>All Time</option>
+                <option value="this_year" {% if request.GET.date_filter == "this_year" %}selected{% endif %}>This Year</option>
+                <option value="this_month" {% if request.GET.date_filter == "this_month" %}selected{% endif %}>This Month</option>
+            </select>
+        </form>
 
         <!-- Toggle Buttons for Team and Individual Leaderboards -->
         <div class="flex justify-center gap-4 mb-6">
-            <button hx-get="{% url 'individual_leaderboard' %}" hx-target="#leaderboard" hx-trigger="click" class="px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg">
+            <button hx-get="{% url 'individual_leaderboard' %}?leaderboard_id={{ request.GET.leaderboard_id }}&date_filter={{ request.GET.date_filter }}"
+                    hx-target="#leaderboard" hx-trigger="click" class="px-6 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg">
                 Individual
             </button>
-            <button hx-get="{% url 'team_leaderboard' %}" hx-target="#leaderboard" hx-trigger="click" class="px-6 py-2 bg-green-500 hover:bg-green-700 text-white font-bold rounded-lg">
+            <button hx-get="{% url 'team_leaderboard' %}?leaderboard_id={{ request.GET.leaderboard_id }}&date_filter={{ request.GET.date_filter }}"
+                    hx-target="#leaderboard" hx-trigger="click" class="px-6 py-2 bg-green-500 hover:bg-green-700 text-white font-bold rounded-lg">
                 Team
             </button>
         </div>
@@ -84,4 +85,9 @@
             {% include 'partials/individual_leaderboard.html' %}
         </div>
     </div>
+    <script>
+        document.body.addEventListener('htmx:configRequest', function(event) {
+          console.log('HTMX Request:', event.detail);
+        });
+      </script>
 {% endblock %}
