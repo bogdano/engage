@@ -127,3 +127,7 @@
 button:disabled {
   background-color: #fafaf9;
 }
+
+.mapboxgl-ctrl-geocoder {
+  min-width: 100%;
+}

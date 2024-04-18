@@ -8,7 +8,18 @@
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
 
-    <h1 class="text-4xl md:text-5xl font-extrabold text-center pt-12 mb-5">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
+    <div class="flex flex-row space-x-3 mx-3 justify-center pt-12 mb-4">
+        <a href="{% url 'home' %}">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-amber-500 shadow-md h-12 w-12 border border-amber-500 rounded-2xl align-middle p-1 hover:bg-amber-100">
+                <title>Back</title>
+                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"> <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" /> </g>
+            </svg>
+        </a>
+        <h1 class="text-4xl md:text-5xl font-extrabold my-auto">{% if request.user.is_staff %}Add Activity{% else %}Suggest an Activity{% endif %}</h1>
+    </div>
+
     <form hx-post="{% url 'new_activity' %}" hx-indicator=".loading-bar" hx-target=".htmx-body" hx-disabled-elt="button" enctype="multipart/form-data" class="px-4 lg:px-0">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">

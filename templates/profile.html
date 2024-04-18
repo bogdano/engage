@@ -48,7 +48,7 @@
             {% for activity in interested %}
                 {% if activity.is_active %}
                     <div class="flex justify-between w-full border border-rose-200 hover:bg-rose-50 shadow-sm rounded-xl mb-2">
-                        <span class="my-auto pl-4 text-rose-300 font-bold uppercase text-xs">{{ activity.end_date | date:"m/j" }}</span>
+                        <span class="my-auto pl-4 text-rose-400 font-bold uppercase text-xs">{{ activity.end_date | date:"m/j" }}</span>
                         <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 pl-3 my-auto text-sm">{{ activity.title }}</a>
                         <div class="flex flex-row space-x-2 filter">
                             <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-4 h-4 my-auto">

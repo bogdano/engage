@@ -3,11 +3,16 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <div id="activities-iterator" class="flex flex-col items-center">
-    <div class="flex justify-center items-center space-x-4 align-bottom">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-center mt-12 ml-5 mb-5">Activities</h1>
-        <a href="{% url 'add_activity' %}" class="bg-amber-400 hover:bg-amber-600 p-2.5 rounded-xl shadow-md mt-6">
-            <img src="{% static 'icons/add.svg' %}" class="w-7 h-7" alt="Add Activity">
+    <div class="flex justify-center items-center space-x-3 pt-12 mb-5">
+        <a href="{% url 'add_activity' %}" class="border border-amber-500 hover:bg-amber-100 rounded-2xl shadow-md">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 ">
+                <title>Add Activity</title>
+                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"> <path d="M6 12H18M12 6V18" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </g>
+            </svg>
         </a>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center my-auto">Activities</h1>
     </div>
 
     <div id="draggable-container" class="relative w-full overflow-x-auto hide-scrollbar px-2 lg:px-0">

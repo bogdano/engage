@@ -29,9 +29,7 @@ def home(request):
         return redirect("send_login_link")
     else:
         # fetch approved and active activities
-        activities = Activity.objects.filter(is_active=True).order_by(
-            "event_date"
-        )
+        activities = Activity.objects.filter(is_active=True).order_by("event_date")
         # set the date range
         start_date = datetime.today()
         end_date = start_date + timedelta(days=15)
@@ -419,17 +417,17 @@ def profile(request, pk=None):
     else:
         user = request.user
     team = Team.objects.filter(member=user)
-    interested = Activity.objects.filter(interested_users=user)
+    interested = Activity.objects.filter(interested_users=user, is_approved=True).order_by("event_date")
     # true if user is interested  in any activity that is active
     show_interested = interested.filter(is_active=True).exists()
-    participated = Activity.objects.filter(participated_users=user).order_by("-event_date")[:5]
+    participated = Activity.objects.filter(participated_users=user, is_active=False).order_by("-event_date")[:5]
     return render(request, "profile.html", {"user": user, "team": team, "interested": interested, "participated": participated, "show_interested": show_interested})
 
 
 def additional_past_activities(request, user_id):
     user = CustomUser.objects.get(id=user_id)
     # return past acttivities a user has participated in 
-    participated_activities = Activity.objects.filter(participated_users=user).order_by("-event_date")[5:]
+    participated_activities = Activity.objects.filter(participated_users=user, is_active=False).order_by("-event_date")[5:]
     return render(request, "partials/additional_past_activities.html", {"activities": participated_activities})
 
 
