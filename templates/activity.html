@@ -24,7 +24,7 @@
 
 {% if not activity.is_approved %}
     <div class="flex flex-row justify-center items-center mb-6 space-x-2">
-        <span class="px-4 py-1 bg-rose-300 font-extrabold text-sm text-white rounded-2xl">APPROVAL PENDING</span>
+        <span class="px-4 py-1 bg-rose-300 font-extrabold text-sm text-white rounded-2xl">PENDING APPROVAL</span>
         {% if request.user.is_staff %}
             <div class="flex justify-center items-center">
                 <button hx-post="{% url 'approve_activity' activity.pk %}" hx-swap="outerHTML" hx-target=".htmx-body" class="py-1 px-4 border rounded-full border-lime-400 hover:bg-amber-50 shadow text-sm font-bold text-lime-600" aria-label="Approve activity">
