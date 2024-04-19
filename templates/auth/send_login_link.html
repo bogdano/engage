@@ -10,7 +10,6 @@
     {% endif %}
     {% if success %}
         <p class="text-green-500 mb-4 italic text-center">{{ success }}</p>
-        <p class="text-stone-500 text-center">(You may close this tab.)</p>
     {% endif %}
 
     <form hx-post="{% url 'send_login_link' %}" hx-target=".htmx-body" class="flex items-center w-full max-w-md {% if success %}hidden{% endif %}">
