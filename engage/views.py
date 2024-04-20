@@ -16,9 +16,11 @@ import dateutil.parser
 from django.views.generic import TemplateView
 from django.urls import reverse
 
+
 class ServiceWorker(TemplateView):
     template_name = "sw.js"
     content_type = "application/javascript"
+
 
 def offline(request):
     return render(request, "offline.html")
@@ -74,7 +76,9 @@ def home(request):
         # filter activities by date if query_date is present
         query_date = request.GET.get("query_date", None)
         if query_date is not None:
-            activities = Activity.objects.filter(event_date__date=query_date).order_by("event_date")
+            activities = Activity.objects.filter(event_date__date=query_date).order_by(
+                "event_date"
+            )
             # format in 'A, d, B' format
             query_date = datetime.strptime(query_date, "%Y-%m-%d").strftime("%A, %d %B")
         else:
@@ -155,7 +159,11 @@ def edit_activity(request, pk):
     if request.user.is_staff:
         activity = Activity.objects.get(pk=pk)
         leaderboards = Leaderboard.objects.all()
-        return render(request, "edit_activity.html", {"activity": activity, "leaderboards": leaderboards})
+        return render(
+            request,
+            "edit_activity.html",
+            {"activity": activity, "leaderboards": leaderboards},
+        )
     else:
         return redirect("home")
 
@@ -174,7 +182,10 @@ def update_activity(request, pk):
         uploaded_image_url = activity.photo
         if "photo" in request.FILES:
             uploaded_image = cloudinary.uploader.upload(
-                request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
+                request.FILES["photo"],
+                quality="75",
+                fetch_format="webp",
+                height=700,
             )
             uploaded_image_url = uploaded_image["secure_url"]
         leaderboard_names = request.POST.getlist("leaderboards")
@@ -196,9 +207,8 @@ def update_activity(request, pk):
         activity.save()
         redirect_url = reverse("activity", args=[activity.pk])
         response = HttpResponse("Redirecting...")
-        response['HX-Redirect'] = redirect_url
+        response["HX-Redirect"] = redirect_url
         return response
-
 
 
 def delete_activity(request, pk):
@@ -206,7 +216,7 @@ def delete_activity(request, pk):
         activity = Activity.objects.get(pk=pk)
         activity.delete()
         return redirect("home")
-    
+
 
 @login_required
 def approve_activity(request, pk):
@@ -217,9 +227,13 @@ def approve_activity(request, pk):
         activity.save()
 
         # Fetch all users to notify them about the approval
-        users = CustomUser.objects.all()  # Consider excluding the activity creator if needed
+        users = (
+            CustomUser.objects.all()
+        )  # Consider excluding the activity creator if needed
 
-        activity_url = request.build_absolute_uri(reverse('activity', args=[activity.pk]))
+        activity_url = request.build_absolute_uri(
+            reverse("activity", args=[activity.pk])
+        )
 
         # Create a notification for each user
         notifications = [
@@ -227,11 +241,13 @@ def approve_activity(request, pk):
                 recipient=user,
                 title=f"New Activity Posted: {activity.title}",
                 message=f"The activity titled '<a href=\"{activity_url}\">{activity.title}</a>' has been approved and is now live!",
-                read=False
+                read=False,
             )
             for user in users
         ]
-        Notification.objects.bulk_create(notifications)  # Use bulk_create for efficiency
+        Notification.objects.bulk_create(
+            notifications
+        )  # Use bulk_create for efficiency
 
         # Redirect to the homepage or another appropriate page
         return redirect("home")
@@ -242,7 +258,9 @@ def new_item(request):
         name = request.POST.get("itemName")
         points = request.POST.get("pointCost")
         description = request.POST.get("itemDescription")
-        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="50", fetch_format="webp")
+        uploaded_image = cloudinary.uploader.upload(
+            request.FILES["photo"], quality="50", fetch_format="webp"
+        )
         uploaded_image_url = uploaded_image["secure_url"]
     item = Item.objects.create(
         name=name, description=description, price=points, image=uploaded_image_url
@@ -260,16 +278,55 @@ def add_item(request):
         return JsonResponse({"error": "You are not staff."})
 
 
+def edit_item(request, pk):
+    item = Item.objects.get(pk=pk)
+    item.name = request.POST.get("itemName")
+    item.price = request.POST.get("pointCost")
+    if request.POST.get("photo"):
+        item.description = request.POST.get("itemDescription")
+        image = cloudinary.uploader.upload(
+            request.FILES["photo"], quality="50", fetch_format="webp"
+        )
+        item.image = image["secure_url"]
+    item.save()
+    items = Item.objects.all()
+    user = request.user
+    return render(request, "store.html", {"items": items, "user": user})
+
+
+def delete_item(request, pk):
+    item = Item.objects.get(pk=pk)
+    item.delete()
+    items = Item.objects.all()
+    user = request.user
+    return (request, "store.html", {"items": items, "user": user})
+
+
+def edit_item_form(request, pk):
+    item = Item.objects.get(pk=pk)
+    return render(request, "edit_item.html", {"item": item})
+
+
 def load_more_activities(request):
     offset = int(request.GET.get("offset", 0))
     next_offset = offset + 5
-    user_participations = UserParticipated.objects.filter(activity=OuterRef("pk"), user=request.user)
-    past_activities = Activity.objects.filter(
-        is_approved=True, is_active=False
-    ).order_by("-event_date")[offset:next_offset].annotate(user_has_participated=Exists(user_participations))
+    user_participations = UserParticipated.objects.filter(
+        activity=OuterRef("pk"), user=request.user
+    )
+    past_activities = (
+        Activity.objects.filter(is_approved=True, is_active=False)
+        .order_by("-event_date")[offset:next_offset]
+        .annotate(user_has_participated=Exists(user_participations))
+    )
     if not past_activities or len(past_activities) < 5:
-        return render(request, "partials/past_activities.html", {"past_activities": past_activities, "no_more_activities": True})
-    return render(request, "partials/past_activities.html", {"past_activities": past_activities})
+        return render(
+            request,
+            "partials/past_activities.html",
+            {"past_activities": past_activities, "no_more_activities": True},
+        )
+    return render(
+        request, "partials/past_activities.html", {"past_activities": past_activities}
+    )
 
 
 def new_activity(request):
@@ -281,18 +338,23 @@ def new_activity(request):
         address = request.POST.get("address")
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
-        
+
         event_date_naive = dateutil.parser.parse(request.POST.get("event_date"))
         end_date_naive = dateutil.parser.parse(request.POST.get("end_date"))
 
-        event_date = timezone.make_aware(event_date_naive, timezone.get_default_timezone())
+        event_date = timezone.make_aware(
+            event_date_naive, timezone.get_default_timezone()
+        )
         end_date = timezone.make_aware(end_date_naive, timezone.get_default_timezone())
 
         # upload photo to cloudinary and store URL in database
         uploaded_image_url = ""
         if "photo" in request.FILES:
             uploaded_image = cloudinary.uploader.upload(
-                request.FILES["photo"], quality="75", fetch_format="webp", height=700, 
+                request.FILES["photo"],
+                quality="75",
+                fetch_format="webp",
+                height=700,
             )
             uploaded_image_url = uploaded_image["secure_url"]
 
@@ -322,7 +384,7 @@ def new_activity(request):
             activity.save()
         redirect_url = reverse("activity", args=[activity.pk])
         response = HttpResponse("Redirecting...")
-        response['HX-Redirect'] = redirect_url
+        response["HX-Redirect"] = redirect_url
         return response
     else:
         return JsonResponse({"error": "Invalid request method"})
@@ -339,7 +401,9 @@ def activity(request, pk):
     user_has_participated = activity.participated_users.filter(
         pk=request.user.pk
     ).exists()
-    return render(request, "activity.html", 
+    return render(
+        request,
+        "activity.html",
         {
             "activity": activity,
             "other_interested_users": other_interested_users,
@@ -381,6 +445,8 @@ def award_participation_points(request, pk):
 
 
 def new_item(request):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     if request.method == "POST":
         name = request.POST.get("itemName")
         points = request.POST.get("pointCost")
@@ -398,14 +464,21 @@ def new_item(request):
 
 
 def add_item(request):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     return render(request, "new_item.html")
 
 
 def item(request, pk):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     item = Item.objects.get(pk=pk)
     return render(request, "item_details.html", {"item": item})
 
+
 def store(request):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     items = Item.objects.all()
     return render(request, "store.html", {"items": items})
 
@@ -417,18 +490,38 @@ def profile(request, pk=None):
     else:
         user = request.user
     team = Team.objects.filter(member=user)
-    interested = Activity.objects.filter(interested_users=user, is_approved=True).order_by("event_date")
+    interested = Activity.objects.filter(
+        interested_users=user, is_approved=True
+    ).order_by("event_date")
     # true if user is interested  in any activity that is active
     show_interested = interested.filter(is_active=True).exists()
-    participated = Activity.objects.filter(participated_users=user, is_active=False).order_by("-event_date")[:5]
-    return render(request, "profile.html", {"user": user, "team": team, "interested": interested, "participated": participated, "show_interested": show_interested})
+    participated = Activity.objects.filter(
+        participated_users=user, is_active=False
+    ).order_by("-event_date")[:5]
+    return render(
+        request,
+        "profile.html",
+        {
+            "user": user,
+            "team": team,
+            "interested": interested,
+            "participated": participated,
+            "show_interested": show_interested,
+        },
+    )
 
 
 def additional_past_activities(request, user_id):
     user = CustomUser.objects.get(id=user_id)
-    # return past acttivities a user has participated in 
-    participated_activities = Activity.objects.filter(participated_users=user, is_active=False).order_by("-event_date")[5:]
-    return render(request, "partials/additional_past_activities.html", {"activities": participated_activities})
+    # return past acttivities a user has participated in
+    participated_activities = Activity.objects.filter(
+        participated_users=user, is_active=False
+    ).order_by("-event_date")[5:]
+    return render(
+        request,
+        "partials/additional_past_activities.html",
+        {"activities": participated_activities},
+    )
 
 
 @login_required
@@ -455,7 +548,9 @@ def edit_profile(request):
                 user.profile_picture = request.FILES["profile_picture"]
                 # Handle profile picture upload if provided
                 # Upload the image to Cloudinary
-                uploaded_image = cloudinary.uploader.upload(request.FILES['profile_picture'], upload_preset="gj4yeadt")
+                uploaded_image = cloudinary.uploader.upload(
+                    request.FILES["profile_picture"], upload_preset="gj4yeadt"
+                )
                 # Get the URL of the uploaded image from Cloudinary
                 user.profile_picture = uploaded_image["secure_url"]
                 # This part is up to you depending on how you handle profile picture uploads

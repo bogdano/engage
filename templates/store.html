@@ -50,3 +50,25 @@
 
 
 {% endblock %}
+
+{% block scripts %}
+<script>
+    function openActivityKebab() {
+        const menu = document.querySelector('.kebab-menu');
+        const isMenuVisible = menu.style.display === 'block';
+        // hide this menu
+        document.querySelector('.kebab-menu').style.display = 'none';
+        // toggle this menu
+        menu.style.display = isMenuVisible ? 'none' : 'block';
+        // close the menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const isClickInsideKebab = event.target.closest('.kebab-button');
+            if (!isClickInsideKebab) {
+                document.querySelectorAll('.kebab-menu').forEach((menu) => {
+                    menu.style.display = 'none';
+                });
+            }
+        });
+    }   
+</script>
+{% endblock %}
