@@ -19,6 +19,9 @@ self.addEventListener('install', async (event) => {
     .then((cache) => {
       return cache.addAll([
         offlineFallbackPage,
+        '/static/styles.9e212597b7e1.css',
+        '/static/css/dist/styles.5cb380364384.css',
+        '/static/logo.7b04d77c16c7.webp',
       ]);
     })
   );

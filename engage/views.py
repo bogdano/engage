@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 import dateutil.parser
 from django.views.generic import TemplateView
 from django.urls import reverse
+from django.core.mail import send_mail
 
 
 class ServiceWorker(TemplateView):
@@ -338,32 +339,22 @@ def new_activity(request):
         address = request.POST.get("address")
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
-
         event_date_naive = dateutil.parser.parse(request.POST.get("event_date"))
         end_date_naive = dateutil.parser.parse(request.POST.get("end_date"))
-
-        event_date = timezone.make_aware(
-            event_date_naive, timezone.get_default_timezone()
-        )
+        event_date = timezone.make_aware(event_date_naive, timezone.get_default_timezone())
         end_date = timezone.make_aware(end_date_naive, timezone.get_default_timezone())
-
         # upload photo to cloudinary and store URL in database
         uploaded_image_url = ""
         if "photo" in request.FILES:
-            uploaded_image = cloudinary.uploader.upload(
-                request.FILES["photo"],
-                quality="75",
-                fetch_format="webp",
-                height=700,
-            )
+            uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], quality="75", fetch_format="webp", height=700,)
             uploaded_image_url = uploaded_image["secure_url"]
-
         leaderboard_names = request.POST.getlist("leaderboards")
         # Create new Leaderboard instances if necessary
         leaderboards = [
             Leaderboard.objects.get_or_create(leaderboard_name=name)[0]
             for name in leaderboard_names
         ]
+        alert = bool(request.POST.get("alert"))
 
         activity = Activity.objects.create(
             title=title,
@@ -376,12 +367,29 @@ def new_activity(request):
             event_date=event_date,
             end_date=end_date,
             photo=uploaded_image_url,
+            alert=alert,
         )
         # Link the Leaderboard instances to the Activity instance
         activity.leaderboards.add(*leaderboards)
         if request.user.is_staff:
             activity.is_approved = True
             activity.save()
+            if alert:
+                # Fetch all users to notify them about the new activity
+                creator = creator.first_name + " " + creator.last_name
+                users = CustomUser.objects.filter(is_staff=False, is_active=True)
+                activity_url = request.build_absolute_uri(reverse('activity', args=[activity.pk]))
+                subject = 'Important activity added to Engage'
+                message = 'Hello!\n' + creator + ' just added a new activity titled "' \
+                            + title + '" to Engage! \nIt expires at ' + end_date.strftime("%-I:%M %p") \
+                            + ' on ' + end_date.strftime("%A, %d %B") + '. \n' \
+                            + '"' + description + '"\nCheck it out <a href="' \
+                            + activity_url + '">here</a>.'
+                from_email = 'noreply@engage.bogz.dev'
+                # Send an email about the activity to each user
+                for user in users:
+                    send_mail(subject, message, from_email, [user.email])
+
         redirect_url = reverse("activity", args=[activity.pk])
         response = HttpResponse("Redirecting...")
         response["HX-Redirect"] = redirect_url

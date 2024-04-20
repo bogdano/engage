@@ -2,7 +2,7 @@
     <div id="navDock" class="transition-transform w-full fixed bottom-0 md:bottom-1 px-1 py-2 md:py-1 z-50 bg-white bg-opacity-75 backdrop-filter backdrop-blur-md border-t border-gray-200 md:max-w-fit md:rounded-2xl md:border md:shadow-lg">
         <div class="flex justify-between max-w-fit space-x-3 mx-auto">
             <a href="{% url 'home' %}"
-                class="tooltip transition-colors px-2 py-2 mx-1 rounded-2xl {% if current_section == 'home' %} bg-amber-500 bg-opacity-75 hover:bg-amber-800{% else %}hover:bg-amber-200 bg-white bg-opacity-60{% endif %}">
+                class="tooltip transition-colors px-2 py-2 rounded-2xl {% if current_section == 'home' %} bg-amber-500 bg-opacity-75 hover:bg-amber-800{% else %}hover:bg-amber-200 bg-white bg-opacity-60{% endif %}">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10 {% if current_section == 'home' %}fill-white{% else %}fill-amber-600 hover:fill-amber-700{% endif %}">
                     <title>home</title>
                     <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -12,7 +12,7 @@
                 <span class="tooltiptext text-xs border border-amber-600 bg-amber-100 rounded-xl py-1">home</span>
             </a>
             <a href="{% url 'leaderboard' %}"
-                class="tooltip transition-colors px-2 py-2 mx-1 rounded-2xl {% if current_section == 'leaderboard' %} bg-teal-500  hover:bg-teal-800 bg-opacity-75 {% else %} hover:bg-teal-200 bg-white bg-opacity-60{% endif %}">
+                class="tooltip transition-colors px-2 py-2 rounded-2xl {% if current_section == 'leaderboard' %} bg-teal-500  hover:bg-teal-800 bg-opacity-75 {% else %} hover:bg-teal-200 bg-white bg-opacity-60{% endif %}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-9 h-9 md:w-10 md:h-10 {% if current_section == 'leaderboard' %}fill-white{% else %}fill-teal-600 hover:fill-teal-700{% endif %}">
                     <title>leaderboard</title>
                     <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -22,7 +22,7 @@
                 <span class="tooltiptext text-xs border border-teal-600 bg-teal-100 rounded-xl py-1">leaderboards</span>
             </a>
             <a href="{% url 'profile' %}"
-                class="tooltip transition-colors px-2 py-2 mx-1 rounded-2xl {% if current_section == 'profile' %} bg-rose-500 bg-opacity-75 hover:bg-rose-800{% else %} hover:bg-rose-200 bg-white bg-opacity-60 {% endif %}">
+                class="tooltip transition-colors px-2 py-2 rounded-2xl {% if current_section == 'profile' %} bg-rose-500 bg-opacity-75 hover:bg-rose-800{% else %} hover:bg-rose-200 bg-white bg-opacity-60 {% endif %}">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10 {% if current_section == 'profile' %}fill-white{% else %}fill-rose-600 hover:fill-rose-700{% endif %}">
                     <title>profile</title>
                     <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -32,7 +32,7 @@
                 <span class="tooltiptext text-xs border border-rose-600 bg-rose-100 rounded-xl py-1">profile</span>
             </a>
             <a href="{% url 'store' %}"
-                class="tooltip transition-colors px-2 py-2 mx-1 rounded-2xl {% if current_section == 'store' %} bg-lime-500 bg-opacity-75 hover:bg-lime-800 {% else %} hover:bg-lime-200 bg-white bg-opacity-60{% endif %}">
+                class="tooltip transition-colors px-2 py-2 rounded-2xl {% if current_section == 'store' %} bg-lime-500 bg-opacity-75 hover:bg-lime-800 {% else %} hover:bg-lime-200 bg-white bg-opacity-60{% endif %}">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10 {% if current_section == 'store' %}fill-white{% else %}fill-lime-600 hover:fill-lime-700{% endif %}">
                     <title>store</title>
                     <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -42,7 +42,7 @@
                 <span class="tooltiptext text-xs border border-lime-600 bg-lime-100 rounded-xl py-1">store</span>
             </a>
             <a href="{% url 'notifications' %}"
-                class="tooltip transition-colors px-2 py-2 mx-1 rounded-2xl  {% if current_section == 'notifications' %} bg-violet-500 bg-opacity-75 hover:bg-violet-800 {% else %} hover:bg-violet-200 bg-white bg-opacity-60{% endif %}">
+                class="tooltip transition-colors px-2 py-2 rounded-2xl  {% if current_section == 'notifications' %} bg-violet-500 bg-opacity-75 hover:bg-violet-800 {% else %} hover:bg-violet-200 bg-white bg-opacity-60{% endif %}">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 md:w-10 md:h-10 {% if current_section == 'notifications' %}fill-white{% else %}fill-violet-600 hover:fill-violet-700{% endif %}">
                     <title>notifications</title>
                     <g id="SVGRepo_bgCarrier" stroke-width="0"/>
