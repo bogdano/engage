@@ -299,7 +299,7 @@ def delete_item(request, pk):
     item.delete()
     items = Item.objects.all()
     user = request.user
-    return (request, "store.html", {"items": items, "user": user})
+    return redirect("store")
 
 
 def edit_item_form(request, pk):
