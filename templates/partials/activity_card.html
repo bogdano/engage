@@ -76,7 +76,7 @@
                         <span>approve</span>
                     </li>
                     {% endif %}
-                    <li hx-get="{% url 'edit_activity' activity.pk %}" hx-target=".htmx-body" hx-replace-url="true" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 {% if activity.is_approved %}rounded-t-2xl{% endif %}">
+                    <li hx-get="{% url 'edit_activity' activity.pk %}" hx-target=".htmx-body" hx-push-url="true" onclick="event.preventDefault(); event.stopPropagation();" class="flex items-center hover:bg-amber-200 px-4 py-2 {% if activity.is_approved %}rounded-t-2xl{% endif %}">
                         <img src="{% static 'icons/edit.svg' %}" class="h-5 w-5 mr-2" alt="Edit activity">
                         <span>edit</span>
                     </li>

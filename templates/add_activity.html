@@ -65,14 +65,14 @@
 
         {% if request.user.is_staff %}
         <div class="flex items-center justify-center my-4">
-            <label class="bg-amber-100 px-4 py-1 my-2 rounded-2xl cursor-pointer text-stone-500">
-                <input type="checkbox" name="alert" class="px-2 py-2 my-2 mr-1 border border-gray-300 rounded-md">
-                Alert
+            <label class="bg-rose-100 px-4 py-3 my-2 rounded-2xl cursor-pointer text-rose-700">
+                <input type="checkbox" name="alert" class="px-2 py-2 mr-1 accent-rose-400 rounded-md">
+                Email all users about this activity?
             </label>
         </div>
         {% endif %}
         <div class="flex justify-center">
-            <button type="submit" class="w-full md:w-80 px-4 py-4  bg-amber-300 text-white font-bold rounded-2xl shadow-lg hover:bg-amber-400">Add activity</button>
+            <button type="submit" class="w-full md:w-80 px-4 py-4 bg-amber-300 text-white font-bold rounded-2xl shadow-lg hover:bg-amber-400">Add activity</button>
         </div>
     </form>
 {% endblock %}
