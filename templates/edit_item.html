@@ -1,21 +1,24 @@
 {% extends 'base.html' %}
-{% block title %}Add Store Item{% endblock %}
+{% block title %}Update Store Item{% endblock %}
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">Add Item to Store</h1>
-    <form class="space-y-4" action="{% url 'new_item' %}" method="POST" enctype="multipart/form-data">
+    <h1 class="text-2xl font-bold mb-6">Update Store Item</h1>
+    <form class="space-y-4" action="{% url 'edit_item' item.pk %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div>
             <label class="block font-medium" for="itemName">Item Name</label>
-            <input class="w-full p-2 border rounded" type="text" id="itemName" name="itemName" required>
+            <input class="w-full p-2 border rounded" value="{{ item.name }}" type="text" id="itemName" name="itemName"
+                required>
         </div>
         <div>
             <label class="block font-medium" for="itemDescription">Description</label>
-            <input class="w-full p-2 border rounded" type="text" id="itemDescription" name="itemDescription" required>
+            <input class="w-full p-2 border rounded" value="{{ item.description }}" type="text" id="itemDescription"
+                name="itemDescription" required>
         </div>
         <div>
             <label class="block font-medium" for="pointCost">Point Cost</label>
-            <input class="w-full p-2 border rounded" type="number" id="pointCost" name="pointCost" required>
+            <input class="w-full p-2 border rounded" value="{{ item.price|floatformat:0 }}" type="number" id="pointCost"
+                name="pointCost" required>
         </div>
 
         <!--
@@ -35,10 +38,10 @@
 
         <div>
             <label class="block font-medium" for="photo">Photo</label>
-            <input class="w-full p-2 border rounded" type="file" id="photo" name="photo" required>
+            <input class="w-full p-2 border rounded" type="file" id="photo" name="photo">
         </div>
         <button type="submit"
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Add
+            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Update
             Item</button>
     </form>
 </div>

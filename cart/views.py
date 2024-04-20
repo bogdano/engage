@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from engage.models import Item
 from accounts.models import CustomUser
 from django.http import HttpResponse
@@ -50,6 +50,8 @@ def update_cart(request, item_id, action):
 
 
 def cart(request):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     user = request.user
     return render(request, "cart/cart.html", {"user": user})
 
@@ -63,6 +65,8 @@ def hx_cart_total(request):
 
 
 def checkout(request):
+    if not request.user.is_authenticated:
+        return redirect("send_login_link")
     cart = Cart(request)
     total = cart.total()
     # change -1 to total once balance is fully functional
@@ -87,14 +91,15 @@ def email_order(request):
     cart = Cart(request)
     user = request.user
     admin = list(CustomUser.objects.filter(is_staff=True))
-    random.shuffle(admin)
-    email = admin[0].email
+    email = []
+    for user in admin:
+        email.append(user.email)
     subject = "New Order"
     message = render_to_string(
         "cart/partials/order_message.html", {"user": user, "cart": cart}
     )
     from_email = "noreply@engage.bogz.dev"
-    send_mail(subject, message, from_email, [email])
+    send_mail(subject, message, from_email, email)
 
 
 def clear_cart(request):
