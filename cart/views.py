@@ -13,9 +13,12 @@ import random
 def add_to_cart(request, item_id):
     cart = Cart(request)
     cart.add(item_id)
-
     return render(request, "cart/menu_cart.html")
 
+def add_to_cart_from_store(request, item_id):
+    cart = Cart(request)
+    cart.add(item_id)
+    return redirect("store")
 
 def update_cart(request, item_id, action):
     cart = Cart(request)
@@ -107,3 +110,4 @@ def clear_cart(request):
     items = Item.objects.all()
     cart.empty()
     return render(request, "store.html", {"items": items})
+

@@ -254,60 +254,6 @@ def approve_activity(request, pk):
         return redirect("home")
 
 
-def new_item(request):
-    if request.method == "POST":
-        name = request.POST.get("itemName")
-        points = request.POST.get("pointCost")
-        description = request.POST.get("itemDescription")
-        uploaded_image = cloudinary.uploader.upload(
-            request.FILES["photo"], quality="50", fetch_format="webp"
-        )
-        uploaded_image_url = uploaded_image["secure_url"]
-    item = Item.objects.create(
-        name=name, description=description, price=points, image=uploaded_image_url
-    )
-    item.save()
-    items = Item.objects.all()
-    user = request.user
-    return render(request, "store.html", {"items": items, "user": user})
-
-
-def add_item(request):
-    if request.user.is_staff:
-        return render(request, "new_item.html")
-    else:
-        return JsonResponse({"error": "You are not staff."})
-
-
-def edit_item(request, pk):
-    item = Item.objects.get(pk=pk)
-    item.name = request.POST.get("itemName")
-    item.price = request.POST.get("pointCost")
-    if request.POST.get("photo"):
-        item.description = request.POST.get("itemDescription")
-        image = cloudinary.uploader.upload(
-            request.FILES["photo"], quality="50", fetch_format="webp"
-        )
-        item.image = image["secure_url"]
-    item.save()
-    items = Item.objects.all()
-    user = request.user
-    return render(request, "store.html", {"items": items, "user": user})
-
-
-def delete_item(request, pk):
-    item = Item.objects.get(pk=pk)
-    item.delete()
-    items = Item.objects.all()
-    user = request.user
-    return redirect("store")
-
-
-def edit_item_form(request, pk):
-    item = Item.objects.get(pk=pk)
-    return render(request, "edit_item.html", {"item": item})
-
-
 def load_more_activities(request):
     offset = int(request.GET.get("offset", 0))
     next_offset = offset + 5
@@ -443,13 +389,34 @@ def award_participation_points(request, pk):
         activity.participated_users.add(user)
         activity.user_has_participated = True
         if request.GET.get("from_activity_page"):
-            return render(
-                request, "partials/points_display.html", {"activity": activity}
-            )
+            return render(request, "partials/points_display.html", {"activity": activity})
         else:
-            return render(
-                request, "partials/activity_card.html", {"activity": activity}
-            )
+            return render(request, "partials/activity_card.html", {"activity": activity})
+
+
+def edit_item(request, pk):
+    item = Item.objects.get(pk=pk)
+    item.name = request.POST.get("itemName")
+    item.price = request.POST.get("pointCost")
+    item.description = request.POST.get("itemDescription")
+    if "photo" in request.FILES:
+        image = cloudinary.uploader.upload(request.FILES["photo"], upload_preset="p4p2xtey")
+        item.image = image["secure_url"]
+    item.save()
+    items = Item.objects.all()
+    user = request.user
+    return render(request, "store.html", {"items": items, "user": user})
+
+
+def delete_item(request, pk):
+    item = Item.objects.get(pk=pk)
+    item.delete()
+    return redirect("store")
+
+
+def edit_item_form(request, pk):
+    item = Item.objects.get(pk=pk)
+    return render(request, "edit_item.html", {"item": item})
 
 
 def new_item(request):
@@ -459,14 +426,10 @@ def new_item(request):
         name = request.POST.get("itemName")
         points = request.POST.get("pointCost")
         description = request.POST.get("itemDescription")
-        uploaded_image = cloudinary.uploader.upload(
-            request.FILES["photo"], quality="50", fetch_format="webp"
-        )
+        uploaded_image = cloudinary.uploader.upload(request.FILES["photo"], upload_preset="p4p2xtey")
         uploaded_image_url = uploaded_image["secure_url"]
-    item = Item.objects.create(
-        name=name, description=description, price=points, image=uploaded_image_url
-    )
-    item.save()
+        item = Item.objects.create(name=name, description=description, price=points, image=uploaded_image_url)
+        item.save()
     items = Item.objects.all()
     return render(request, "store.html", {"items": items})
 
@@ -474,7 +437,10 @@ def new_item(request):
 def add_item(request):
     if not request.user.is_authenticated:
         return redirect("send_login_link")
-    return render(request, "new_item.html")
+    elif request.user.is_staff:
+        return render(request, "new_item.html")
+    else:
+        return redirect("home")
 
 
 def item(request, pk):

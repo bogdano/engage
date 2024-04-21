@@ -1,45 +1,108 @@
 {% extends 'base.html' %}
 {% block title %}Add Store Item{% endblock %}
+{% load static %}
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">Add Item to Store</h1>
-    <form class="space-y-4" action="{% url 'new_item' %}" method="POST" enctype="multipart/form-data">
+<div class="flex flex-col justify-center items-center px-4 pt-12">
+    <div class="flex flex-row space-x-3 mx-3 mb-10">
+        <a href="{% url 'store' %}">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-lime-400 shadow-md h-12 w-12 border border-lime-400 rounded-2xl align-middle p-1 hover:bg-lime-100">
+            <title>Back to Store</title>
+            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="SVGRepo_iconCarrier"> <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" /> </g>
+            </svg>
+        </a>
+        <h1 class="text-4xl md:text-5xl font-extrabold my-auto">Add Store Item</h1>
+    </div>
+    <form class="w-full space-y-4" action="{% url 'new_item' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <div>
-            <label class="block font-medium" for="itemName">Item Name</label>
-            <input class="w-full p-2 border rounded" type="text" id="itemName" name="itemName" required>
+        <div class="flex flex-col md:flex-row md:space-x-4">
+            <input type="text" name="itemName" placeholder="Item Name" required autofocus class=" focus:border-lime-400 focus:outline-none focus:ring-0 px-4 py-2 my-2 border border-gray-300 rounded-2xl text-2xl w-full md:w-auto md:flex-grow h-14">
+            <div class="inline-flex">
+                <input type="number" name="pointCost" placeholder="0" required class="focus:border-lime-400 focus:outline-none focus:ring-0 text-yellow-500 placeholder-yellow-500 px-4 py-2 my-2 border border-r-0 border-gray-300 rounded-l-2xl text-4xl w-full md:w-36 h-14">
+                <img src="{% static 'icons/coin.svg' %}" class="h-14 w-14 my-auto border border-amber-400 p-2 rounded-r-2xl bg-amber-200">
+            </div>
         </div>
-        <div>
-            <label class="block font-medium" for="itemDescription">Description</label>
-            <input class="w-full p-2 border rounded" type="text" id="itemDescription" name="itemDescription" required>
-        </div>
-        <div>
-            <label class="block font-medium" for="pointCost">Point Cost</label>
-            <input class="w-full p-2 border rounded" type="number" id="pointCost" name="pointCost" required>
-        </div>
-
-        <!--
-            this is item sizing. implement later
-        <div>
-            <p class="block font-medium" for="sizes">Sizes Offered (Optional)</p>
-            <input type="checkbox" id="small" name="sizes" value="Small">
-            <label for="small">Small</label><br>
-            <input type="checkbox" id="medium" name="sizes" value="Medium">
-            <label for="medium">Medium</label><br>
-            <input type="checkbox" id="large" name="sizes" value="Large">
-            <label for="large">Large</label><br>
-            <input type="checkbox" id="XL" name="sizes" value="Extra-Large">
-            <label for="XL">Extra-Large</label>
-        </div>
-    -->
-
-        <div>
-            <label class="block font-medium" for="photo">Photo</label>
-            <input class="w-full p-2 border rounded" type="file" id="photo" name="photo" required>
-        </div>
-        <button type="submit"
-            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Add
-            Item</button>
+        <input type="text" name="itemDescription" placeholder="Description" required class="w-full p-2 h-14 border border-gray-300 rounded-2xl focus:border-lime-400 focus:outline-none focus:ring-0">
+        <label class="{% if item.image %}drag-over{% endif %} drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+            <input type="file" name="photo" id="fileInputEdit" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
+            <span id="imageDroppedEdit" class="inline-flex overflow-y-hidden">
+                Upload Image
+            </span>
+        </label>
+        
+        <button type="submit" class="w-full h-14 p-2 font-extrabold border border-lime-500 rounded-2xl bg-lime-400 text-white hover:bg-lime-500">Update Item</button>
     </form>
-</div>
+</div>   
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Script for drag and drop file upload handling
+function initializeDragAndDrop() {
+    if (document.getElementById('imageDroppedEdit') === null) return
+    // DRAG AND DROG FILE UPLOAD
+    const dropArea = document.querySelector('.drag-drop');
+    const fileLabel = document.getElementById('imageDroppedEdit');
+    const fileInput = document.getElementById('fileInputEdit');
+    fileInput.addEventListener('change', function() {
+        // Check if files were selected
+        if (fileInput.files.length > 0) {
+            // Update the label with the name of the first selected file
+            fileLabel.textContent = fileInput.files[0].name;
+            dropArea.classList.add('drag-over');
+        }
+    });
+
+    // Highlight drop area when file is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    // Unhighlight drop area when dragging leaves it or drops
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Prevent default behavior (prevent file from being opened)
+    dropArea.addEventListener('dragover', preventDefaults, false);
+    dropArea.addEventListener('dragenter', preventDefaults, false);
+    dropArea.addEventListener('dragleave', preventDefaults, false);
+    dropArea.addEventListener('drop', preventDefaults, false);
+
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        dropArea.classList.add('drag-over');
+    }
+
+    function unhighlight(e) {
+        dropArea.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        // Call a function to handle the files
+        // For this example, we'll just pass it to the input
+        fileInput.files = files;
+
+        // Optionally, you can emit a change event on the input
+        // if you need to trigger any 'change' event listeners
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+        fileLabel.innerText = files[0].name;
+        dropArea.classList.add('drag-over');
+    }
+}
+
+initializeDragAndDrop()
+</script>
 {% endblock %}
