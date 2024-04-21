@@ -13,7 +13,7 @@
                         hx-get="{% url 'update_cart' item.item.id 'decrement' %}"
                         hx-target="#cart-item-{{ item.item.id }}" 
                         hx-swap="outerHTML">-</a>
-                    <span>{{ item.quantity }}</span>
+                    <span class="font-semibold">{{ item.quantity }}</span>
                     <a  class="h-7 w-7 bg-lime-500 cursor-pointer rounded-full text-center font-extrabold text-white" 
                         hx-get="{% url 'update_cart' item.item.id 'increment' %}"
                         hx-target="#cart-item-{{ item.item.id }}" 
