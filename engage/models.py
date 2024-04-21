@@ -93,10 +93,10 @@ class Team(models.Model):
 # stores all basic item info
 class Item(models.Model):
     name = models.CharField(max_length=200)
-    price = models.FloatField()
-    description = models.CharField(max_length=200)
+    price = models.IntegerField()
+    description = models.CharField(max_length=300)
     created_at = models.DateField(auto_now_add=True)
-    image = models.CharField(max_length=100, default="", blank=True)
+    image = models.CharField(max_length=200, default="", blank=True)
     def __str__(self):
         return self.name
 

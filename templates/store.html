@@ -1,74 +1,69 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% block title %}Store{% endblock %}
 
 {% block content %}
-
-{% if user.is_staff %}
-<div>
-    <a href="{% url 'add_item' %}"
-        class="fixed bottom-24 right-4 md:right-72 md:bottom-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-2xl shadow-lg flex items-center justify-center z-50">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-    </a>
+<div class="flex flex-row justify-center items-center pt-12 pb-4 space-x-5 sticky top-0 bg-white z-50">
+    {% if request.user.is_staff %}
+        <a href="{% url 'add_item' %}"
+            class="border border-lime-500 hover:bg-lime-100 rounded-2xl shadow">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 ">
+                <title>Add Activity</title>
+                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"> <path d="M6 12H18M12 6V18" stroke="#84cc16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </g>
+            </svg>
+        </a>
+    {% endif %}
+    <h1 class="text-4xl md:text-5xl font-extrabold text-center">Store</h1>
+    <button class="border border-lime-500 hover:bg-lime-100 relative text-white font-bold rounded-2xl shadow flex items-center justify-center"
+         hx-get="{% url 'hx_menu_cart' %}" 
+         hx-trigger="update-menu-cart from:body" 
+         hx-swap="innerHTML">
+        {% include 'cart/menu_cart.html' %}
+    </button>
 </div>
-{% endif %}
 
-
-<h1 class="text-4xl md:text-5xl font-extrabold text-center pt-12 ml-5 mb-5">Store</h1>
-<div class="relative">
-    <div class="flex">
-        <p class="px-1 text-2xl md:text-3xl font-extrabold text-center ml-5 mb-5">Balance: {{user.balance}}</p>
-        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-        <div class="fixed top-24 right-4 md:right-72 md:top-8 bg-amber-400 hover:bg-amber-600 text-white font-bold p-4 rounded-full shadow-lg flex items-center justify-center z-50"
-            hx-get="{% url 'hx_menu_cart' %}" hx-trigger="update-menu-cart from:body" hx-swap="innerHTML">
-            {% include 'cart/menu_cart.html' %}
+<div class="flex flex-row justify-center items-center mt-6">
+    <div class="flex flex-col border border-amber-300 rounded-2xl">
+        <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700">BALANCE</div>
+        <div class="flex  px-4 py-2 items-center space-x-2">
+            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+            <p class="text-2xl font-bold text-yellow-500">{{ user.balance }}</p>
         </div>
     </div>
 </div>
 
-
-
-
-<div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-white rounded-xl">
-    <div class="w-7/8 my-6 mx-auto p-2 lg:p-10 bg-gray-200 rounded-xl">
-        <div>
-            <div class="grid grid-cols-[repeat(auto-fill,10rem)] gap-2 justify-between ">
-                {% for item in items %}
-                {% include 'partials/item_card.html' %}
-                {% endfor %}
-            </div>
-        </div>
-
+<div class="w-full mt-10 mx-auto">
+    <div class="flex gap-4 flex-wrap justify-center">
+        {% for item in items %}
+            {% include 'partials/item_card.html' %}
+        {% endfor %}
     </div>
-
-
-
 </div>
-
-
-
 {% endblock %}
 
 {% block scripts %}
 <script>
-    function openActivityKebab() {
-        const menu = document.querySelector('.kebab-menu');
-        const isMenuVisible = menu.style.display === 'block';
-        // hide this menu
-        document.querySelector('.kebab-menu').style.display = 'none';
-        // toggle this menu
-        menu.style.display = isMenuVisible ? 'none' : 'block';
-        // close the menu when clicking outside
-        document.addEventListener('click', function (event) {
-            const isClickInsideKebab = event.target.closest('.kebab-button');
-            if (!isClickInsideKebab) {
-                document.querySelectorAll('.kebab-menu').forEach((menu) => {
-                    menu.style.display = 'none';
-                });
-            }
-        });
-    }   
+    function openStoreKebab(id) {
+    const menuId = 'kebab-menu-store-' + id;
+    const menu = document.getElementById(menuId);
+    const isMenuVisible = menu.style.display === 'block';
+    // hide all menus
+    document.querySelectorAll('.kebab-menu').forEach((el) => {
+        el.style.display = 'none';
+    });
+    // toggle this menu
+    menu.style.display = isMenuVisible ? 'none' : 'block';
+    // close the menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const isClickInsideKebab = event.target.closest('.kebab-button');
+        if (!isClickInsideKebab) {
+            document.querySelectorAll('.kebab-menu').forEach((menu) => {
+                menu.style.display = 'none';
+            });
+        }
+    });
+}       
 </script>
 {% endblock %}
