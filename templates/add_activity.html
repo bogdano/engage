@@ -31,7 +31,7 @@
         </div>
         
         <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
-        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Contributes to which leaderboards?" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Contributes to which leaderboards? (3 max.)" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
             {% for leaderboard in leaderboards %}
                 <option value="{{ leaderboard.leaderboard_name }}">{{ leaderboard.leaderboard_name }}</option>
             {% endfor %}
@@ -200,6 +200,7 @@ function initializeAddActivity() {
     // Get current date and time plus 1 hour
     const now = new Date()
     now.setHours(now.getHours() + 1)
+    const rightnow = new Date()
     // Format current date/time for datetime-local input
     const eventStart = formatDateTime(now);
 
@@ -211,10 +212,10 @@ function initializeAddActivity() {
     // Set the values of the input fields
     let startDateField = document.getElementById('event_date')
     startDateField.value = eventStart;
-    startDateField.min = eventStart;
+    startDateField.min = formatDateTime(rightnow)
     let endDateField = document.getElementById('end_date')
     endDateField.value = eventEnd;
-    endDateField.min = eventEnd;
+    endDateField.min = eventStart
 
     // DRAG AND DROG FILE UPLOAD
     const dropArea = document.querySelector('.drag-drop');

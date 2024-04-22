@@ -1,14 +1,14 @@
 {% load static %}
-<div class="p-4 relative w-72 md:w-56">
+<div class="p-4 relative">
     <a href="{% url 'item' item.pk %}" class="block rounded-lg shadow shadow-lime-300 group">
         <div class="relative">
-            <img src='{{item.image}}' class="rounded-t-lg w-72 md:w-56" loading="lazy">
+            <img src='{{item.image}}' alt="{{ item.name }}" class="rounded-t-lg w-72 h-72 md:w-56 md:h-56 bg-stone-100" loading="lazy">
             <div class="absolute bottom-0 right-0 flex bg-white border-l border-t border-lime-500 px-2 py-0.5 opacity-90 group-hover:opacity-100 rounded-tl-lg">
                 <p class="font-extrabold mr-1 text-amber-900">{{ item.price }}</p>
                 <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-5 h-5 my-auto">
             </div>
         </div>
-        <div class="flex w-full h-16 bg-lime-50 rounded-b-lg border-t border-lime-400 group-hover:bg-white">
+        <div class="flex w-72 md:w-56 h-16 bg-lime-50 rounded-b-lg border-t border-lime-400 group-hover:bg-white">
             <p class="p-2 m-auto text-center ">{{item.name}}</p>
         </div>  
     </a>
@@ -28,7 +28,7 @@
                     </g>
                 </svg>
             </button>
-            <ul id="kebab-menu-store-{{ item.pk }}" class="kebab-menu hidden absolute right-0 left-1/2 transform -translate-x-1/2 mt-1 bg-white cursor-pointer rounded-2xl border border-lime-600 shadow-md text-stone-600 font-bold w-auto min-w-max z-20">
+            <ul id="kebab-menu-store-{{ item.pk }}" class="kebab-menu hidden absolute right-0 mt-1 bg-white cursor-pointer rounded-2xl border border-lime-600 shadow-md text-stone-600 font-bold w-auto min-w-max z-20">
                 <li hx-post="{% url 'add_to_cart_from_store' item.pk %}"
                     hx-target=".htmx-body"
                     class="flex items-center hover:bg-lime-500 hover:text-white px-4 py-2 rounded-t-2xl">
