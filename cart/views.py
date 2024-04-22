@@ -76,7 +76,7 @@ def checkout(request):
     total = cart.total()
     user = request.user
     if request.user.balance >= total and len(cart) > 0:
-        items = cart.cart.copy()
+        items = cart.cart
         email_order(request, user)
         user.balance -= total
         user.save()
@@ -95,8 +95,8 @@ def email_order(request, user):
     cart = Cart(request)
     admin = list(CustomUser.objects.filter(is_staff=True))
     email = []
-    for user in admin:
-        email.append(user.email)
+    for staff in admin:
+        email.append(staff.email)
     subject = "New Order"
     message = render_to_string(
         "cart/partials/order_message.html", {"user": user, "cart": cart}
