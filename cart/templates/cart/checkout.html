@@ -7,7 +7,7 @@
 <div class="max-w-6xl mx-auto flex flex-wrap items-start py-6 px-6 xl:px-0">
     <div class="item w-full lg:w-3/4">
         <h2 class="py-5 text-xl">Success! You have redeemed the following items:</h2>
-        {% for item in cart %}
+        {% for item in items %}
         {% include 'cart/partials/checkout_item.html' %}
         {% endfor %}
         <div class="flex py-5">
