@@ -76,8 +76,9 @@ def checkout(request):
     total = cart.total()
     user = request.user
     if request.user.balance >= total and len(cart) > 0:
-        items = cart.cart
+        items = cart
         email_order(request, user)
+        clear_cart(request)
         user.balance -= total
         user.save()
         return render(request, "cart/checkout.html", {"items": items})
