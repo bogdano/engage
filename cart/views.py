@@ -15,10 +15,12 @@ def add_to_cart(request, item_id):
     cart.add(item_id)
     return render(request, "cart/menu_cart.html")
 
+
 def add_to_cart_from_store(request, item_id):
     cart = Cart(request)
     cart.add(item_id)
     return redirect("store")
+
 
 def update_cart(request, item_id, action):
     cart = Cart(request)
@@ -72,11 +74,10 @@ def checkout(request):
         return redirect("send_login_link")
     cart = Cart(request)
     total = cart.total()
-    # change -1 to total once balance is fully functional
+    user = request.user
     if request.user.balance >= total and len(cart) > 0:
         items = cart.cart.copy()
-        email_order(request)
-        user = request.user
+        email_order(request, user)
         user.balance -= total
         user.save()
         return render(request, "cart/checkout.html", {"items": items})
@@ -90,9 +91,8 @@ def checkout(request):
         return response
 
 
-def email_order(request):
+def email_order(request, user):
     cart = Cart(request)
-    user = request.user
     admin = list(CustomUser.objects.filter(is_staff=True))
     email = []
     for user in admin:
@@ -110,4 +110,3 @@ def clear_cart(request):
     items = Item.objects.all()
     cart.empty()
     return render(request, "store.html", {"items": items})
-
