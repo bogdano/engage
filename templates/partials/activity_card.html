@@ -17,7 +17,7 @@
                 {% if activity.leaderboards.all %}
                     <div class="flex flex-row mt-1 flex-wrap">
                         {% for leaderboard in activity.leaderboards.all %}
-                            <span class="{% if not activity.is_approved %}bg-rose-300{% endif %} {% if not activity.is_active %}bg-stone-300 group-hover:bg-stone-400{% endif %} bg-amber-400 text-white font-semibold text-xs px-1.5 py-0 rounded-lg mr-1 group-hover:bg-amber-500 mb-1">{{ leaderboard.leaderboard_name }}</span>
+                            <span class="{% if not activity.is_approved %}bg-rose-300 group-hover:bg-rose-400 {% elif not activity.is_active %}bg-stone-300 group-hover:bg-stone-400{% else %} bg-amber-400 group-hover:bg-amber-500 {% endif %} text-white font-semibold text-xs px-1.5 py-0 rounded-lg mr-1 mb-1">{{ leaderboard.leaderboard_name }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}
@@ -36,25 +36,29 @@
                     <span class="text-amber-500 font-bold text-sm {% if not activity.is_approved %}text-rose-500{% endif %}">{{ activity.points }}</span>
                 </div>
             {% else %}
-
-            {% if request.user in activity.interested_users.all %}
-                {% if not activity.user_has_participated %}
-                    <button type="button"
-                        hx-post="{% url 'award_participation_points' activity.pk %}" 
-                        hx-swap="outerHTML" 
-                        hx-target="#activity-{{ activity.pk }}" 
-                        onclick="awardPoints(); event.preventDefault(); event.stopPropagation();"
-                        class="award-points-button flex items-center justify-center space-x-1 w-20 bg-white border border-amber-300 shadow-sm px-2 py-1 mt-1 md:mt-0 rounded-xl hover:bg-amber-200 hover:border-none hover:text-white">
-                        
-                        <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-6 md:h-6 text-amber-500">
-                        <span class="text-amber-500 font-bold text-sm">{{ activity.points }}</span>
-                    </button>
+                {% if request.user in activity.interested_users.all %}
+                    {% if not activity.user_has_participated %}
+                        <button class="group/button flex flex-row justify-center items-center mt-1"
+                                type="button"
+                                hx-post="{% url 'award_participation_points' activity.pk %}" 
+                                hx-swap="outerHTML" 
+                                hx-target="#activity-{{ activity.pk }}" 
+                                onclick="awardPoints(); event.preventDefault(); event.stopPropagation();">
+                            <div class="flex flex-col border border-amber-300 group-hover/button:border-lime-500 shadow rounded-xl bg-white  text-amber-500 ">
+                                <div class="text-center w-full font-extrabold text-xs rounded-t-lg py-0.5 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM</div>
+                                <div class="flex px-2 items-center space-x-1">
+                                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4">
+                                    <p class="text-base font-extrabold text-amber-500">{{ activity.points }}</p>
+                                </div>
+                            </div>
+                        </button>
                     {% else %}
-                        <img src="{% static 'icons/checked.svg' %}" alt="Icon" class="w-6 h-6">
+                            <img src="{% static 'icons/checked.svg' %}" alt="Icon" class="w-6 h-6">
                     {% endif %}
                 {% endif %}
             {% endif %}
         </div>
+
 
         {% if request.user.is_staff %}
             <div class="relative">

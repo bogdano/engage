@@ -30,7 +30,7 @@
         </div>
         
         <!-- TomSelect input that allows for selecting one or more leaderboards from the Leaderboard model, and allows typing in a new leaderboard name -->
-        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Contributes to which leaderboards?" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
+        <select id="select-leaderboard" name="leaderboards" multiple placeholder="Contributes to which leaderboards? (3 max.)" autocomplete="on" class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-14">
             {% for leaderboard in leaderboards %}
                 <option value="{{ leaderboard.leaderboard_name }}" {% if leaderboard in activity.leaderboards.all %}selected{% endif %}>{{ leaderboard.leaderboard_name }}</option>
             {% endfor %}
@@ -212,13 +212,16 @@ function formatDateTime(date) {
 // if this is the add_activity page:
 function initializeAddActivity() {
     if (document.getElementById('imageDropped') === null) return
+    const end = new Date();
+    const start = new Date();
+    end.setHours(end.getHours() + 1);
     // Set the values of the input fields
     let startDateField = document.getElementById('event_date');
     startDateField.value = "{{ activity.event_date|date:'Y-m-d\\TH:i' }}";
-    startDateField.min = "{{ activity.event_date|date:'Y-m-d\\TH:i' }}";
+    startDateField.min = formatDateTime(start);
     let endDateField = document.getElementById('end_date');
     endDateField.value = "{{ activity.end_date|date:'Y-m-d\\TH:i' }}";
-    endDateField.min = "{{ activity.end_date|date:'Y-m-d\\TH:i' }}";
+    endDateField.min = formatDateTime(end);
 
 
     // DRAG AND DROG FILE UPLOAD

@@ -42,15 +42,20 @@
 
 {% if request.user in activity.interested_users.all and not user_has_participated and not activity.is_active %}
     <div id="points-button-container" class="flex justify-center items-center mb-5">
-        <button type="button"
-            name="award_points_from_activity_page"
-            hx-post="{% url 'award_participation_points' activity.pk %}?from_activity_page=true" 
-            hx-swap="outerHTML transition:true" 
-            hx-target="#points-button-container" 
-            onclick="awardPoints()"
-            class="award-points-button group flex items-center justify-center space-x-1 border border-amber-100 shadow-md px-2 py-1 rounded-xl hover:bg-amber-300 hover:border-amber-300">
-            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-            <span class="text-yellow-500 font-bold text-2xl group-hover:text-white">{{ activity.points }}</span>
+        <button class="group/button flex flex-row justify-center items-center mt-1"
+                name="award_points_from_activity_page"
+                type="button"
+                hx-post="{% url 'award_participation_points' activity.pk %}?from_activity_page=true" 
+                hx-swap="outerHTML transition:true" 
+                hx-target="#points-button-container" 
+                onclick="awardPoints()">
+                <div class="flex flex-col border border-amber-300 group-hover/button:border-lime-500 shadow-md rounded-2xl bg-white  text-amber-500 ">
+                <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM POINTS</div>
+                <div class="flex px-4 py-2 items-center space-x-2">
+                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+                    <p class="text-2xl font-extrabold text-yellow-500">{{ activity.points }}</p>
+                </div>
+            </div>
         </button>
     </div>
 {% else %}

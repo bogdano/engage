@@ -1,26 +1,41 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Checkout{% endblock %}
+{% block title %}Cart{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto flex flex-wrap items-start py-6 px-6 xl:px-0">
-    <div class="item w-full lg:w-3/4">
-        <h2 class="py-5 text-xl">Success! You have redeemed the following items:</h2>
+<div class="flex flex-row space-x-3 mx-3 mb-10 justify-center pt-12 pb-10">
+    <a href="{% url 'store' %}">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-lime-400 shadow-md h-12 w-12 border border-lime-400 rounded-2xl align-middle p-1 hover:bg-lime-100">
+        <title>Back to Store</title>
+        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+        <g id="SVGRepo_iconCarrier"> <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" /> </g>
+        </svg>
+    </a>
+    <h1 class="text-4xl md:text-5xl font-extrabold my-auto">Your Order</h1>
+</div>
+<div class="mx-auto flex flex-wrap items-start">
+    <div class="item w-full">
         {% for item in items %}
-        {% include 'cart/partials/checkout_item.html' %}
+            {% include 'cart/partials/cart_item.html' %}
         {% endfor %}
-        <div class="flex py-5">
-            <h2 class="text-xl px-1">Your order has been sent to an admin for processing. Your new balance is
-                {{user.balance|floatformat:0}}
-            </h2>
-            <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-            <p>.</p>
-
-        </div>
     </div>
 
-</div>
+    <div class="summary w-full md:w-fit md:px-56 p-12 mx-4 md:mx-auto bg-amber-100 border border-amber-500 rounded-xl mt-3">
+        <h2 class="uppercase text font-extrabold text-2xl text-center text-stone-600 mb-5">SUMMARY</h2>
+        <!-- success message, order has been received -->
+        <p class="text-green-600 font-bold mb-4">Success! Your order has been sent to an admin for processing. Your new balance is:</p>
 
-<a href="{% url 'clear_cart' %}" class="px-8 py-4 rounded-xl bg-amber-400 hover:bg-amber-600 text-white">Back</a>
+        <div class="flex flex-row justify-center items-center my-6">
+            <div class="flex flex-col border border-amber-300 rounded-2xl">
+                <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700">BALANCE</div>
+                <div class="flex  px-4 py-2 items-center space-x-2 bg-white rounded-b-2xl">
+                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
+                    <p class="text-2xl font-bold text-yellow-500">{{ user.balance }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

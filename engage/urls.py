@@ -25,6 +25,7 @@ from cart.views import (
     hx_menu_cart,
     update_cart,
     hx_cart_total,
+    hx_summary,
     checkout,
     clear_cart,
 )
@@ -74,6 +75,7 @@ urlpatterns = [
     path("hx_menu_cart/", hx_menu_cart, name="hx_menu_cart"),
     path("update_cart/<int:item_id>/<str:action>/", update_cart, name="update_cart"),
     path("hx_cart_total/", hx_cart_total, name="hx_cart_total"),
+    path("hx_summary/", hx_summary, name="hx_summary"),
     path("checkout/", checkout, name="checkout"),
     path("clear_cart/", clear_cart, name="clear_cart"),
     path("edit_item/<int:pk>/", views.edit_item, name="edit_item"),

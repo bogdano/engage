@@ -1,5 +1,7 @@
+{% if cart %}
 <div class="flex justify-center">
     <a  href="{% url 'checkout' %}"
         class="px-8 py-4 mx-auto rounded-2xl font-extrabold bg-lime-500 hover:bg-lime-600  text-white">Redeem
     </a>
 </div>
+{% endif %}

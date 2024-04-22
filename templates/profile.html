@@ -70,7 +70,7 @@
             <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700">BALANCE</div>
             <div class="flex  px-4 py-2 items-center space-x-2">
                 <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-                <p class="text-2xl font-bold text-yellow-500">{{ user.balance }}</p>
+                <p class="text-2xl font-extrabold text-yellow-500">{{ user.balance }}</p>
             </div>
         </div>
     </div>
@@ -78,7 +78,7 @@
 
     <p class="px-6 mt-6 md:max-w-screen-lg md:text-center">{{ user.description }}</p>
 
-    <p class="px-6 mt-6 text-center font-bold text-rose-700">Participating in:</p>
+    <p class="px-6 mt-6 text-center font-bold text-rose-700">Currently participating in:</p>
     {% if show_interested %}
         <div class="flex flex-col w-full mt-4 px-3 md:px-36">
             {% for activity in interested %}

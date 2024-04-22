@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="flex flex-row space-x-3 mx-3 mb-10 justify-center pt-12 pb-10">
-    <a href="{% url 'store' %}">
+    <a href="javascript:history.back()">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-lime-400 shadow-md h-12 w-12 border border-lime-400 rounded-2xl align-middle p-1 hover:bg-lime-100">
         <title>Back to Store</title>
         <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -22,8 +22,8 @@
         {% endfor %}
     </div>
 
-    <div class="summary w-full md:w-fit md:px-56 p-12 mx-4 md:mx-auto bg-amber-100 border border-amber-500 rounded-xl mt-3">
-        <h2 class="uppercase text font-extrabold text-xl text-center text-stone-700 mb-5">SUMMARY</h2>
+    <div class="summary w-full md:w-fit md:px-56 p-12 mx-4 md:mx-auto bg-amber-50 border border-amber-200 rounded-xl mt-3">
+        <h2 class="uppercase text font-extrabold text-2xl text-center text-stone-600 mb-5">SUMMARY</h2>
         <div class="mb-6 flex justify-center">
             <span class="font-semibold">Total: </span>
             <span hx-get="{% url 'hx_cart_total' %}" hx-trigger="update-menu-cart from:body" hx-swap="innerHTML">
@@ -36,19 +36,20 @@
                 <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700">BALANCE</div>
                 <div class="flex  px-4 py-2 items-center space-x-2 bg-white rounded-b-2xl">
                     <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-                    <p class="text-2xl font-bold text-yellow-500">{{ user.balance }}</p>
+                    <p class="text-2xl font-extrabold text-yellow-500">{{ user.balance }}</p>
                 </div>
             </div>
         </div>
         
         {% if insufficient_funds %}
-        <p class="text-red-500 font-bold mb-4">You have insufficient currency for these items!</p>
+            <p class="text-red-500 font-bold mb-4">You have insufficient currency for these items!</p>
         {% endif %}
         {% if empty_cart %}
-        <p class="text-red-500 font-bold mb-4">Your cart is empty!</p>
+            <p class="text-red-500 font-bold mb-4">Your cart is empty!</p>
         {% endif %}
-        
-        {% include 'cart/partials/summary.html' %}
+        <div hx-get="{% url 'hx_summary' %}" hx-trigger="update-menu-cart from:body" hx-swap="innerHTML">
+            {% include 'cart/partials/summary.html' %}
+        </div>    
     </div>
 </div>
 {% endblock %}

@@ -18,7 +18,7 @@
     <h1 class="text-4xl md:text-5xl font-extrabold text-center">Store</h1>
     <button class="border border-lime-500 hover:bg-lime-100 relative text-white font-bold rounded-2xl shadow flex items-center justify-center"
          hx-get="{% url 'hx_menu_cart' %}" 
-         hx-trigger="update-menu-cart from:body" 
+         hx-trigger="update-menu-cart from:body, load" 
          hx-swap="innerHTML">
         {% include 'cart/menu_cart.html' %}
     </button>
@@ -29,13 +29,13 @@
         <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700">BALANCE</div>
         <div class="flex  px-4 py-2 items-center space-x-2">
             <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
-            <p class="text-2xl font-bold text-yellow-500">{{ user.balance }}</p>
+            <p class="text-2xl font-extrabold text-yellow-500">{{ user.balance }}</p>
         </div>
     </div>
 </div>
 
 <div class="w-full mt-10 mx-auto">
-    <div class="flex gap-4 flex-wrap justify-center">
+    <div class="flex gap-4 flex-wrap justify-center mx-auto">
         {% for item in items %}
             {% include 'partials/item_card.html' %}
         {% endfor %}
