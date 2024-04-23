@@ -6,9 +6,31 @@
                 hx-swap="outerHTML" 
                 hx-target="#activity-{{ activity.pk }}" 
                 onclick="event.preventDefault(); event.stopPropagation();"
-                class="flex-none p-2 border rounded-xl border-amber-100 hover:bg-white group-hover:bg-white shadow-sm {% if not activity.is_active %}grayscale{% endif %}"
-                {% if not activity.is_active or not activity.is_approved %}disabled{% endif %}>
-            <img src="{% if request.user in activity.interested_users.all %}{% static 'icons/bookmark_saved.svg' %}{% elif not activity.is_approved %}{% static 'icons/hourglass.svg' %}{% else %}{% static 'icons/bookmark.svg' %}{% endif %}" alt="Bookmark Icon" class="w-6 h-6">
+                class="flex-none p-2 border rounded-xl border-amber-100 hover:bg-white group-hover:bg-white shadow-sm 
+                        {% if not activity.is_active and not request.user in activity.interested_users.all %}
+                            grayscale
+                        {% elif not activity.is_approved %}
+                            grayscale
+                        {% elif request.user in activity.participated_users.all %}
+                            grayscale
+                        {% endif %}"
+                {% if not activity.is_active and not request.user in activity.interested_users.all %}
+                    disabled
+                {% elif not activity.is_approved %}
+                    disabled
+                {% elif request.user in activity.participated_users.all %}
+                    disabled
+                {% endif %}>
+                <img src="{% if request.user in activity.interested_users.all and activity.is_active or request.user in activity.participated_users.all %}
+                            {% static 'icons/bookmark_saved.svg' %}
+                        {% elif not activity.is_active and not request.user in activity.participated_users.all and request.user in activity.interested_users.all %}
+                            {% static 'icons/delete.svg' %}
+                        {% elif not activity.is_approved %}
+                            {% static 'icons/hourglass.svg' %}
+                        {% else %}
+                            {% static 'icons/bookmark.svg' %}
+                        {% endif %}" 
+                        alt="Bookmark Icon" class="w-6 h-6">
         </button>
 
         <div class="flex-grow flex items-center justify-start">
@@ -23,7 +45,7 @@
                 {% endif %}
             </div>
         </div>
-        <div class="flex flex-col md:flex-row items-center min-w-20">
+        <div class="flex flex-col md:flex-row items-center w-auto">
             {% if activity in today_activities or activity in tomorrow_activities %}
                 <span class="text-xs text-stone-400 md:mr-4">{{ activity.event_date|date:"g:i A" }}</span>
             {% else %}
@@ -31,23 +53,23 @@
             {% endif %}
 
             {% if activity.is_active %}
-                <div class="flex items-center justify-center space-x-1 w-20 group-hover:bg-white border border-amber-100 shadow-sm px-2 py-1 rounded-xl mt-1 md:mt-0 {% if not activity.is_approved %}border-rose-200{% endif %}">
-                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-6 md:h-6 text-amber-500">
-                    <span class="text-amber-500 font-bold text-sm {% if not activity.is_approved %}text-rose-500{% endif %}">{{ activity.points }}</span>
+                <div class="flex items-center justify-center space-x-1 w-20 group-hover:bg-white border border-amber-200 shadow-sm px-2 py-1 rounded-xl mt-1.5 md:mt-0 {% if not activity.is_approved %}border-rose-300{% endif %}">
+                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 text-amber-500">
+                    <span class="text-amber-500 font-extrabold text-base {% if not activity.is_approved %}text-rose-500{% endif %}">{{ activity.points }}</span>
                 </div>
             {% else %}
                 {% if request.user in activity.interested_users.all %}
                     {% if not activity.user_has_participated %}
-                        <button class="group/button flex flex-row justify-center items-center mt-1"
+                        <button class="group/button flex flex-row justify-center items-center mt-1.5 md:mt-0"
                                 type="button"
                                 hx-post="{% url 'award_participation_points' activity.pk %}" 
                                 hx-swap="outerHTML" 
                                 hx-target="#activity-{{ activity.pk }}" 
                                 onclick="awardPoints(); event.preventDefault(); event.stopPropagation();">
                             <div class="flex flex-col border border-amber-300 group-hover/button:border-lime-500 shadow rounded-xl bg-white  text-amber-500 ">
-                                <div class="text-center w-full font-extrabold text-xs rounded-t-lg py-0.5 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM</div>
-                                <div class="flex px-2 items-center space-x-1">
-                                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4">
+                                <div class="text-center w-full font-extrabold text-xs rounded-t-xl py-0.5 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM</div>
+                                <div class="flex px-2 py-1 items-center space-x-1">
+                                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5">
                                     <p class="text-base font-extrabold text-amber-500">{{ activity.points }}</p>
                                 </div>
                             </div>

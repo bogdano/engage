@@ -3,7 +3,10 @@
     <div class="mr-1.5"> 
         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7"> 
     </div>
-    <p class="font-bold text-2xl text-center text-yellow-500">
+    <p class="text-3xl font-extrabold text-yellow-500">
         {{ activity.points }}
     </p>
+    {% if request.user in activity.participated_users.all %}
+        <img src="{% static 'icons/checked.svg' %}" alt="Icon" class="ml-1 w-8 h-8">
+    {% endif %}
 </div>

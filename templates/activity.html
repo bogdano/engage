@@ -7,7 +7,7 @@
 <!-- add a back button, maybe? -->
 <!-- <button onclick="window.history.back()">go back</button> -->
 
-<div class="flex md:flex-row flex-col justify-center items-center md:space-x-4 pt-12 mb-5 px-2">
+<div class="flex md:flex-row flex-col flex-wrap space-y-2 justify-center items-center md:space-x-4 pt-12 mb-5 px-2">
     <h1 class="font-extrabold text-4xl md:text-5xl mb-4 md:mb-0 text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
     <div class="flex flex-row space-x-2">
         {% include 'partials/bookmark_button.html' %}
@@ -50,7 +50,7 @@
                 hx-target="#points-button-container" 
                 onclick="awardPoints()">
                 <div class="flex flex-col border border-amber-300 group-hover/button:border-lime-500 shadow-md rounded-2xl bg-white  text-amber-500 ">
-                <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM POINTS</div>
+                <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM</div>
                 <div class="flex px-4 py-2 items-center space-x-2">
                     <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7">
                     <p class="text-2xl font-extrabold text-yellow-500">{{ activity.points }}</p>
@@ -115,8 +115,8 @@
 <p class="my-10 text-md md:text-lg px-6 text-center">{{ activity.description }}</p>
 
 {% if other_interested_users.all %}
-<div class="{% if activity.photo %}mb-10{% else %}mb-16{% endif %} p-3 bg-amber-50 border border-amber-100 md:rounded-2xl md:w-fit max-w-full md:min-w-96 mx-auto">
-    <p class="font-semibold text-amber-500 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
+<div class="{% if activity.photo %}mb-10{% else %}mb-16{% endif %} p-3 bg-amber-100 border border-amber-200 md:rounded-2xl md:w-fit max-w-full md:min-w-96 mx-auto">
+    <p class="font-semibold text-amber-700 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
     <div id="users-list" class="flex flex-wrap md:space-x-3 text-sm px-2 md:text-md">
         {% with users=other_interested_users.all|slice:":8" %}
             {% include 'partials/additional_users.html' %}
@@ -136,7 +136,7 @@
 </div>
 {% endif %}
 
-<p class="text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ activity.creator.email }} on {{ activity.created_at }}</p>
+<p class="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-slate-400 text-xs text-center"><span class="italic">Created by:</span> {{ activity.creator.email }} on {{ activity.created_at }}</p>
 <audio class="award-points-sound hidden" src="{% static 'coins.ogg' %}" type="audio/ogg"></audio>
 {% endblock %}
 

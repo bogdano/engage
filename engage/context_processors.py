@@ -10,11 +10,11 @@ def current_section(request):
         return {'current_section': 'home'}
     elif '/leaderboard/' in path:
         return {'current_section': 'leaderboard'}
-    elif '/store/' in path or '/item/' in path or '/add_item/' in path or '/cart/' in path:
+    elif '/store/' in path or '/item/' in path or '/add_item/' in path or '/cart/' in path or '/checkout/' in path:
         return {'current_section': 'store'}
     elif '/notifications/' in path:
         return {'current_section': 'notifications'}
-    elif '/profile/' in path or '/edit_profile/' in path or '/outside_profile/' in path or '/teams/' in path:
+    elif '/profile/' in path or '/edit_profile/' in path or '/teams/' in path:
         return {'current_section': 'profile'}
     # Add more conditions as necessary
     else:

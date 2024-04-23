@@ -1,11 +1,37 @@
 {% load static %}
 <button type="button" 
         hx-post="{% url 'bookmark_activity_from_activity' activity.pk %}" 
+        hx-target=".htmx-body"
         hx-swap="outerHTML" 
-        {% if not activity.is_active or not activity.is_approved %}disabled{% endif %}
-        class="{% if not activity.is_active or not activity.is_approved %}grayscale{% endif %} 
-         p-2 border rounded-xl border-amber-200 hover:bg-amber-50 shadow w-auto inline-flex items-center justify-center text-yellow-500 text-sm font-bold pl-3">
-    {% if request.user in activity.interested_users.all %}Participating{% else %}Participate!{% endif %}
-    <img src="{% if request.user in activity.interested_users.all %}{% static 'icons/bookmark_saved.svg' %}{% else %}{% static 'icons/bookmark.svg' %}{% endif %}" alt="Bookmark Icon" class="w-6 h-6 ml-1">
+        {% if not activity.is_active and not request.user in activity.interested_users.all %}
+            disabled
+        {% elif not activity.is_approved %}
+            disabled
+        {% elif request.user in activity.participated_users.all %}
+            disabled
+        {% endif %} 
+        class="{% if not activity.is_active and not request.user in activity.interested_users.all %}
+                grayscale
+            {% elif not activity.is_approved %}
+                grayscale
+            {% elif request.user in activity.participated_users.all %}
+                grayscale
+            {% endif %} p-2 border rounded-xl border-amber-200 hover:bg-amber-50 shadow w-auto inline-flex items-center justify-center text-amber-500 text-sm font-bold pl-3">
+    {% if request.user in activity.interested_users.all and activity.is_active %}
+        Participating
+        <img src="{% static 'icons/bookmark_saved.svg' %}" alt="Bookmark Icon" class="w-6 h-6 ml-1">
+    {% elif not activity.is_active and not request.user in activity.participated_users.all and request.user in activity.interested_users.all %}
+        Remove
+        <img src="{% static 'icons/delete.svg' %}" alt="Bookmark Icon" class="w-6 h-6 ml-1">
+    {% elif not activity.is_approved %}
+        Participate!
+        <img src="{% static 'icons/hourglass.svg' %}" alt="Bookmark Icon" class="w-6 h-6 ml-1">
+    {% elif request.user in activity.participated_users.all %}
+        Participated
+        <img src="{% static 'icons/bookmark_saved.svg' %}" alt="Bookmark Icon" class="w-6 h-6 ml-1">
+    {% else %}
+        Participate!
+        <img src="{% static 'icons/bookmark.svg' %}" alt="Bookmark Icon" class="w-6 h-6 ml-1">
+    {% endif %}
 </button>
 
