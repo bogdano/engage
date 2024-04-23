@@ -467,8 +467,8 @@ def profile(request, pk=None):
     interested = Activity.objects.filter(
         interested_users=user, is_approved=True
     ).order_by("event_date")
+    interested = interested.exclude(participated_users=user)
     # true if user is interested  in any activity that is active
-    show_interested = interested.filter(is_active=True).exists()
     participated = Activity.objects.filter(
         participated_users=user, is_active=False
     ).order_by("-event_date")[:5]
@@ -480,7 +480,6 @@ def profile(request, pk=None):
             "team": team,
             "interested": interested,
             "participated": participated,
-            "show_interested": show_interested,
         },
     )
 

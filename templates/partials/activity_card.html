@@ -9,8 +9,6 @@
                 class="flex-none p-2 border rounded-xl border-amber-100 hover:bg-white group-hover:bg-white shadow-sm 
                         {% if not activity.is_active and not request.user in activity.interested_users.all %}
                             grayscale
-                        {% elif not activity.is_approved %}
-                            grayscale
                         {% elif request.user in activity.participated_users.all %}
                             grayscale
                         {% endif %}"

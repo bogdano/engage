@@ -1,5 +1,5 @@
 {% load static %}
-<div class="flex flex-col md:flex-row hover:shadow items mb-6 md:pr-6 bg-lime-50 border border-lime-200 rounded-xl mx-4" id="cart-item-{{ item.item.id }}">
+<div class="flex flex-col md:flex-row hover:shadow items mb-4 md:pr-6 bg-lime-50 border border-lime-200 rounded-xl mx-4" id="cart-item-{{ item.item.id }}">
     <a href="{% url 'item' item.item.id %}">
         <img class="rounded-2xl md:rounded-none m-auto mt-6 md:mt-0 md:rounded-l-xl w-72 md:w-32" src="{{ item.item.image }}" alt="{{ item.name }}">
     </a>
@@ -7,7 +7,7 @@
     <div class="w-full md:pl-6 my-auto">
         <div class="flex flex-col md:flex-row justify-center md:justify-between">
             <div class="flex flex-col mx-auto md:mx-0">
-                <a href="{% url 'item' item.item.id %}" class="text-lg my-4 mx-2 md:mx-0 font-bold text-stone-600 text-center">{{item.item.name}} <span class="text-sm ml-2 p-2 border border-amber-200 bg-white rounded-2xl font-extrabold text-amber-700 text-nowrap">{{ item.item.price }}<img src="{% static 'icons/coin.svg' %}" alt="Coins" class="h-4 w-4 inline-block ml-1 mb-1"></span></a>
+                <a href="{% url 'item' item.item.id %}" class="text-lg my-4 mx-2 md:mx-0 font-bold text-stone-600 text-center">{{item.item.name}} <span class="text-sm ml-2 p-2 border border-amber-200 bg-white rounded-2xl font-extrabold text-amber-700 text-nowrap"><img src="{% static 'icons/coin.svg' %}" alt="Coins" class="h-4 w-4 inline-block mr-1 mb-1">{{ item.item.price }}</span></a>
                 <div class="quantity mb-2 flex items-center space-x-2 mx-auto md:mx-0">
                     <a  class="h-7 w-7 bg-lime-500 cursor-pointer rounded-full text-center font-extrabold text-white" 
                         hx-get="{% url 'update_cart' item.item.id 'decrement' %}"
@@ -21,8 +21,8 @@
                 </div>
             </div>    
             <div class="flex px-4 py-2 border border-amber-400 rounded-2xl bg-white my-6 md:my-auto w-fit mx-auto md:mx-0">
-                <p class="font-bold mr-2">{{ item.item.price }}<span class="text-xs"> ✕ </span><span class="text-red-600">{{ item.quantity }}</span> = <span class="text-amber-600">{{ item.total_price }}</span></p>
                 <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-6 h-6">
+                <p class="font-bold ml-2">{{ item.item.price }}<span class="text-xs"> ✕ </span><span class="text-red-600">{{ item.quantity }}</span> = <span class="text-amber-600">{{ item.total_price }}</span></p>
             </div>
         </div>
     </div>

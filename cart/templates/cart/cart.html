@@ -4,7 +4,7 @@
 {% block title %}Cart{% endblock %}
 
 {% block content %}
-<div class="flex flex-row space-x-3 mx-3 mb-10 justify-center pt-12 pb-10">
+<div class="flex flex-row space-x-3 mx-3 justify-center pt-12 pb-6 sticky top-0 bg-white">
     <a href="javascript:history.back()">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-lime-400 shadow-md h-12 w-12 border border-lime-400 rounded-2xl align-middle p-1 hover:bg-lime-100">
         <title>Back to Store</title>
@@ -15,14 +15,14 @@
     </a>
     <h1 class="text-4xl md:text-5xl font-extrabold my-auto">Your Cart</h1>
 </div>
-<div class="mx-auto flex flex-wrap items-start">
+<div class="mx-auto flex flex-wrap items-start mt-4">
     <div class="item w-full">
         {% for item in cart %}
             {% include 'cart/partials/cart_item.html' %}
         {% endfor %}
     </div>
 
-    <div class="summary w-full md:w-fit md:px-56 p-12 mx-4 md:mx-auto bg-amber-50 border border-amber-200 rounded-xl mt-3">
+    <div class="summary w-full md:px-56 p-12 mx-4 bg-amber-50 border border-amber-200 rounded-xl mt-3">
         <h2 class="uppercase text font-extrabold text-2xl text-center text-stone-600 mb-5">SUMMARY</h2>
         <div class="mb-6 flex justify-center">
             <span class="font-semibold">Total: </span>

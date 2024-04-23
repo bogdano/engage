@@ -79,10 +79,10 @@
     <p class="px-6 mt-6 md:max-w-screen-lg md:text-center">{{ user.description }}</p>
 
     <p class="px-6 mt-6 text-center font-bold text-rose-700">Currently participating in:</p>
-    {% if show_interested %}
+    {% if interested.all %}
         <div class="flex flex-col w-full mt-4 px-3 md:px-36">
             {% for activity in interested %}
-                {% if activity.is_active %}
+                {% if not request.user in activity.participated_users.all %}
                     <div class="flex justify-between w-full border border-rose-200 hover:bg-rose-50 shadow-sm rounded-xl mb-2">
                         <span class="my-auto pl-4 text-rose-400 font-bold uppercase text-xs">{{ activity.end_date | date:"m/j" }}</span>
                         <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 my-auto text-sm">{{ activity.title }}</a>
