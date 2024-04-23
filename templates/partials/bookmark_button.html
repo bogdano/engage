@@ -12,8 +12,6 @@
         {% endif %} 
         class="{% if not activity.is_active and not request.user in activity.interested_users.all %}
                 grayscale
-            {% elif not activity.is_approved %}
-                grayscale
             {% elif request.user in activity.participated_users.all %}
                 grayscale
             {% endif %} p-2 border rounded-xl border-amber-200 hover:bg-amber-50 shadow w-auto inline-flex items-center justify-center text-amber-500 text-sm font-bold pl-3">
