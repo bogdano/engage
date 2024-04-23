@@ -146,7 +146,7 @@ def bookmark_activity_from_activity(request, pk):
         activity.interested_users.remove(user)
     else:
         activity.interested_users.add(user)
-    return render(request, "partials/bookmark_button.html", {"activity": activity})
+    return redirect("activity", pk=pk)
 
 
 def leave_activity(request, pk):

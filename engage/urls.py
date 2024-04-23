@@ -20,7 +20,6 @@ from django.conf import settings
 from django.urls import path, include
 from cart.views import (
     add_to_cart,
-    add_to_cart_from_store,
     cart,
     hx_menu_cart,
     update_cart,
@@ -70,7 +69,6 @@ urlpatterns = [
     path("add_item/", views.add_item, name="add_item"),
     path("item/<int:pk>/", views.item, name="item"),
     path("add_to_cart/<int:item_id>/", add_to_cart, name="add_to_cart"),
-    path("add_to_cart_from_store/<int:item_id>/", add_to_cart_from_store, name="add_to_cart_from_store"),
     path("cart/", cart, name="cart"),
     path("hx_menu_cart/", hx_menu_cart, name="hx_menu_cart"),
     path("update_cart/<int:item_id>/<str:action>/", update_cart, name="update_cart"),

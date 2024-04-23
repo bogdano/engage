@@ -37,16 +37,6 @@
             {% endfor %}
         </select>
 
-        <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-28 md:h-14 focus:border-amber-400 focus:outline-none focus:ring-0"></textarea>     
-
-        <div class="flex items-center justify-center h-72 my-2 rounded-2xl bg-slate-100">
-            <div id="map" class="w-full h-full rounded-2xl"></div>
-        </div>
-
-        <input type="hidden" name="address" id="addressField" value="ATG Office">
-        <input type="hidden" name="latitude" id="latitudeField">
-        <input type="hidden" name="longitude" id="longitudeField">
-
         <div class="flex md:flex-row flex-col md:space-x-4 justify-center py-2 my-2">
             <div class="flex flex-col justify-center">
                 <label for="event_date" class="text-sm font-bold text-gray-700 text-center">Event Time/Date</label>
@@ -58,6 +48,16 @@
             </div>
         </div>     
 
+        <div class="flex items-center justify-center h-72 my-2 rounded-2xl bg-slate-100">
+            <div id="map" class="w-full h-full rounded-2xl"></div>
+        </div>
+
+        <input type="hidden" name="address" id="addressField" value="ATG Office">
+        <input type="hidden" name="latitude" id="latitudeField">
+        <input type="hidden" name="longitude" id="longitudeField">
+        
+        <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-28 md:h-20 focus:border-amber-400 focus:outline-none focus:ring-0"></textarea>     
+        
         <label class="drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="photo" id="fileInput" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
             <span id="imageDropped" class="inline-flex">Upload image for activity</span>
