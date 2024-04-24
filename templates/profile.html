@@ -82,19 +82,21 @@
     {% if interested.all %}
         <div class="flex flex-col w-full mt-4 px-3 md:px-36">
             {% for activity in interested %}
-                {% if not request.user in activity.participated_users.all %}
-                    <div class="flex justify-between w-full border border-rose-200 hover:bg-rose-50 shadow-sm rounded-xl mb-2">
-                        <span class="my-auto pl-4 text-rose-400 font-bold uppercase text-xs">{{ activity.end_date | date:"m/j" }}</span>
-                        <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 my-auto text-sm">{{ activity.title }}</a>
-                        <div class="flex flex-row space-x-1 filter">
-                            <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-4 h-4 my-auto">
-                            <p class="my-auto text-stone-amber text-xs">{{ activity.points }}</p>                     
-                            <button hx-post="{% url 'leave_activity' activity.pk %}" hx-confirm="Are you sure you want to leave this activity?" hx-swap="outerHTML" hx-target=".htmx-body" class="p-2 hover:bg-white rounded-r-xl font-extrabold text-xs md:text-base text-rose-300 w-10">
-                                <span class="align-middle">✕</span>
-                            </button>
-                        </div>
+                <div class="flex justify-between w-full border {% if activity.is_active %}border-rose-200 hover:bg-rose-50{% else %}border-stone-200 hover:bg-stone-50{% endif %} shadow-sm rounded-xl mb-2">
+                    <span class="my-auto pl-4 {% if activity.is_active %}text-rose-400{% else %}text-stone-400{% endif %} font-bold uppercase text-xs">{{ activity.end_date | date:"m/j" }}</span>
+                    <a href="{% url 'activity' activity.pk %}" class="flex-grow p-2 my-auto text-sm">{{ activity.title }}{% if not activity.is_active %}<span class="font-bold text-stone-400 text-xs"> (UNCLAIMED)</span>{% endif %}</a>
+                    <div class="flex flex-row space-x-1 filter">
+                        <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-4 h-4 my-auto">
+                        <p class="my-auto text-stone-amber text-xs">{{ activity.points }}</p>                     
+                        <button hx-post="{% url 'leave_activity' activity.pk %}" 
+                                hx-confirm="Are you sure you want to leave this activity?" 
+                                hx-swap="outerHTML" 
+                                hx-target=".htmx-body" 
+                                class="p-2 hover:bg-white rounded-r-xl font-extrabold text-xs md:text-base {% if activity.is_active %}text-rose-300{% else %}text-stone-300{% endif %} w-10">
+                            <span class="align-middle">✕</span>
+                        </button>
                     </div>
-                {% endif %}
+                </div>
             {% endfor %}
         </div>
     {% else %}
@@ -105,7 +107,7 @@
         <p class="px-6 mt-6 text-center font-bold text-rose-700">Lifetime points:</p>
         <div class="flex items-center px-4 py-2 mt-3 space-x-2 border border-stone-200 rounded-2xl">
             <img src="{% static 'icons/coin.svg' %}" alt="Coins" class="w-7 h-7">
-            <p class="text-2xl font-bold text-stone-400">{{ user.lifetime_points }}</p>
+            <p class="text-2xl font-extrabold text-stone-400">{{ user.lifetime_points }}</p>
         </div>
         <div id="past-activities" class="flex flex-col w-full mt-3 px-3 md:px-36">
             {% with activities=participated.all|slice:":5" %}

@@ -18,17 +18,20 @@
                     disabled
                 {% elif request.user in activity.participated_users.all %}
                     disabled
+                {% elif not activity.is_active and not request.user in activity.participated_users.all and request.user in activity.interested_users.all %}
+                    hx-confirm="Are you sure? If you remove this activity, you will no longer be able to claim points for it."
                 {% endif %}>
-                <img src="{% if request.user in activity.interested_users.all and activity.is_active or request.user in activity.participated_users.all %}
-                            {% static 'icons/bookmark_saved.svg' %}
-                        {% elif not activity.is_active and not request.user in activity.participated_users.all and request.user in activity.interested_users.all %}
-                            {% static 'icons/delete.svg' %}
-                        {% elif not activity.is_approved %}
-                            {% static 'icons/hourglass.svg' %}
-                        {% else %}
-                            {% static 'icons/bookmark.svg' %}
-                        {% endif %}" 
-                        alt="Bookmark Icon" class="w-6 h-6">
+                {% if request.user in activity.interested_users.all and activity.is_active or request.user in activity.participated_users.all %}
+                    <img src="{% static 'icons/bookmark_saved.svg' %}" alt="Bookmark Icon" class="w-6 h-6">
+                {% elif not activity.is_active and not request.user in activity.participated_users.all and request.user in activity.interested_users.all %}
+                    <span class="text-stone-400 group-hover:text-red-400 font-extrabold text-base w-6 h-6 block">✕</span>
+                {% elif not activity.is_approved %}
+                    <img src="{% static 'icons/hourglass.svg' %}" alt="Bookmark Icon" class="w-6 h-6">
+                {% elif request.user in activity.participated_users.all %}
+                    <img src="{% static 'icons/bookmark_saved.svg' %}" alt="Bookmark Icon" class="w-6 h-6">
+                {% else %}
+                    <img src="{% static 'icons/bookmark.svg' %}" alt="Bookmark Icon" class="w-6 h-6">
+                {% endif %}
         </button>
 
         <div class="flex-grow flex items-center justify-start">

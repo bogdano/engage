@@ -35,7 +35,7 @@ def home(request):
         activities = Activity.objects.filter(is_active=True).order_by("event_date")
         # set the date range
         start_date = datetime.today()
-        end_date = start_date + timedelta(days=15)
+        end_date = start_date + timedelta(days=30)
         # generate the date range
         date_range = [
             start_date + timedelta(days=x)
