@@ -136,17 +136,10 @@ def bookmark_activity(request, pk):
         activity.interested_users.remove(user)
     else:
         activity.interested_users.add(user)
-    return render(request, "partials/activity_card.html", {"activity": activity})
-
-
-def bookmark_activity_from_activity(request, pk):
-    activity = Activity.objects.get(pk=pk)
-    user = request.user
-    if user in activity.interested_users.all():
-        activity.interested_users.remove(user)
+    if request.GET.get("from_activity_page"):
+        return render(request, "partials/activity_header.html", {"activity": activity})
     else:
-        activity.interested_users.add(user)
-    return redirect("activity", pk=pk)
+        return render(request, "partials/activity_card.html", {"activity": activity})
 
 
 def leave_activity(request, pk):
@@ -352,7 +345,7 @@ def activity(request, pk):
     except Activity.DoesNotExist:
         return redirect("home")
     other_interested_users = activity.interested_users.all().exclude(pk=request.user.pk)
-    user_has_participated = activity.participated_users.filter(
+    activity.user_has_participated = activity.participated_users.filter(
         pk=request.user.pk
     ).exists()
     return render(
@@ -361,7 +354,6 @@ def activity(request, pk):
         {
             "activity": activity,
             "other_interested_users": other_interested_users,
-            "user_has_participated": user_has_participated,
         },
     )
 
@@ -389,7 +381,7 @@ def award_participation_points(request, pk):
         activity.participated_users.add(user)
         activity.user_has_participated = True
         if request.GET.get("from_activity_page"):
-            return render(request, "partials/points_display.html", {"activity": activity})
+            return render(request, "partials/activity_header.html", {"activity": activity})
         else:
             return render(request, "partials/activity_card.html", {"activity": activity})
 

@@ -51,7 +51,6 @@ urlpatterns = [
     path("new_activity/", views.new_activity, name="new_activity"),
     path("leave_activity/<int:pk>/", views.leave_activity, name="leave_activity"),
     path("bookmark_activity/<int:pk>/", views.bookmark_activity, name="bookmark_activity"),
-    path("bookmark_activity_from_activity/<int:pk>/", views.bookmark_activity_from_activity, name="bookmark_activity_from_activity"),
     path("load-more-activities/", views.load_more_activities, name="load_more_activities"),
     path("award_participation_points/<int:pk>/", views.award_participation_points, name="award_participation_points"),
     path("edit_activity/<int:pk>/", views.edit_activity, name="edit_activity"),
