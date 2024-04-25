@@ -143,7 +143,36 @@ function awardPoints() {
     // play sound effect when clicking on the award points button
     const audio = document.querySelector('.award-points-sound')
     audio.play()
-    console.log('Awarded points!')
+    var scalar = 1;
+    var unicorn = confetti.shapeFromText({ text: '🪙', scalar });
+    var defaults = {
+        spread: 80,
+        ticks: 200,
+        gravity: 6,
+        decay: 0.97,
+        startVelocity: 20,
+        shapes: [unicorn],
+        scalar,
+        origin: { // originate from button
+            x: event.clientX / window.innerWidth,
+            // since they fall down, start a bit higher than random
+            y: event.clientY / window.innerHeight
+        }
+    };
+    function shoot() {
+        confetti({
+            ...defaults,
+            particleCount: 10
+        });
+
+        confetti({
+            ...defaults,
+            particleCount: 10,
+            flat: true
+        });
+    }
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 50);  
 }   
 
 function initializeDraggableContainer() {

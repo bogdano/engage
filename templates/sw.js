@@ -22,6 +22,7 @@ self.addEventListener('install', async (event) => {
         '/static/styles.9e212597b7e1.css',
         '/static/css/dist/styles.5cb380364384.css',
         '/static/logo.7b04d77c16c7.webp',
+        '/static/js/confetti.browser.min.ba69e8bde58d.js',
       ]);
     })
   );
