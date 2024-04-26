@@ -77,7 +77,13 @@ def team_leaderboard_view(request):
         start_date = datetime(now.year, now.month, 1)
 
     # Simplified user participation query
-    user_participations = UserParticipated.objects.filter(date_participated__gte=timezone.make_aware(start_date))
+    # Check if a start date is defined to avoid NoneType errors
+    if start_date:
+        start_date = timezone.make_aware(start_date)  # Ensure the datetime is timezone aware
+        user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
+    else:
+        user_participations = UserParticipated.objects.all()  # No date filtering for 'all time'
+        
     if selected_leaderboard_id:
         user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
 
@@ -213,3 +219,8 @@ def leave_team(request, team_id):
         return redirect('list_teams')
     else:
         return redirect('list_teams')
+    
+def team_detail(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    return render(request, 'team_detail.html', {'team': team})
+
