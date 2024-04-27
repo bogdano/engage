@@ -12,4 +12,4 @@ class JoinTeamForm(forms.Form):
 class LeaderboardForm(forms.ModelForm):
     class Meta:
         model = Leaderboard
-        fields = ['leaderboard_name', 'leaderboard_logo', 'leaderboard_color']  # Include other fields as necessary
+        fields = ['leaderboard_name', 'leaderboard_color']  # Include other fields as necessary

@@ -58,7 +58,6 @@ class Leaderboard(models.Model):
     leaderboard_name = models.CharField(
         max_length=200, null=False, blank=False, unique=True
     )
-    leaderboard_logo = models.CharField(max_length=200)
     leaderboard_color = models.CharField(max_length=200)
     def __str__(self):
         return self.leaderboard_name
@@ -85,6 +84,9 @@ class Team(models.Model):
         related_name="team_leader",
     )
     member = models.ManyToManyField("accounts.CustomUser", related_name="team_member")
+    logo = models.CharField(max_length=200, default="", blank=True)
+    monthly_rank = models.IntegerField(default=0)
+    description = models.TextField(default="", blank=True)
     # team points will be calculated by summing the points of all users in the team,
     # queries by time can be done by filtering the UserParticipates model by date for the team members
     def __str__(self):

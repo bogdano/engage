@@ -55,7 +55,7 @@
         <div id="points-button-container" class="flex justify-center items-center mb-5">
             <div class="flex flex-row justify-center items-center mt-1">
                 <div class="flex flex-col border {% if activity.is_active %}border-amber-300 shadow-sm text-amber-500{% else %} border-stone-300 shadow text-stone-500{% endif %} bg-white rounded-2xl ">
-                    <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 {% if activity.is_active %}bg-amber-200 text-amber-700{% else %}bg-stone-200 text-stone-500{% endif %}">{% if activity.is_active %}POINTS{% else %}CLAIMED{% endif %}</div>
+                    <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 {% if activity.is_active %}bg-amber-200 text-amber-700{% else %}bg-stone-200 text-stone-500{% endif %}">{% if not activity.user_has_participated %}POINTS{% else %}CLAIMED{% endif %}</div>
                     <div class="flex px-4 py-2 items-center space-x-2">
                         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7 {% if not activity.is_active %}grayscale{% endif %}">
                         <p class="text-2xl font-extrabold {% if activity.is_active %}text-yello-500{% else %}text-stone-400{% endif %}">{{ activity.points }}</p>

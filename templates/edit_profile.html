@@ -26,7 +26,7 @@
         <input type="text" name="position" placeholder="Position" value="{{ request.user.position }}" class="w-full p-2 h-14 border border-gray-300 rounded-2xl focus:border-rose-400 focus:outline-none focus:ring-0">
         <textarea name="description" placeholder="Bio" class="w-full p-2 h-40 border border-gray-300 rounded-2xl resize-y focus:border-rose-400 focus:outline-none focus:ring-0">{{ request.user.description }}</textarea>
         
-        <label class="{% if request.user.profile_picture %}drag-over{% endif %} drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+        <label class="h-auto {% if request.user.profile_picture %}drag-over{% endif %} drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="profile_picture" id="fileInputEdit" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
             <span id="imageDroppedEdit" class="inline-flex overflow-y-hidden">{% if request.user.profile_picture %}{{ request.user.profile_picture }}{% else %}Upload profile picture{% endif %}</span>
         </label>

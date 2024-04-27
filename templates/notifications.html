@@ -1,27 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifications</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
 {% extends 'base.html' %}
-
+{% block title %}Notifications{% endblock %}
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-semibold mb-4">Notifications</h1>
-    <div class="space-y-4">
-        {% for notification in notifications %}
-        <div class="p-4 bg-white shadow rounded-lg">
-            <div class="font-bold">{{ notification.title }}</div>
-            <p>{{ notification.body }}</p>
-            <small>Received on: {{ notification.created_at }}</small>
-        </div>
-        {% empty %}
-        <p>No notifications.</p>
-        {% endfor %}
+<h1 class="text-4xl md:text-5xl font-extrabold mb-6 pt-12 text-center">Notifications</h1>
+<div class="space-y-4 mx-3">
+    {% for notification in notifications %}
+    <div class="p-4 bg-white shadow rounded-lg">
+        <div class="font-bold">{{ notification.title }}</div>
+        <p>{{ notification.body }}</p>
+        <small>Received on: {{ notification.created_at }}</small>
     </div>
+    {% empty %}
+    <p>No notifications.</p>
+    {% endfor %}
 </div>
 {% endblock %}
 

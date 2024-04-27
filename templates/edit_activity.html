@@ -56,7 +56,7 @@
 
         <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-28 md:h-20 focus:border-amber-400 focus:outline-none focus:ring-0">{{ activity.description }}</textarea>          
 
-        <label class="drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50 {% if activity.photo %}drag-over{% endif %}">
+        <label class="drag-drop h-auto flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50 {% if activity.photo %}drag-over{% endif %}">
             <input type="file" name="photo" id="fileInput" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
             <span id="imageDropped" class="overflow-y-hidden">{% if activity.photo %}{{ activity.photo }}{% else %}Upload new image for activity{% endif %}</span>
         </label>

@@ -34,12 +34,10 @@
     </div>
 </div>
 
-<div class="w-full mt-10">
-    <div class="flex gap-4 flex-wrap justify-center">
-        {% for item in items %}
-            {% include 'partials/item_card.html' %}
-        {% endfor %}
-    </div>
+<div class="w-full mt-10 flex gap-4 flex-wrap justify-center">
+    {% for item in items %}
+        {% include 'partials/item_card.html' %}
+    {% endfor %}
 </div>
 {% endblock %}
 
