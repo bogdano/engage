@@ -1,27 +1,39 @@
+{% load static %}
 <!-- partials/team_leaderboard.html -->
-<div class="space-y-4">
+<div class="space-y-2 mx-3 md:max-w-3xl md:mx-auto md:space-y-3">
+    {% now "Y" as current_year %}
+    {% now "F" as current_month %}
+    {% if date_filter == "all_time" %}
+        <h2 class="text-2xl font-extrabold text-center mb-6 text-teal-800">All Time</h2>
+    {% elif date_filter == "this_year" %}
+        <h2 class="text-2xl font-extrabold text-center mb-6 text-teal-800">{{ current_year }}</h2>
+    {% else %}
+        <h2 class="text-2xl font-extrabold text-center mb-6 text-teal-800">{{ current_month }} {{ current_year }}</h2>
+    {% endif %}
+    
     {% for team in teams %}
-    <div class="flex justify-between items-center p-4 bg-white rounded-lg shadow">
-        <div class="flex items-center">
-            <!-- Optional: Display a team logo if available -->
-            {% if team.logo %}
-            <img src="{{ team.logo }}" alt="{{ team.name }} Logo" class="h-10 w-10 rounded-full mr-4">
-            {% endif %}
-            <div>
-                <h3 class="text-lg font-semibold">
-                    <!-- Link to a team detail page -->
-                    <a href="{% url 'team_detail' team.id %}">{{ team.name }}</a>
-                </h3>
-                <p>Leader: <a href="{% url 'profile' team.leader.id %}">
-                    {{ team.leader.first_name }} {{ team.leader.last_name }}
-                </a></p>
-                <!-- Display the number of members -->
-                <p>Members: {{ team.member.count }}</p>
+    <a href="{% url 'team_detail' team.id %}" class="block">
+        <div class="flex justify-between items-center px-6 py-4 bg-white rounded-2xl shadow border border-teal-300 hover:bg-teal-100">
+            <div class="flex flex-col flex-grow">
+                <h3 class="text-lg font-extrabold text-stone-800"><span class="text-teal-500 mr-2">#{{ forloop.counter }}</span>{{ team.name }}</h3>
+                <p class="text-xs inline-flex">
+                    Creator: <span class="font-bold ml-1">{{ team.leader.first_name }} {{ team.leader.last_name }}</span>
+                </p>
+                <p class="text-xs"><span class="font-bold">{{ team.member.count|add:"-1" }}</span> teammates</p>
+            </div>
+            <div class="font-bold text-amber-500 inline-flex items-center">
+                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1 opacity-85">
+                {{ team.team_points }}
             </div>
         </div>
-        <div class="text-lg font-semibold text-blue-500">{{ team.team_points }} Points</div>
-    </div>
+    </a>
     {% empty %}
-    <p>No teams found for the selected criteria.</p>
+        <p class="text-center font-bold text-stone-500">No teams found for the selected criteria.</p>
     {% endfor %}
+    <!-- view all teams button-->
+    <div class="flex justify-center mt-6">
+        <button hx-get="{% url 'list_teams' %}" hx-push-url="true" hx-target=".htmx-body" class="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 mt-10 mb-6 rounded-2xl">View all teams</button>
+    </div>
 </div>
+
+

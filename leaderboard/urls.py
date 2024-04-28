@@ -2,10 +2,9 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path("leaderboard/", leaderboard_view, name="leaderboard"),
-    path("leaderboard/individual/", individual_leaderboard_view, name="individual_leaderboard"),
-    path("leaderboard/team/", team_leaderboard_view, name="team_leaderboard"),
+    path("", leaderboard, name="leaderboard"),
     path('teams/detail/<int:team_id>/', team_detail, name='team_detail'),
+    path('teams/edit/<int:team_id>/', edit_team, name='edit_team'),
     path('teams/', list_teams, name='list_teams'),
     path('teams/create/', create_team, name='create_team'),
     path('teams/join/', join_team, name='join_team'),

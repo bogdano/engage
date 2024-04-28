@@ -1,18 +1,30 @@
+{% load static %}
 <!-- partials/individual_leaderboard.html -->
-<div class="space-y-4">
-    {% for user in users_with_points %}
-        <div class="flex justify-between items-center p-4 bg-white rounded-lg shadow">
-            <!-- Wrap user names with an anchor tag linking to their profile -->
-            <div class="text-lg font-medium text-gray-900">
-                <a href="{% url 'profile' user.user__id %}">
-                    {{ user.user__first_name }} {{ user.user__last_name }}
-                </a>
+<div class="space-y-2 mx-3 md:max-w-3xl md:mx-auto md:space-y-3">
+    {% now "Y" as current_year %}
+    {% now "F" as current_month %}
+    {% if date_filter == "all_time" %}
+        <h2 class="text-2xl font-extrabold text-center mb-6 text-teal-800">All Time</h2>
+    {% elif date_filter == "this_year" %}
+        <h2 class="text-2xl font-extrabold text-center mb-6 text-teal-800">{{ current_year }}</h2>
+    {% else %}
+        <h2 class="text-2xl font-extrabold text-center mb-6 text-teal-800">{{ current_month }} {{ current_year }}</h2>
+    {% endif %}
+
+    <div class="border-2 border-teal-100 rounded-2xl">
+        {% for user in users %}
+        <a href="{% url 'profile' user.user__id %}" class="block">
+            <div class="flex justify-between items-center border-b border-teal-100 px-4 py-4 hover:bg-teal-100 {% if forloop.first %}rounded-t-2xl{% elif forloop.last %}rounded-b-2xl{% endif %}">
+                <!-- Wrap user names with an anchor tag linking to their profile -->
+                <span><span class="text-teal-500 w-10 mr-2">#{{ forloop.counter }} </span>{{ user.user__first_name }} {{ user.user__last_name }}</span>
+                <div class="font-bold text-amber-500 inline-flex items-center">
+                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1 opacity-85">
+                    {{ user.total_points }}
+                </div>
             </div>
-            <div class="text-lg font-semibold text-blue-500">
-                {{ user.total_points }} Points
-            </div>
-        </div>
-    {% empty %}
-        <p>No users found for the selected criteria.</p>
-    {% endfor %}
+        </a>
+        {% empty %}
+            <p class="text-center font-bold text-stone-500">No users found for the selected criteria.</p>
+        {% endfor %}
+    </div>  
 </div>

@@ -68,7 +68,7 @@
                                 hx-swap="outerHTML" 
                                 hx-target="#activity-{{ activity.pk }}" 
                                 onclick="awardPoints(); event.preventDefault(); event.stopPropagation();">
-                            <div class="flex flex-col border border-amber-300 group-hover/button:border-lime-500 shadow rounded-xl bg-white  text-amber-500 ">
+                            <div class="flex flex-col border border-amber-300 group-hover/button:border-lime-500 shadow rounded-xl bg-white  text-amber-500 min-w-max">
                                 <div class="text-center w-full font-extrabold text-xs rounded-t-xl py-0.5 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM</div>
                                 <div class="flex px-2 py-1 items-center space-x-1">
                                     <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5">

@@ -1,112 +1,16 @@
-from engage.models import Team, Activity, Leaderboard, Item, UserParticipated, Notification
-from leaderboard.forms import TeamCreateForm, JoinTeamForm, LeaderboardForm
+from engage.models import Team, Leaderboard, UserParticipated
+from leaderboard.forms import JoinTeamForm, LeaderboardForm
 from notifications.views import *
-from accounts.models import CustomUser
-from django.db.models import Sum, Count, Exists, OuterRef, Prefetch, Q
-from django.db.models.functions import TruncDay
-from django.http import HttpRequest, JsonResponse
+from django.db.models import Sum, Q
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-import dateutil.parser
-from django.views.generic import TemplateView
-from django.urls import reverse
-from django.utils.http import urlencode
 
 def leaderboard(request):
-
-    return render(request, "leaderboard.html")
-
-def individual_leaderboard_view(request):
-    leaderboards = Leaderboard.objects.all()
-    selected_leaderboard_id = request.GET.get('leaderboard_id', '')
-    date_filter = request.GET.get('date_filter', 'this_month')
-
-    # Default to None, will be used to filter by date if specified
-    start_date = None
-
-    now = datetime.now()
-    if date_filter == "this_year":
-        start_date = datetime(now.year, 1, 1)
-    elif date_filter == "this_month":
-        start_date = datetime(now.year, now.month, 1)
-
-    user_participations = UserParticipated.objects.all()
-
-    if start_date:
-        user_participations = user_participations.filter(date_participated__gte=start_date)
-
-    if selected_leaderboard_id:
-        user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
-
-    users_with_points = user_participations.values(
-        'user__id', 'user__first_name', 'user__last_name'
-    ).annotate(
-        total_points=Sum('activity__points')
-    ).order_by('-total_points')
-
-    if request.headers.get('HX-Request', False):
-        # If HTMX request, only return the necessary partial
-        return render(request, "partials/individual_leaderboard.html", {
-            "users_with_points": users_with_points
-        })
-    else:
-        # Return the full page for normal requests
-        return render(request, "leaderboard.html", {
-            "users_with_points": users_with_points,
-            "leaderboards": leaderboards,
-            "selected_leaderboard_id": selected_leaderboard_id,
-            "date_filter": date_filter
-        })
-
-
-def team_leaderboard_view(request):
-    leaderboards = Leaderboard.objects.all()
-    selected_leaderboard_id = request.GET.get('leaderboard_id', '')
-    date_filter = request.GET.get('date_filter', 'this_month')
-
-    start_date = None
-    now = timezone.now()
-    if date_filter == "this_year":
-        start_date = datetime(now.year, 1, 1)
-    elif date_filter == "this_month":
-        start_date = datetime(now.year, now.month, 1)
-
-    # Simplified user participation query
-    # Check if a start date is defined to avoid NoneType errors
-    if start_date:
-        start_date = timezone.make_aware(start_date)  # Ensure the datetime is timezone aware
-        user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
-    else:
-        user_participations = UserParticipated.objects.all()  # No date filtering for 'all time'
-        
-    if selected_leaderboard_id:
-        user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
-
-    # Simplify the aggregation of points
-    teams = Team.objects.annotate(
-        team_points=Sum('member__userparticipated__activity__points', filter=Q(member__userparticipated__in=user_participations))
-    ).order_by('-team_points')
-
-    if request.headers.get('HX-Request', False):
-        return render(request, "partials/team_leaderboard.html", {
-            "teams": teams,
-            "leaderboards": leaderboards
-        })
-    else:
-        return render(request, "leaderboard.html", {
-            "teams": teams,
-            "leaderboards": leaderboards,
-            "selected_leaderboard_id": selected_leaderboard_id,
-            "date_filter": date_filter
-        })
-
-
-def leaderboard_view(request):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     leaderboard_mode = request.GET.get('leaderboard_mode', 'individual')
     selected_leaderboard_id = request.GET.get('leaderboard_id', None)
     date_filter = request.GET.get('date_filter', 'this_month')
@@ -114,7 +18,6 @@ def leaderboard_view(request):
     leaderboards = Leaderboard.objects.all()
     now = timezone.now()
     start_date = datetime(now.year, now.month, 1) if date_filter == "this_month" else datetime(now.year, 1, 1)
-
     context = {
         'leaderboard_mode': leaderboard_mode,
         'leaderboards': leaderboards,
@@ -126,6 +29,9 @@ def leaderboard_view(request):
         user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
         if selected_leaderboard_id:
             user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
+        if start_date:
+            start_date = timezone.make_aware(start_date)
+            user_participations = user_participations.filter(date_participated__gte=start_date)
 
         users = user_participations.values(
             'user__id', 'user__first_name', 'user__last_name'
@@ -135,29 +41,34 @@ def leaderboard_view(request):
         context['users'] = users
 
     elif leaderboard_mode == 'team':
-        user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
+        if start_date:
+            start_date = timezone.make_aware(start_date)  # Ensure the datetime is timezone aware
+            user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
+        else:
+            user_participations = UserParticipated.objects.all()  # No date filtering for 'all time'
+
         if selected_leaderboard_id:
             user_participations = user_participations.filter(activity__leaderboards__id=selected_leaderboard_id)
 
-        teams = Team.objects.prefetch_related(
-            Prefetch(
-                "member",
-                queryset=CustomUser.objects.filter(
-                    id__in=user_participations.values('user__id')
-                ).annotate(
-                    total_points=Sum('userparticipated__activity__points')
-                )
-            )
-        ).annotate(team_points=Sum('member__total_points')).order_by('-team_points')
+        # Simplify the aggregation of points
+        teams = Team.objects.annotate(
+            team_points=Sum('member__userparticipated__activity__points', filter=Q(member__userparticipated__in=user_participations))
+        ).filter(team_points__gt=0).order_by('-team_points')       
         context['teams'] = teams
 
     return render(request, "leaderboard.html", context)
 
+
 def edit_leaderboard(request):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     leaderboards = Leaderboard.objects.all()
     return render(request, 'edit_leaderboard.html', {'leaderboards': leaderboards})
 
+
 def edit_leaderboard_detail(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     leaderboard = get_object_or_404(Leaderboard, pk=pk)
     if request.method == 'POST':
         form = LeaderboardForm(request.POST, instance=leaderboard)
@@ -169,29 +80,40 @@ def edit_leaderboard_detail(request, pk):
         form = LeaderboardForm(instance=leaderboard)
     return render(request, 'edit_leaderboard_detail.html', {'form': form, 'leaderboard': leaderboard})
 
+
 def list_teams(request):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     teams = Team.objects.all()
+    owns_team = False
     for team in teams:
         team.is_member = request.user in team.member.all()
-    join_form = JoinTeamForm()
-    return render(request, 'list_teams.html', {'teams': teams, 'join_form': join_form})
+        if request.user == team.leader:
+            owns_team = True
+    return render(request, 'list_teams.html', {'teams': teams, 'owns_team': owns_team})
 
 
 def create_team(request):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     if request.method == 'POST':
-        form = TeamCreateForm(request.POST)
-        if form.is_valid():
-            team = form.save(commit=False)
-            team.leader = request.user
-            team.save()
+            name = request.POST.get('name')
+            leader = request.user
+            description = request.POST.get('description')
+            if "logo" in request.FILES:
+                logo = cloudinary.uploader.upload(request.FILES["logo"], upload_preset="p4p2xtey")
+                logo = logo["secure_url"]
+            team = Team.objects.create(name=name, leader=leader, description=description, logo=logo)
             team.member.add(request.user)  # Auto-add the creator as a member
             messages.success(request, 'Team created successfully.')
-            return redirect('list_teams')
+            return redirect('team_detail', team_id=team.id)
     else:
-        form = TeamCreateForm()
-    return render(request, 'create_team.html', {'form': form})
+        return render(request, 'create_team.html')
+
 
 def join_team(request):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     if request.method == 'POST':
         form = JoinTeamForm(request.POST)
         if form.is_valid():
@@ -207,7 +129,10 @@ def join_team(request):
     else:
         return redirect('list_teams')
     
+
 def leave_team(request, team_id):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     if request.method == 'POST':
         team = get_object_or_404(Team, id=team_id)
         # Check if the user is a member of the team
@@ -220,7 +145,33 @@ def leave_team(request, team_id):
     else:
         return redirect('list_teams')
     
-def team_detail(request, team_id):
-    team = get_object_or_404(Team, id=team_id)
-    return render(request, 'team_detail.html', {'team': team})
 
+def team_detail(request, team_id):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
+    # check if request user is in any team
+    has_a_team = Team.objects.filter(member=request.user).exists()
+    team = Team.objects.get(id=team_id)
+    return render(request, 'team_detail.html', {'team': team, 'has_a_team': has_a_team})
+
+
+def edit_team(request, team_id):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
+    if request.method == 'POST':
+        if request.POST.get('delete'):
+            team = Team.objects.get(id=team_id)
+            team.delete()
+            return redirect('list_teams')
+        else:
+            team = Team.objects.get(id=team_id)
+            team.name = request.POST.get('name')
+            if "logo" in request.FILES:
+                logo = cloudinary.uploader.upload(request.FILES["logo"], upload_preset="p4p2xtey")
+                team.logo = logo["secure_url"]
+            team.description = request.POST.get('description')
+            team.save()
+            return redirect('team_detail', team_id=team_id)
+    else:
+        team = Team.objects.get(id=team_id)
+        return render(request, 'edit_team.html', {'team': team})

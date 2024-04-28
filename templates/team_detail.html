@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Team | {{ team.name }} {% endblock %}
+{% block content %}
+
+<div class="flex flex-col items-center justify-center w-full mx-auto pt-12">
+    <div class="relative mx-6 mb-6 border-4 border-teal-200 rounded-full max-w-96">
+        <img src="{% if team.logo %}{{ team.logo }}{% else %}{% static 'icons/default_team.svg' %}{% endif %}" alt="Team Logo" class="w-40 h-40 m-1 rounded-full">
+        {% if request.user == team.leader %}
+            <div class="absolute bottom-0 right-0 bg-teal-400 rounded-full hover:bg-teal-300">
+                <div class="relative">
+                    <button 
+                        type="button" 
+                        hx-get="{% url 'edit_team' team.id %}"
+                        hx-target=".htmx-body"
+                        hx-push-url="true"
+                        class="kebab-button h-10 w-10 p-2 filter hover:contrast-200 align-middle text-white">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-current">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                            <g id="SVGRepo_iconCarrier"> <path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="flex flex-row flex-wrap items-center justify-center align-middle mx-3 gap-4">
+        <a href="javascript:history.back()">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-teal-400 shadow-md h-12 w-12 border border-teal-400 rounded-2xl align-middle p-1 hover:bg-teal-100">
+                <title>Back to Store</title>
+                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"></g>
+                    <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" />
+                </g>
+            </svg>
+        </a>
+        <h1 class="font-extrabold text-4xl md:text-5xl">
+            {{ team.name }}
+        </h1>
+    </div>
+    <p class="px-6 my-4 md:max-w-2xl md:text-center">{{ team.description }}</p>
+
+    <a href="{% url 'leaderboard' %}?leaderboard_mode=team">
+        <div class="flex flex-row justify-center items-center mt-1">
+            <div class="flex flex-col border border-teal-300 rounded-2xl shadow-md group">
+                <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 px-2 bg-teal-200 text-teal-700 group-hover:bg-teal-300">MONTHLY RANK</div>
+                <div class="px-4 py-2 items-center text-center">
+                    <p class="text-2xl font-extrabold text-teal-500"># {{ team.monthly_rank }}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <p class="px-6 mt-6 text-center font-bold text-rose-700">Team creator:</p>
+    <div class="flex flex-col w-full mt-4 px-3 md:max-w-2xl">
+        <div class="flex justify-between items-center w-full border border-rose-200 hover:bg-rose-100 shadow-sm rounded-xl mb-2">
+            <a href="{% url 'profile' team.leader.pk %}" class="flex-grow p-2 ml-2 my-auto text-sm">{{ team.leader.first_name }} {{ team.leader.last_name }}</a>
+            <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 mr-2">
+        </div>
+    </div>
+    <p class="px-6 mt-6 text-center font-bold text-rose-700">Team members:</p>
+    {% if team.member.all|length > 1 %}
+        <div class="flex flex-col w-full mt-4 px-3 md:max-w-2xl">
+            {% for member in team.member.all %}
+                {% if not member == team.leader %}
+                    <div class="flex justify-between items-center w-full border border-teal-200 hover:bg-teal-100 shadow-sm rounded-xl mb-2">
+                        <a href="{% url 'profile' member.pk %}" class="flex-grow p-2 ml-2 my-auto text-sm">{{ member.first_name }} {{ member.last_name }}</a>
+                        <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 mr-2">
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="px-6 mt-3 text-center text-sm font-bold text-stone-400">No other members right now :(</p>
+    {% endif %}
+    
+    {% if not request.user == team.leader %}
+        {% if has_a_team %}
+            {% if request.user in team.member.all %}
+                <form action="{% url 'leave_team' team.id %}" method="post" class="inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="team_id" value="{{ team.id }}">
+                    <button type="submit" class="px-4 py-2 mt-12 {% if request.user in team.member.all %}bg-rose-400 hover:bg-rose-600{% else %}bg-green-500 hover:bg-green-600{% endif %} text-white font-extrabold rounded-2xl">
+                        Leave team
+                    </button>
+                </form>
+            {% endif %}
+        {% else %}
+            <form action="{% url 'join_team' %}" method="post" class="inline">
+                {% csrf_token %}
+                <input type="hidden" name="team_id" value="{{ team.id }}">
+                <button type="submit" class="px-4 py-2 mt-12 bg-green-500 hover:bg-green-600 text-white font-extrabold rounded-2xl">
+                    Join team
+                </button>
+            </form>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

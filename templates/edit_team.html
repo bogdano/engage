@@ -4,29 +4,39 @@
 {% block content %}
 <div class="flex flex-col justify-center items-center px-4 pt-12">
     <div class="flex flex-row space-x-3 mx-3 mb-10">
-        <a href="{% url 'list_teams' %}">
+        <a href="{% url 'team_detail' team.id %}">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-teal-400 shadow-md h-12 w-12 border border-teal-400 rounded-2xl align-middle p-1 hover:bg-teal-100">
-            <title>Back </title>
+            <title>Back to Team</title>
             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
             <g id="SVGRepo_iconCarrier"> <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" /> </g>
             </svg>
         </a>
-        <h1 class="text-4xl md:text-5xl font-extrabold my-auto">Create New Team</h1>
+        <h1 class="text-4xl md:text-5xl font-extrabold my-auto">Update Team Info</h1>
     </div>
-    <form class="w-full space-y-4" action="{% url 'create_team' %}" method="POST" enctype="multipart/form-data">
+    <form class="w-full space-y-4" action="{% url 'edit_team' team.id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="flex flex-col md:flex-row md:space-x-4">
-            <input type="text" name="name" placeholder="Team Name" required autofocus class=" focus:border-teal-400 focus:outline-none focus:ring-0 px-4 py-2 my-2 border border-gray-300 rounded-2xl text-2xl w-full md:w-auto md:flex-grow h-14">
+            <input type="text" name="name" placeholder="Team Name" value="{{ team.name }}" required autofocus class=" focus:border-teal-400 focus:outline-none focus:ring-0 px-4 py-2 my-2 border border-gray-300 rounded-2xl text-2xl w-full md:w-auto md:flex-grow h-14">
         </div>
-        <input type="text" name="description" placeholder="Description"  required class="w-full p-2 h-14 border border-gray-300 rounded-2xl focus:border-teal-400 focus:outline-none focus:ring-0">
+        <input type="text" name="description" placeholder="Description" value="{{ team.description }}" required class="w-full p-2 h-14 border border-gray-300 rounded-2xl focus:border-teal-400 focus:outline-none focus:ring-0">
         <label class="h-auto {% if team.logo %}drag-over{% endif %} drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="logo" id="fileInputEdit" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
             <span id="imageDroppedEdit" class="inline-flex overflow-y-hidden">
-                Upload Image
+                {% if team.logo %}
+                    {{ team.logo }}
+                {% else %}
+                    Upload Image
+                {% endif %}
             </span>
         </label>
-        <button type="submit" class="w-full h-14 p-2 font-extrabold border border-teal-500 rounded-2xl bg-teal-400 text-white hover:bg-teal-500">Create Team</button>
+        <div class="flex my-6 bg-rose-100 rounded-2xl p-4 w-fit mx-auto">
+            <label class="cursor-pointer text-rose-700">
+                <input type="checkbox" name="delete" class=" before:checked:bg-rose-700">
+                Delete this team?
+            </label>
+        </div>
+        <button type="submit" class="w-full h-14 p-2 font-extrabold border border-teal-500 rounded-2xl bg-teal-400 text-white hover:bg-teal-500">Update Team</button>
     </form>
 </div>   
 {% endblock %}

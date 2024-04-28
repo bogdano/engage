@@ -1,21 +1,20 @@
 from .models import Team, Activity, Leaderboard, Item, UserParticipated, Notification
-from leaderboard.forms import TeamCreateForm, JoinTeamForm, LeaderboardForm
 from notifications.views import *
 from accounts.models import CustomUser
-from django.db.models import Sum, Count, Exists, OuterRef, Prefetch, Q
+from django.db.models import Count, Exists, OuterRef
 from django.db.models.functions import TruncDay
-from django.http import HttpRequest, JsonResponse
+from django.http import JsonResponse
 from django.utils import timezone
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 import cloudinary.uploader
 from datetime import datetime, timedelta
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import dateutil.parser
 from django.views.generic import TemplateView
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.db.models import Sum, Q
 
 
 class ServiceWorker(TemplateView):
@@ -188,7 +187,7 @@ def update_activity(request, pk):
             for name in leaderboard_names
         ]
         activity.title = title
-        activity.points = points
+        activity.points = int(points)
         activity.description = description
         activity.address = address
         activity.latitude = latitude
@@ -198,6 +197,17 @@ def update_activity(request, pk):
         activity.photo = uploaded_image_url
         activity.leaderboards.clear()
         activity.leaderboards.add(*leaderboards)
+
+        event_date_naive = dateutil.parser.parse(event_date)
+        event_date_aware = timezone.make_aware(event_date_naive, timezone.get_default_timezone())
+        if event_date_aware > timezone.now():
+            activity.is_active = True
+            for user in activity.participated_users.all():
+                user.balance -= activity.points
+                user.lifetime_points -= activity.points
+                user.save()
+                activity.participated_users.remove(user)
+
         activity.save()
         redirect_url = reverse("activity", args=[activity.pk])
         response = HttpResponse("Redirecting...")
@@ -380,10 +390,24 @@ def award_participation_points(request, pk):
         user.save()
         activity.participated_users.add(user)
         activity.user_has_participated = True
+        update_team_rankings()
         if request.GET.get("from_activity_page"):
             return render(request, "partials/activity_header.html", {"activity": activity})
         else:
             return render(request, "partials/activity_card.html", {"activity": activity})
+
+def update_team_rankings():
+    teams = Team.objects.all()
+    now = timezone.now()
+    start_date = timezone.make_aware(datetime(now.year, now.month, 1))
+    user_participations = UserParticipated.objects.filter(date_participated__gte=start_date)
+    teams = Team.objects.annotate(
+            team_points=Sum('member__userparticipated__activity__points', filter=Q(member__userparticipated__in=user_participations))
+        ).order_by('-team_points')
+    # save order of each team in team.monthly rank based on order in teams
+    for i, team in enumerate(teams):
+        team.monthly_rank = i+1
+        team.save()        
 
 
 def edit_item(request, pk):
@@ -455,7 +479,14 @@ def profile(request, pk=None):
         user = CustomUser.objects.get(pk=pk)
     else:
         user = request.user
-    team = Team.objects.filter(member=user)
+        
+    try:
+        team = Team.objects.get(member=user)
+    except Team.DoesNotExist:
+        team = None
+    except Team.MultipleObjectsReturned:
+        team = Team.objects.filter(member=user).first()
+
     interested = Activity.objects.filter(
         interested_users=user, is_approved=True
     ).order_by("event_date")

@@ -8,6 +8,11 @@ class UserParticipatedInline(admin.TabularInline):
     fields = ('user', 'date_participated')  # Specify which fields to include
     readonly_fields = ('date_participated',)  # Make date_participated read-only if desired
 
+class UserParticipatedInlineUser(admin.TabularInline):
+    model = UserParticipated
+    extra = 0  # Number of extra forms to display
+    fields = ('activity', 'date_participated')  # Specify which fields to include
+    readonly_fields = ('date_participated',)  # Make date_participated read-only if desired
 class ActivityAdmin(admin.ModelAdmin):
     list_display = ('title', 'event_date', 'is_active')
     inlines = [UserParticipatedInline]
@@ -30,6 +35,7 @@ class LoginTokenAdmin(admin.ModelAdmin):
 # display customusers with user.str, date joined, balance, and whether they are a superuser
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('user_str', 'date_joined', 'balance', 'is_superuser')
+    inlines = [UserParticipatedInlineUser]
     def user_str(self, obj):
         return obj.__str__()
 

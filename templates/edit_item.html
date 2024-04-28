@@ -24,7 +24,7 @@
             </div>
         </div>
         <input type="text" name="itemDescription" placeholder="Description" value="{{ item.description }}" required class="w-full p-2 h-14 border border-gray-300 rounded-2xl focus:border-lime-400 focus:outline-none focus:ring-0">
-        <label class="{% if item.image %}drag-over{% endif %} drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+        <label class="h-auto {% if item.image %}drag-over{% endif %} drag-drop flex justify-center px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="photo" id="fileInputEdit" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
             <span id="imageDroppedEdit" class="inline-flex overflow-y-hidden">
                 {% if item.image %}
