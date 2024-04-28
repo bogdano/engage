@@ -33,7 +33,7 @@
                 <!-- Wrap user names with an anchor tag linking to their profile -->
                 <div class="flex flex-row items-center">
                     <span class="{% if user.user__id == request.user.id %}text-white font-extrabold {% else %} text-teal-500 {% endif %} w-7">#{{ forloop.counter }} </span>
-                    <img src="{% if user.user__profile_picture %}{{ user.user__profile_picture }}{% else %}{% static 'icons/default_profile.svg' %}{% endif %}" class="w-8 h-8 mr-2 rounded-full bg-white border-2 border-teal-100">
+                    <img src="{% if user.user__profile_picture %}{{ user.user__profile_picture }}{% else %}{% static 'icons/default_profile.svg' %}{% endif %}" class="w-8 h-8 mr-2 rounded-full bg-white border-2 {% if selected_leaderboard %} border-{{ selected_leaderboard.leaderboard_color }}-500 {% else %}border-teal-500{% endif %}" loading="lazy">
                     <span>{{ user.user__first_name }} {{ user.user__last_name }}</span>
                 </div>    
                 <div class="font-bold {% if user.user__id == request.user.id %}text-white font-extrabold {% else %} text-amber-500  {% endif %}inline-flex items-center">

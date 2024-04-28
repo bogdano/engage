@@ -19,3 +19,12 @@ def current_section(request):
     # Add more conditions as necessary
     else:
         return {'current_section': None}
+
+def unread_notifications(request):
+    if request.user.is_authenticated:
+        unread_count = request.user.notifications.filter(read=False).count()
+        return {
+            'has_unread': unread_count > 0,
+            'unread_count': unread_count,
+        }
+    return {}
