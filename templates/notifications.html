@@ -1,16 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}Notifications{% endblock %}
 {% block content %}
-<h1 class="text-4xl md:text-5xl font-extrabold mb-6 pt-12 text-center">Notifications</h1>
-<div class="space-y-4 mx-3">
+<h1 class="text-4xl md:text-5xl font-extrabold mb-10 pt-12 text-center">Notifications</h1>
+<div class="space-y-4 mx-3 md:mx-auto md:max-w-4xl">
     {% for notification in notifications %}
-    <div class="p-4 bg-white shadow rounded-lg">
-        <div class="font-bold">{{ notification.title }}</div>
-        <p>{{ notification.body }}</p>
-        <small>Received on: {{ notification.created_at }}</small>
-    </div>
+        <div class="pl-8 pr-16 py-4 rounded-2xl border-2 border-violet-200 group hover:bg-violet-200 relative">
+            <button hx-delete="{% url 'dismiss_notification' notification.id %}"
+                    hx-target=".htmx-body"
+                    class="absolute top-6 right-6 text-red-400 group-hover:text-white font-extrabold rounded-full h-8 w-8 border-2 border-red-300 group-hover:bg-red-600 group-hover:border-red-600">✕</button>
+            <div class="font-bold">{{ notification.title }}</div>
+            <p>{{ notification.body }}</p>
+            <small>{{ notification.created_at }}</small>
+        </div>
     {% empty %}
-    <p>No notifications.</p>
+    <p class="text-center font-extrabold text-stone-400">No notifications. Yay!</p>
     {% endfor %}
 </div>
 {% endblock %}

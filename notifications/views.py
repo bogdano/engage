@@ -3,14 +3,17 @@ from django.contrib.auth.decorators import login_required
 from engage.models import Notification
 
 # Create your views here.
-@login_required
 def notifications(request):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
     user_notifications = request.user.notifications.all().order_by('-created_at')
+    # mark all notifications as read
+    user_notifications.update(read=True)
     return render(request, 'notifications.html', {'notifications': user_notifications})
 
-@login_required
-def mark_notification_read(request, notification_id):
-    notification = request.user.notifications.get(id=notification_id)
-    notification.read = True
-    notification.save()
+def dismiss_notification(request, notification_id):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
+    notification = get_object_or_404(Notification, id=notification_id)
+    notification.delete()
     return redirect('notifications')
