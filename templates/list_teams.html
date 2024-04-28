@@ -15,27 +15,29 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for team in teams %}
-        <div class="bg-stone-100 rounded-lg shadow-lg p-5 relative">
-            <div class="flex justify-between items-center mb-2">
-                <h3 class="font-semibold text-xl cursor-pointer" onclick="togglePopup('{{ team.id }}')">{{ team.name }}</h3>
-                <form action="{% if team.is_member %}{% url 'leave_team' team.id %}{% else %}{% url 'join_team' %}{% endif %}" method="post" class="inline">
-                    {% csrf_token %}
-                    <input type="hidden" name="team_id" value="{{ team.id }}">
-                    <button type="submit" class="team-action-btn px-4 py-2 {% if team.is_member %}leave-btn bg-red-500 hover:bg-red-700{% else %}join-btn bg-green-500 hover:bg-green-700{% endif %} text-white font-bold rounded-lg">
-                        {% if team.is_member %}Leave{% else %}Join{% endif %}
-                    </button>
-                </form>
+        <a href="{% url 'team_detail' team.id %}"> <!-- Link to team detail page -->
+            <div class="bg-stone-100 rounded-lg shadow-lg p-5 relative">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-semibold text-xl cursor-pointer" onclick="togglePopup('{{ team.id }}'); event.preventDefault(); event.stopPropagation();">{{ team.name }}</h3>
+                    <form action="{% if team.is_member %}{% url 'leave_team' team.id %}{% else %}{% url 'join_team' %}{% endif %}" method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="team_id" value="{{ team.id }}">
+                        <button type="submit" class="team-action-btn px-4 py-2 {% if team.is_member %}leave-btn bg-red-500 hover:bg-red-700{% else %}join-btn bg-green-500 hover:bg-green-700{% endif %} text-white font-bold rounded-lg">
+                            {% if team.is_member %}Leave{% else %}Join{% endif %}
+                        </button>
+                    </form>
+                </div>
+                <!-- Popup for team members -->
+                <div id="popup-{{ team.id }}" class="hidden absolute top-full mt-2 left-0 bg-stone-100 border border-stone-200 rounded shadow-lg p-4 z-10 w-64">
+                    <h3 class="font-semibold text-lg mb-2 text-center">Team Members:</h3>
+                    <ul>
+                        {% for member in team.member.all %}
+                        <li>{{ member.first_name }} {{ member.last_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
-            <!-- Popup for team members -->
-            <div id="popup-{{ team.id }}" class="hidden absolute top-full mt-2 left-0 bg-stone-100 border border-stone-200 rounded shadow-lg p-4 z-10 w-64">
-                <h3 class="font-semibold text-lg mb-2 text-center">Team Members:</h3>
-                <ul>
-                    {% for member in team.member.all %}
-                    <li>{{ member.first_name }} {{ member.last_name }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
+        </a>
         {% empty %}
         <div class="col-span-3 text-center">
             <p>No teams found.</p>

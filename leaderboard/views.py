@@ -1,5 +1,5 @@
 from engage.models import Team, Leaderboard, UserParticipated
-from leaderboard.forms import TeamCreateForm, JoinTeamForm, LeaderboardForm
+from leaderboard.forms import JoinTeamForm, LeaderboardForm
 from notifications.views import *
 from django.db.models import Sum, Q
 from django.utils import timezone
@@ -95,17 +95,18 @@ def create_team(request):
     if not request.user.is_authenticated:
         return redirect('send-login-link')
     if request.method == 'POST':
-        form = TeamCreateForm(request.POST)
-        if form.is_valid():
-            team = form.save(commit=False)
-            team.leader = request.user
-            team.save()
+            name = request.POST.get('name')
+            leader = request.user
+            description = request.POST.get('description')
+            if "logo" in request.FILES:
+                logo = cloudinary.uploader.upload(request.FILES["logo"], upload_preset="p4p2xtey")
+                logo = logo["secure_url"]
+            team = Team.objects.create(name=name, leader=leader, description=description, logo=logo)
             team.member.add(request.user)  # Auto-add the creator as a member
             messages.success(request, 'Team created successfully.')
-            return redirect('list_teams')
+            return redirect('team_detail', team_id=team.id)
     else:
-        form = TeamCreateForm()
-    return render(request, 'create_team.html', {'form': form})
+        return render(request, 'create_team.html')
 
 
 def join_team(request):
@@ -149,3 +150,24 @@ def team_detail(request, team_id):
     team = Team.objects.get(id=team_id)
     return render(request, 'team_detail.html', {'team': team})
 
+
+def edit_team(request, team_id):
+    if not request.user.is_authenticated:
+        return redirect('send-login-link')
+    if request.method == 'POST':
+        if request.POST.get('delete'):
+            team = Team.objects.get(id=team_id)
+            team.delete()
+            return redirect('list_teams')
+        else:
+            team = Team.objects.get(id=team_id)
+            team.name = request.POST.get('name')
+            if "logo" in request.FILES:
+                logo = cloudinary.uploader.upload(request.FILES["logo"], upload_preset="p4p2xtey")
+                team.logo = logo["secure_url"]
+            team.description = request.POST.get('description')
+            team.save()
+            return redirect('team_detail', team_id=team_id)
+    else:
+        team = Team.objects.get(id=team_id)
+        return render(request, 'edit_team.html', {'team': team})

@@ -11,10 +11,10 @@
                 <div class="relative">
                     <button 
                         type="button" 
-                        class="kebab-button h-10 w-10 p-2 filter hover:contrast-200 align-middle text-white" 
-                        aria-expanded="true" 
-                        aria-haspopup="true"
-                        aria-label="Activity kebab menu"> 
+                        hx-get="{% url 'edit_team' team.id %}"
+                        hx-target=".htmx-body"
+                        hx-push-url="true"
+                        class="kebab-button h-10 w-10 p-2 filter hover:contrast-200 align-middle text-white">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-current">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
@@ -55,7 +55,7 @@
     {% if team.member.all|length > 1 %}
         <div class="flex flex-col w-full mt-4 px-3 md:px-36">
             {% for member in team.member.all %}
-                {% if not member == request.user %}
+                {% if not member == team.leader %}
                     <div class="flex justify-between items-center w-full border border-teal-200 hover:bg-teal-100 shadow-sm rounded-xl mb-2">
                         <a href="{% url 'profile' member.pk %}" class="flex-grow p-2 ml-2 my-auto text-sm">{{ member.first_name }} {{ member.last_name }}</a>
                         <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 mr-2">

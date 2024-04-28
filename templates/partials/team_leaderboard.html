@@ -30,4 +30,10 @@
     {% empty %}
         <p class="text-center font-bold text-stone-500">No teams found for the selected criteria.</p>
     {% endfor %}
+    <!-- view all teams button-->
+    <div class="flex justify-center mt-6">
+        <button hx-get="{% url 'list_teams' %}" hx-push-url="true" hx-target=".htmx-body" class="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 mt-10 mb-6 rounded-2xl">View all teams</button>
+    </div>
 </div>
+
+
