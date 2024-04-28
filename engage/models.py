@@ -87,6 +87,7 @@ class Team(models.Model):
     logo = models.CharField(max_length=200, default="", blank=True)
     monthly_rank = models.IntegerField(default=0)
     description = models.TextField(default="", blank=True)
+    created_on = models.DateField(auto_now_add=True, null=True)
     # team points will be calculated by summing the points of all users in the team,
     # queries by time can be done by filtering the UserParticipates model by date for the team members
     def __str__(self):

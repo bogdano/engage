@@ -9,7 +9,7 @@
     {% if activity.leaderboards.all %}
     <div class="flex justify-center space-x-1">
         {% for leaderboard in activity.leaderboards.all %}
-            <a href="{% url 'leaderboard' %}?leaderboard_id={{ leaderboard.pk }}&date_filter=this_month" class="bg-amber-500 hover:bg-amber-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
+            <a href="{% url 'leaderboard' %}?leaderboard_id={{ leaderboard.pk }}&date_filter=this_month" class="bg-{{ leaderboard.leaderboard_color }}-500 hover:bg-{{ leaderboard.leaderboard_color }}-600 px-3 py-1 rounded-xl font-extrabold text-white text-xs">{{ leaderboard.leaderboard_name }}</a>
         {% endfor %}
     </div>
     {% endif %}

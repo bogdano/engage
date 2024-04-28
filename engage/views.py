@@ -183,7 +183,7 @@ def update_activity(request, pk):
             uploaded_image_url = uploaded_image["secure_url"]
         leaderboard_names = request.POST.getlist("leaderboards")
         leaderboards = [
-            Leaderboard.objects.get_or_create(leaderboard_name=name)[0]
+            Leaderboard.objects.get_or_create(leaderboard_name=name, defaults={'leaderboard_color': 'amber'})[0]
             for name in leaderboard_names
         ]
         activity.title = title
@@ -300,7 +300,7 @@ def new_activity(request):
         leaderboard_names = request.POST.getlist("leaderboards")
         # Create new Leaderboard instances if necessary
         leaderboards = [
-            Leaderboard.objects.get_or_create(leaderboard_name=name)[0]
+            Leaderboard.objects.get_or_create(leaderboard_name=name, defaults={'leaderboard_color': 'amber'})[0]
             for name in leaderboard_names
         ]
         alert = bool(request.POST.get("alert"))

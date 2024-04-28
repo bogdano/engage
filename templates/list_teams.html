@@ -22,11 +22,11 @@
     <a href="{% url 'team_detail' team.id %}" class="block w-full md:w-auto">
         <div class=" rounded-2xl border-2 border-teal-100 hover:bg-teal-100 shadow-lg p-4 pr-2 md:w-96 mx-6 md:mx-0 {% if team.is_member %}bg-teal-700 text-white border-0 hover:bg-teal-600{% endif %}">
             <div class="flex items-center mb-2">
-                <div class="p-1 border-2 border-teal-100 rounded-full bg-white">
+                <div class="border-2 border-teal-100 rounded-full bg-white">
                     {% if team.logo %}
-                        <img src="{{ team.logo.url }}" alt="Team Logo" class="w-14 h-14 rounded-full bg-white">
+                        <img src="{{ team.logo }}" alt="Team Logo" class="w-14 h-14 p-0.5 rounded-full bg-white">
                     {% else %}
-                        <img src="{% static 'icons/default_team.svg' %}" alt="Team Logo" class="w-14 h-14 rounded-full bg-white">
+                        <img src="{% static 'icons/default_team.svg' %}" alt="Team Logo" class="w-14 h-14 p-0.5 rounded-full bg-white">
                     {% endif %}
                 </div>
                 <div class="flex flex-col items-start ml-4">
@@ -47,7 +47,7 @@
     {% endfor %}
 </div>
 
-{% if not owns_team %}
+{% if not on_team %}
 <div class="text-center mb-8 mt-12">
     <a href="{% url 'create_team' %}" class="px-4 py-2 bg-teal-500 hover:bg-teal-700 rounded-2xl text-white font-extrabold">Create a team</a>
 </div>

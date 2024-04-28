@@ -1,15 +1,57 @@
 {% extends 'base.html' %}
-
+{% block title %}Update Leaderboard{% endblock %}
+{% load static %}
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-semibold mb-4">Edit Leaderboards</h1>
-    <div class="space-y-4">
-        {% for leaderboard in leaderboards %}
-        <div class="flex justify-between items-center bg-white p-4 shadow rounded">
-            <div>{{ leaderboard.leaderboard_name }}</div>
-            <a href="{% url 'edit_leaderboard_detail' leaderboard.id %}" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Edit</a>
-        </div>
-        {% endfor %}
+<div class="flex flex-col justify-center items-center px-4 pt-12">
+    <div class="flex flex-row flex-wrap mx-3 mb-10 justify-center gap-4">
+        <a href="javascript:history.back()">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-teal-400 shadow-md h-12 w-12 border border-teal-400 rounded-2xl align-middle p-1 hover:bg-teal-100">
+                <title>Back to Leaderboards</title>
+                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"> <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" /> </g>
+            </svg>
+        </a>
+        <h1 class="text-4xl md:text-5xl font-extrabold my-auto text-center">Update Leaderboard Info</h1>
     </div>
-</div>
+    <form class="w-full md:max-w-2xl space-y-4" action="{% url 'edit_leaderboard' leaderboard.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="flex flex-col md:flex-row md:space-x-4">
+            <input type="text" name="name" placeholder="Leaderboard Name" value="{{ leaderboard.leaderboard_name }}" required autofocus class=" focus:border-teal-400 focus:outline-none focus:ring-0 px-4 py-2 my-2 border border-gray-300 rounded-2xl text-2xl w-full md:w-auto md:flex-grow h-14">
+            <div class="inline-flex">
+                <select id="colorPicker" 
+                        name="color" 
+                        class="bg-{{ leaderboard.leaderboard_color }}-500 text-white font-extrabold block appearance-none w-full border border-gray-300 pl-4 pr-8 py-2 my-2 h-14 rounded-2xl leading-tight focus:outline-none focus:border-teal-400">
+                  <option hidden>Color</option>
+                  {% for color in colors %}
+                    <option class="bg-{{ color }}-500 hover:bg-{{ color }}-600 text-white font-bold" 
+                            value="{{ color }}" 
+                            {% if leaderboard.leaderboard_color == color %}selected{% endif %}>
+                      {{ color|capfirst }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+        </div>
+
+        <div class="flex my-6 bg-rose-100 rounded-2xl p-4 w-fit mx-auto">
+            <label class="cursor-pointer text-rose-700">
+                <input type="checkbox" name="delete" class=" before:checked:bg-rose-700">
+                Delete this leaderboard?
+            </label>
+        </div>
+        <button type="submit" class="w-full h-14 p-2 font-extrabold border border-teal-500 rounded-2xl bg-teal-400 text-white hover:bg-teal-500">Update Leaderboard</button>
+    </form>
+</div>   
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('colorPicker').addEventListener('change', function() {
+      // Remove all previous bg-* color classes
+      this.className = this.className.replace(/bg-\w+-500/g, '');
+      // Add the new bg-* class based on the selected option's value
+      this.classList.add('bg-' + this.value + '-500');
+    });
+  </script>
 {% endblock %}

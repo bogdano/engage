@@ -1,5 +1,5 @@
 from engage.models import Team, Leaderboard, UserParticipated
-from leaderboard.forms import JoinTeamForm, LeaderboardForm
+from leaderboard.forms import JoinTeamForm
 from notifications.views import *
 from django.db.models import Sum, Q
 from django.utils import timezone
@@ -7,12 +7,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 import cloudinary.uploader
 from datetime import datetime
 from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 def leaderboard(request):
     if not request.user.is_authenticated:
         return redirect('send-login-link')
     leaderboard_mode = request.GET.get('leaderboard_mode', 'individual')
     selected_leaderboard_id = request.GET.get('leaderboard_id', None)
+    selected_leaderboard = Leaderboard.objects.get(id=selected_leaderboard_id) if selected_leaderboard_id else None
     date_filter = request.GET.get('date_filter', 'this_month')
 
     leaderboards = Leaderboard.objects.all()
@@ -21,7 +24,7 @@ def leaderboard(request):
     context = {
         'leaderboard_mode': leaderboard_mode,
         'leaderboards': leaderboards,
-        'selected_leaderboard_id': selected_leaderboard_id,
+        'selected_leaderboard': selected_leaderboard,
         'date_filter': date_filter,
     }
 
@@ -34,7 +37,7 @@ def leaderboard(request):
             user_participations = user_participations.filter(date_participated__gte=start_date)
 
         users = user_participations.values(
-            'user__id', 'user__first_name', 'user__last_name'
+            'user__id', 'user__first_name', 'user__last_name', 'user__profile_picture'
         ).annotate(
             total_points=Sum('activity__points')
         ).order_by('-total_points')
@@ -59,38 +62,38 @@ def leaderboard(request):
     return render(request, "leaderboard.html", context)
 
 
-def edit_leaderboard(request):
+def edit_leaderboard(request, pk):
     if not request.user.is_authenticated:
         return redirect('send-login-link')
-    leaderboards = Leaderboard.objects.all()
-    return render(request, 'edit_leaderboard.html', {'leaderboards': leaderboards})
-
-
-def edit_leaderboard_detail(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('send-login-link')
-    leaderboard = get_object_or_404(Leaderboard, pk=pk)
     if request.method == 'POST':
-        form = LeaderboardForm(request.POST, instance=leaderboard)
-        if form.is_valid():
-            form.save()
-            # Redirect to a new URL:
-            return redirect('edit_leaderboard')
+        if request.POST.get('delete'):
+            leaderboard = Leaderboard.objects.get(id=pk)
+            leaderboard.delete()
+            return redirect('leaderboard')
+        else:
+            leaderboard = Leaderboard.objects.get(id=pk)
+            leaderboard.leaderboard_name = request.POST.get('name')
+            leaderboard.leaderboard_color = request.POST.get('color')
+            leaderboard.save()
+            url = reverse('leaderboard')
+            url += '?leaderboard_id=' + str(leaderboard.id)
+            return HttpResponseRedirect(url)
     else:
-        form = LeaderboardForm(instance=leaderboard)
-    return render(request, 'edit_leaderboard_detail.html', {'form': form, 'leaderboard': leaderboard})
+        colors = ["red", "orange", "amber", "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "fuchsia", "rose"]
+        leaderboard = Leaderboard.objects.get(id=pk)
+        return render(request, 'edit_leaderboard.html', {'leaderboard': leaderboard, 'colors': colors})
 
 
 def list_teams(request):
     if not request.user.is_authenticated:
         return redirect('send-login-link')
     teams = Team.objects.all()
-    owns_team = False
+    on_team = False
     for team in teams:
-        team.is_member = request.user in team.member.all()
-        if request.user == team.leader:
-            owns_team = True
-    return render(request, 'list_teams.html', {'teams': teams, 'owns_team': owns_team})
+        if request.user in team.member.all():
+            team.is_member = True
+            on_team = True
+    return render(request, 'list_teams.html', {'teams': teams, 'on_team': on_team})
 
 
 def create_team(request):
