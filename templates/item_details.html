@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="flex flex-row justify-center items-center pt-12 space-x-5 sticky top-0 bg-white z-50 pb-4">
-    <a href="javascript:history.back()">
+    <a href="{% url 'store' %}">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-lime-400 shadow-md h-12 w-12 border border-lime-400 rounded-2xl align-middle p-1 hover:bg-lime-100">
             <title>Back to Store</title>
             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -17,7 +17,7 @@
     <h1 class="text-4xl md:text-5xl font-extrabold text-center">Item</h1>
     <button class="border border-lime-500 hover:bg-lime-100 relative text-white font-bold rounded-2xl shadow flex items-center justify-center"
          hx-get="{% url 'hx_menu_cart' %}" 
-         hx-trigger="update-menu-cart from:body, load" 
+         hx-trigger="update-menu-cart from:body" 
          hx-swap="innerHTML">
         {% include 'cart/menu_cart.html' %}
     </button>
@@ -93,7 +93,7 @@
         <p class="my-6 mx-4 md:mx-0 md:mr-6 text-center md:text-left">{{item.description}}</p>
 
         <a href="#" class="mb-10 inline-block px-6 py-4 rounded-2xl font-extrabold bg-lime-500 hover:bg-lime-600 text-white"
-            hx-get="{% url 'add_to_cart' item.id %}" hx-target="#menu-cart-button" hx-swap="outerHTML transition:true">
+            hx-get="{% url 'add_to_cart' item.id %}" hx-target="#menu-cart-button" hx-swap="outerHTML">
             Add to Cart
         </a>
     </div>

@@ -35,6 +35,13 @@
                     <span class="{% if user.user__id == request.user.id %}text-white font-extrabold {% else %} text-teal-500 {% endif %} w-7">#{{ forloop.counter }} </span>
                     <img src="{% if user.user__profile_picture %}{{ user.user__profile_picture }}{% else %}{% static 'icons/default_profile.svg' %}{% endif %}" class="w-8 h-8 mr-2 rounded-full bg-white border-2 {% if selected_leaderboard %} border-{{ selected_leaderboard.leaderboard_color }}-500 {% else %}border-teal-500{% endif %}" loading="lazy">
                     <span>{{ user.user__first_name }} {{ user.user__last_name }}</span>
+                    {% if forloop.counter == 1 %}
+                        <span class="text-lg ml-3">👑</span>
+                    {% elif forloop.counter == 2 %}
+                        <span class="text-xl ml-2">🥈</span>
+                    {% elif forloop.counter == 3 %}
+                        <span class="text-xl ml-2">🥉</span>
+                    {% endif %}
                 </div>    
                 <div class="font-bold {% if user.user__id == request.user.id %}text-white font-extrabold {% else %} text-amber-500  {% endif %}inline-flex items-center">
                     <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1 opacity-85">

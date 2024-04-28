@@ -8,10 +8,15 @@
 
 /* define animations for the old and new content */
 ::view-transition-old(smooth-fade) {
-  animation: 150ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
+  animation: 150ms linear both fade-out;
 }
 ::view-transition-new(smooth-fade) {
-  animation: 150ms cubic-bezier(0, 0, 0.2, 1) 30ms both fade-in;
+  animation: 150ms linear 30ms both fade-in;
+}
+
+/* tie the view transition to a given CSS class */
+.htmx-body {
+    view-transition-name: smooth-fade;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -20,11 +25,6 @@
 .hide-scrollbar {
   -ms-overflow-style: none;  /* for IE and Edge */
   scrollbar-width: none;  /* for Firefox */
-}
-
-/* tie the view transition to a given CSS class */
-.htmx-body {
-    view-transition-name: smooth-fade;
 }
 
 .drag-over {
@@ -99,8 +99,6 @@
   opacity: 1;
 }
 
-
-
 .ts-control {
   padding: 0 !important;
   border: none !important;
@@ -126,8 +124,4 @@
 
 button:disabled {
   background-color: #fafaf9;
-}
-
-#navDock {
-  view-transition-name: none !important;
 }

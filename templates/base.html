@@ -27,7 +27,7 @@
     {% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
-<body hx-boost="true" class="htmx-body" hx-swap="transition:true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-indicator=".loading-bar"> 
+<body hx-boost="true" class="htmx-body" hx-swap="innerHTML transition:true" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-indicator=".loading-bar"> 
     <div class="loading-bar"></div>
     <div class="max-w-6xl mx-auto w-full min-h-lvh relative">
         {% if current_section == 'home' %}
