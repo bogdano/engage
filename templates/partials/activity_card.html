@@ -40,7 +40,7 @@
                 {% if activity.leaderboards.all %}
                     <div class="flex flex-row mt-1 flex-wrap">
                         {% for leaderboard in activity.leaderboards.all %}
-                            <span class="{% if not activity.is_approved %}bg-rose-300 group-hover:bg-rose-400 {% elif not activity.is_active %}bg-stone-300 group-hover:bg-stone-400{% else %} bg-amber-400 group-hover:bg-amber-500 {% endif %} text-white font-semibold text-xs px-1.5 py-0 rounded-lg mr-1 mb-1">{{ leaderboard.leaderboard_name }}</span>
+                            <span class="{% if not activity.is_approved %}bg-rose-300 group-hover:bg-rose-400 {% elif not activity.is_active %}bg-stone-300 group-hover:bg-stone-400{% else %} bg-{{ leaderboard.leaderboard_color }}-500 group-hover:bg-{{ leaderboard.leaderboard_color }}-600 opacity-85 {% endif %} text-white font-semibold text-xs px-1.5 py-0 rounded-lg mr-1 mb-1">{{ leaderboard.leaderboard_name }}</span>
                         {% endfor %}
                     </div>
                 {% endif %}

@@ -54,29 +54,23 @@
         </div>
     </a>
 
-    <p class="px-6 mt-6 text-center font-bold text-rose-700">Team creator:</p>
-    <div class="flex flex-col w-full mt-4 px-3 md:max-w-2xl">
-        <div class="flex justify-between items-center w-full border border-rose-200 hover:bg-rose-100 shadow-sm rounded-xl mb-2">
-            <a href="{% url 'profile' team.leader.pk %}" class="flex-grow p-2 ml-2 my-auto text-sm">{{ team.leader.first_name }} {{ team.leader.last_name }}</a>
-            <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 mr-2">
-        </div>
-    </div>
     <p class="px-6 mt-6 text-center font-bold text-rose-700">Team members:</p>
     {% if team.member.all|length > 1 %}
-        <div class="flex flex-col w-full mt-4 px-3 md:max-w-2xl">
-            {% for member in team.member.all %}
-                {% if not member == team.leader %}
-                    <div class="flex justify-between items-center w-full border border-teal-200 hover:bg-teal-100 shadow-sm rounded-xl mb-2">
-                        <a href="{% url 'profile' member.pk %}" class="flex-grow p-2 ml-2 my-auto text-sm">{{ member.first_name }} {{ member.last_name }}</a>
-                        <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 mr-2">
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+    <div class="flex flex-col w-full mt-4 px-3 md:max-w-2xl">
+        {% for member in team.member.all %}
+            <div class="flex justify-between items-center w-full border shadow-sm rounded-xl mb-2 {% if team.leader == member %}border-rose-200 hover:bg-rose-100{% else %} border-teal-200 hover:bg-teal-100{% endif %}">
+                <a href="{% url 'profile' member.pk %}" class="flex-grow p-2 ml-2 my-auto text-sm">{{ member.first_name }} {{ member.last_name }}{% if team.leader == member %}<span class="font-bold text-rose-400 ml-2 text-xs">CREATOR</span>{% endif %}</a>
+                <img src="{% static 'icons/right-arrow.svg' %}" alt="Right Arrow Icon" class="w-6 h-6 mr-2">
+            </div>
+        {% endfor %}
+    </div>
     {% else %}
-        <p class="px-6 mt-3 text-center text-sm font-bold text-stone-400">No other members right now :(</p>
+    <p class="px-6 mt-3 text-center text-sm font-bold text-stone-400">No other members right now :(</p>
     {% endif %}
-    
+
+    <!-- created on -->
+    <p class="px-6 mt-12 text-center text-sm font-bold text-stone-400">Created {{ team.created_on }}</p>
+
     {% if not request.user == team.leader %}
         {% if has_a_team %}
             {% if request.user in team.member.all %}

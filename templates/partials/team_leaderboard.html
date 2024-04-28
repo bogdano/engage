@@ -12,21 +12,26 @@
     {% endif %}
     
     {% for team in teams %}
-    <a href="{% url 'team_detail' team.id %}" class="block">
-        <div class="flex justify-between items-center px-6 py-4 bg-white rounded-2xl shadow border border-teal-300 hover:bg-teal-100">
-            <div class="flex flex-col flex-grow">
-                <h3 class="text-lg font-extrabold text-stone-800"><span class="text-teal-500 mr-2">#{{ forloop.counter }}</span>{{ team.name }}</h3>
-                <p class="text-xs inline-flex">
-                    Creator: <span class="font-bold ml-1">{{ team.leader.first_name }} {{ team.leader.last_name }}</span>
-                </p>
-                <p class="text-xs"><span class="font-bold">{{ team.member.count|add:"-1" }}</span> teammates</p>
+        <a href="{% url 'team_detail' team.id %}" class="block">
+            <div class="flex justify-between items-center px-6 py-4 rounded-2xl shadow border-2 
+                        {% if request.user in team.member.all %} 
+                            border-none text-white font-extrabold {% if selected_leaderboard %} bg-{{ selected_leaderboard.leaderboard_color }}-500 hover:bg-{{ selected_leaderboard.leaderboard_color }}-600 {% else %} bg-teal-500 hover:bg-teal-600 {% endif %}
+                        {% else %} 
+                            bg-white {% if selected_leaderboard %} border-{{ selected_leaderboard.leaderboard_color }}-100 hover:bg-{{ selected_leaderboard.leaderboard_color }}-100 {% else %} border-teal-100 hover:bg-teal-100 {% endif %}
+                        {% endif %}">
+                <div class="flex flex-col flex-grow">
+                    <h3 class="text-lg font-extrabold {% if request.user in team.member.all %} text-white {% else %} text-stone-800 {% endif %}"><span class="{% if request.user in team.member.all %} text-white {% else %} text-teal-500 {% endif %} mr-2">#{{ forloop.counter }}</span>{{ team.name }}</h3>
+                    <p class="text-xs inline-flex">
+                        Creator: <span class="font-bold ml-1">{{ team.leader.first_name }} {{ team.leader.last_name }}</span>
+                    </p>
+                    <p class="text-xs"><span class="font-bold">{{ team.member.count|add:"-1" }}</span> teammates</p>
+                </div>
+                <div class="font-bold {% if request.user in team.member.all %} text-white font-extrabold{% else %} text-amber-500 {% endif %}  inline-flex items-center">
+                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1 opacity-85">
+                    {{ team.team_points }}
+                </div>
             </div>
-            <div class="font-bold text-amber-500 inline-flex items-center">
-                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1 opacity-85">
-                {{ team.team_points }}
-            </div>
-        </div>
-    </a>
+        </a>
     {% empty %}
         <p class="text-center font-bold text-stone-500">No teams found for the selected criteria.</p>
     {% endfor %}
