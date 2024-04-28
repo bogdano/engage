@@ -24,7 +24,6 @@
       @apply focus-within:ring-0 dark:focus-within:ring-0;
       @apply focus:shadow-none dark:focus:shadow-none;
       
-      
       @apply after:absolute before:absolute;
       @apply after:top-0 before:top-0;
       @apply after:block before:inline-block;
@@ -37,7 +36,7 @@
       @apply before:shadow-[inset_0_0_#000];
   
       @apply after:bg-white;
-      @apply before:bg-teal-500;
+      @apply before:bg-gray-300;
       @apply before:checked:bg-teal-500;
       @apply checked:after:duration-300 checked:after:translate-x-4;
   

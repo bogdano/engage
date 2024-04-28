@@ -1,55 +1,55 @@
 {% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>List Teams</title>
-    <link href="{% static 'css/tailwind.min.css' %}" rel="stylesheet">
-    <script src="https://unpkg.com/htmx.org" defer></script>
-</head>
+{% block title %}All Teams{% endblock %}
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-center mb-4">Teams</h1>
-    <div class="text-center mb-8">
-        <a href="{% url 'create_team' %}" class="px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-lg text-white font-bold">Create a New Team</a>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for team in teams %}
-        <a href="{% url 'team_detail' team.id %}"> <!-- Link to team detail page -->
-            <div class="bg-stone-100 rounded-lg shadow-lg p-5 relative">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-semibold text-xl cursor-pointer" onclick="togglePopup('{{ team.id }}'); event.preventDefault(); event.stopPropagation();">{{ team.name }}</h3>
-                    <form action="{% if team.is_member %}{% url 'leave_team' team.id %}{% else %}{% url 'join_team' %}{% endif %}" method="post" class="inline">
-                        {% csrf_token %}
-                        <input type="hidden" name="team_id" value="{{ team.id }}">
-                        <button type="submit" class="team-action-btn px-4 py-2 {% if team.is_member %}leave-btn bg-red-500 hover:bg-red-700{% else %}join-btn bg-green-500 hover:bg-green-700{% endif %} text-white font-bold rounded-lg">
-                            {% if team.is_member %}Leave{% else %}Join{% endif %}
-                        </button>
-                    </form>
-                </div>
-                <!-- Popup for team members -->
-                <div id="popup-{{ team.id }}" class="hidden absolute top-full mt-2 left-0 bg-stone-100 border border-stone-200 rounded shadow-lg p-4 z-10 w-64">
-                    <h3 class="font-semibold text-lg mb-2 text-center">Team Members:</h3>
-                    <ul>
-                        {% for member in team.member.all %}
-                        <li>{{ member.first_name }} {{ member.last_name }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </a>
-        {% empty %}
-        <div class="col-span-3 text-center">
-            <p>No teams found.</p>
-        </div>
-        {% endfor %}
-    </div>
+
+<div class="flex flex-row flex-wrap items-center justify-center align-middle mx-3 gap-4">
+    <a href="javascript:history.back()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-teal-400 shadow-md h-12 w-12 border border-teal-400 rounded-2xl align-middle p-1 hover:bg-teal-100">
+            <title>Back to Store</title>
+            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="SVGRepo_iconCarrier"></g>
+                <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" />
+            </g>
+        </svg>
+    </a>
+    <h1 class="text-4xl md:text-5xl font-extrabold text-center py-12">All Teams:</h1>
 </div>
 
-<script>
-function togglePopup(teamId) {
-    const popup = document.getElementById(`popup-${teamId}`);
-    popup.classList.toggle('hidden');
-}
-</script>
+<div class="w-full md:mt-12 flex gap-6 flex-wrap justify-center">
+    {% for team in teams %}
+    <a href="{% url 'team_detail' team.id %}" class="block w-full md:w-auto">
+        <div class=" rounded-2xl border-2 border-teal-100 hover:bg-teal-100 shadow-lg p-4 pr-2 md:w-96 mx-6 md:mx-0 {% if team.is_member %}bg-teal-700 text-white border-0 hover:bg-teal-600{% endif %}">
+            <div class="flex items-center mb-2">
+                <div class="p-1 border-2 border-teal-100 rounded-full bg-white">
+                    {% if team.logo %}
+                        <img src="{{ team.logo.url }}" alt="Team Logo" class="w-14 h-14 rounded-full bg-white">
+                    {% else %}
+                        <img src="{% static 'icons/default_team.svg' %}" alt="Team Logo" class="w-14 h-14 rounded-full bg-white">
+                    {% endif %}
+                </div>
+                <div class="flex flex-col items-start ml-4">
+                    <h3 class="font-extrabold text-xl cursor-pointer">{{ team.name }}</h3>
+                    <p class="text-xs">Members: <span class="font-bold">{{ team.member.count }}</span></p>
+                    <p class="text-xs">Creator: <span class="font-bold">{{ team.leader.first_name }} {{ team.leader.last_name }}</span></p>
+                </div>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 ml-auto">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                    <g id="SVGRepo_iconCarrier"> <path d="M10 7L15 12L10 17" stroke="#99f6e4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </g>
+                </svg>
+            </div>
+        </div>
+    </a>
+    {% empty %}
+        <p>No teams yet... Go ahead and create one!</p>
+    {% endfor %}
+</div>
+
+{% if not owns_team %}
+<div class="text-center mb-8 mt-12">
+    <a href="{% url 'create_team' %}" class="px-4 py-2 bg-teal-500 hover:bg-teal-700 rounded-2xl text-white font-extrabold">Create a team</a>
+</div>
+{% endif %}
 {% endblock %}

@@ -11,18 +11,20 @@
         <h2 class="text-2xl font-extrabold text-center mb-6 text-teal-800">{{ current_month }} {{ current_year }}</h2>
     {% endif %}
 
-    {% for user in users %}
-    <a href="{% url 'profile' user.user__id %}" class="block">
-        <div class="flex justify-between items-center px-4 py-2 rounded-2xl shadow border border-teal-300 hover:bg-teal-100">
-            <!-- Wrap user names with an anchor tag linking to their profile -->
-            <span><span class="text-teal-500 w-10 mr-2">#{{ forloop.counter }} </span>{{ user.user__first_name }} {{ user.user__last_name }}</span>
-            <div class="font-bold text-amber-500 inline-flex items-center">
-                <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1 opacity-85">
-                {{ user.total_points }}
+    <div class="border-2 border-teal-100 rounded-2xl">
+        {% for user in users %}
+        <a href="{% url 'profile' user.user__id %}" class="block">
+            <div class="flex justify-between items-center border-b border-teal-100 px-4 py-4 hover:bg-teal-100 {% if forloop.first %}rounded-t-2xl{% elif forloop.last %}rounded-b-2xl{% endif %}">
+                <!-- Wrap user names with an anchor tag linking to their profile -->
+                <span><span class="text-teal-500 w-10 mr-2">#{{ forloop.counter }} </span>{{ user.user__first_name }} {{ user.user__last_name }}</span>
+                <div class="font-bold text-amber-500 inline-flex items-center">
+                    <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-4 h-4 md:w-5 md:h-5 mr-1 opacity-85">
+                    {{ user.total_points }}
+                </div>
             </div>
-        </div>
-    </a>
-    {% empty %}
-        <p class="text-center font-bold text-stone-500">No users found for the selected criteria.</p>
-    {% endfor %}
+        </a>
+        {% empty %}
+            <p class="text-center font-bold text-stone-500">No users found for the selected criteria.</p>
+        {% endfor %}
+    </div>  
 </div>

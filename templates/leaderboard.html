@@ -36,11 +36,11 @@
                 </select>
             </div>
             <!-- Toggle Buttons for Team and Individual Leaderboards -->
-            <div class="mx-auto">
+            <div class="mx-auto flex flex-row flex-nowrap space-x-0">
                 <input type="radio" id="individual" name="leaderboard_mode" value="individual" {% if leaderboard_mode == "individual" %}checked{% endif %} class="hidden">
-                <label for="individual" class="mr-2 cursor-pointer px-6 py-2.5 font-extrabold rounded-2xl border border-teal-500 {% if leaderboard_mode == 'individual' %}bg-teal-400 text-white{% else %}text-stone-700 bg-white{% endif %}">Individual</label>
+                <label for="individual" class="h-11 w-28 text-center cursor-pointer px-4 py-2.5 font-extrabold rounded-2xl rounded-r-none border border-teal-500 border-r-0 {% if leaderboard_mode == 'individual' %}bg-teal-400 text-white{% else %}text-stone-700 bg-white{% endif %}">Individual</label>
                 <input type="radio" id="team" name="leaderboard_mode" value="team" {% if leaderboard_mode == "team" %}checked{% endif %} class="hidden">
-                <label for="team" class="cursor-pointer px-6 py-2.5 font-extrabold rounded-2xl border border-teal-500 {% if leaderboard_mode == 'team' %}bg-teal-400 text-white{% else %}text-stone-700 bg-white{% endif %}">Team</label>
+                <label for="team" class="h-11 w-28 text-center cursor-pointer px-4 py-2.5 font-extrabold rounded-2xl rounded-l-none border border-teal-500 border-l-0 {% if leaderboard_mode == 'team' %}bg-teal-400 text-white{% else %}text-stone-700 bg-white{% endif %}">Team</label>
             </div>
 
         </form>

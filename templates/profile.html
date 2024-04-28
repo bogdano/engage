@@ -53,14 +53,11 @@
         <h2 class="md:self-end font-extrabold text-xl md:text-2xl uppercase text-rose-700">{{ user.position }}</h2>
     </div>
 
-    <p class="px-6 text-center font-bold text-lg">{{ user.team.name }}</p>
     <!-- Joinable Teams Button -->
-    {% if request.user == user %}
-        {% if team == None %}
-            <a href="{% url 'list_teams' %}" class="bg-rose-400 hover:bg-rose-500 text-white font-bold py-2 px-4 my-3 rounded-2xl">Join a Team!</a>
-        {% else %}
-            <a href="{% url 'team_detail' team.id %}" class="bg-rose-400 hover:bg-rose-500 text-white font-bold py-2 px-4 my-3 rounded-2xl">View Team</a>
-        {% endif %}
+    {% if team == None and request.user == user %}
+        <a href="{% url 'list_teams' %}" class="bg-rose-400 hover:bg-rose-500 text-white font-bold py-2 px-4 my-3 rounded-2xl">Join a Team!</a>
+    {% else %}
+        <a href="{% url 'team_detail' team.id %}" class="bg-rose-400 hover:bg-rose-500 text-white font-bold py-2 px-4 my-3 rounded-2xl">View Team</a>
     {% endif %}
 
     {% if request.user == user %}

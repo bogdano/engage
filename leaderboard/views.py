@@ -85,10 +85,12 @@ def list_teams(request):
     if not request.user.is_authenticated:
         return redirect('send-login-link')
     teams = Team.objects.all()
+    owns_team = False
     for team in teams:
         team.is_member = request.user in team.member.all()
-    join_form = JoinTeamForm()
-    return render(request, 'list_teams.html', {'teams': teams, 'join_form': join_form})
+        if request.user == team.leader:
+            owns_team = True
+    return render(request, 'list_teams.html', {'teams': teams, 'owns_team': owns_team})
 
 
 def create_team(request):
@@ -147,8 +149,10 @@ def leave_team(request, team_id):
 def team_detail(request, team_id):
     if not request.user.is_authenticated:
         return redirect('send-login-link')
+    # check if request user is in any team
+    has_a_team = Team.objects.filter(member=request.user).exists()
     team = Team.objects.get(id=team_id)
-    return render(request, 'team_detail.html', {'team': team})
+    return render(request, 'team_detail.html', {'team': team, 'has_a_team': has_a_team})
 
 
 def edit_team(request, team_id):
