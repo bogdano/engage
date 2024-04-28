@@ -32,10 +32,16 @@ class LoginTokenAdmin(admin.ModelAdmin):
     def user_email(self, obj):
         return obj.user.email
     
+class NotificationInline(admin.TabularInline):
+    model = Notification
+    extra = 0  # Number of extra forms to display
+    fields = ('title', 'created_at', 'read')  # Specify which fields to include
+    readonly_fields = ('title', 'created_at')  # Make created_at read-only if desired
+    
 # display customusers with user.str, date joined, balance, and whether they are a superuser
 class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('user_str', 'date_joined', 'balance', 'is_superuser')
-    inlines = [UserParticipatedInlineUser]
+    inlines = [NotificationInline, UserParticipatedInlineUser]
     def user_str(self, obj):
         return obj.__str__()
 
@@ -46,4 +52,3 @@ admin.site.register(Activity, ActivityAdmin)
 admin.site.register(Leaderboard, LeaderboardAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Item, ItemAdmin)
-admin.site.register(Notification)

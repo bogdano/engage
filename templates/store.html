@@ -18,7 +18,7 @@
     <h1 class="text-4xl md:text-5xl font-extrabold text-center">Store</h1>
     <button class="border border-lime-500 hover:bg-lime-100 relative text-white font-bold rounded-2xl shadow flex items-center justify-center"
          hx-get="{% url 'hx_menu_cart' %}" 
-         hx-trigger="update-menu-cart from:body, load" 
+         hx-trigger="update-menu-cart from:body" 
          hx-swap="innerHTML">
         {% include 'cart/menu_cart.html' %}
     </button>

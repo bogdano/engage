@@ -13,7 +13,9 @@ import random
 def add_to_cart(request, item_id):
     cart = Cart(request)
     cart.add(item_id)
-    return render(request, "cart/menu_cart.html")
+    response = render(request, "cart/menu_cart.html")
+    response["HX-Trigger"] = "update-menu-cart"
+    return response
 
 
 def update_cart(request, item_id, action):
@@ -57,6 +59,9 @@ def cart(request):
 
 def hx_menu_cart(request):
     return render(request, "cart/menu_cart.html")
+
+def hx_navbar_cart_pill(request):
+    return render(request, "cart/partials/navbar_cart_pill.html")
 
 
 def hx_cart_total(request):
