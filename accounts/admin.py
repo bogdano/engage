@@ -36,7 +36,7 @@ class NotificationInline(admin.TabularInline):
     model = Notification
     extra = 0  # Number of extra forms to display
     fields = ('title', 'created_at', 'read')  # Specify which fields to include
-    readonly_fields = ('title', 'created_at')  # Make created_at read-only if desired
+    readonly_fields = ('created_at',)  # Make created_at read-only if desired
     
 # display customusers with user.str, date joined, balance, and whether they are a superuser
 class CustomUserAdmin(admin.ModelAdmin):

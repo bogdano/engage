@@ -25,7 +25,7 @@
             All Activities Leaderboard
         {% endif %}
     </h1>
-    {% if selected_leaderboard %}
+    {% if selected_leaderboard and request.user.is_staff %}
         <a href="{% url 'edit_leaderboard' selected_leaderboard.id %}">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="shadow-md h-12 w-12 p-2 border border-teal-400 rounded-2xl align-middle hover:bg-teal-100">
                 <title>Edit Leaderboard</title>
@@ -38,10 +38,10 @@
 </div>
 
 <!-- Filtering Form -->
-<form hx-get="{% url 'leaderboard' %}" hx-push-url="true" hx-target=".htmx-body" hx-trigger="change" class="flex flex-col justify-center items-center gap-5 p-6 bg-teal-100 md:rounded-2xl md:max-w-4xl md:mx-auto">
-    <div class="flex flex-row space-x-2">
+<form hx-get="{% url 'leaderboard' %}" hx-push-url="true" hx-target=".htmx-body" hx-trigger="change" class="flex flex-col justify-center items-center gap-3 p-6 bg-teal-100 md:rounded-2xl md:max-w-4xl md:mx-auto">
+    <div class="flex flex-row justify-center space-x-2">
         <!-- Leaderboard Type Filter -->
-        <select name="leaderboard_id" class="rounded-2xl border border-teal-500 focus:border-teal-500 w-fit">
+        <select aria-label="Leaderboard Type" name="leaderboard_id" class="flex-1 min-w-[50%] rounded-2xl h-11 border border-teal-500 focus:border-teal-500">
             <option value="" {% if not request.GET.leaderboard_id %}selected{% endif %}>All Activities</option>
             {% for leaderboard in leaderboards %}
                 <option value="{{ leaderboard.id }}" {% if request.GET.leaderboard_id == leaderboard.id|stringformat:"s" %}selected{% endif %}>
@@ -51,12 +51,13 @@
         </select>
     
         <!-- Date Filter -->
-        <select name="date_filter" class="rounded-2xl border border-teal-500 focus:border-teal-500 w-fit">
+        <select aria-label="Time Range" name="date_filter" class="flex-1 min-w-[50%] rounded-2xl h-11 border border-teal-500 focus:border-teal-500">
             <option value="all_time" {% if request.GET.date_filter == "all_time" %}selected{% endif %}>All Time</option>
             <option value="this_year" {% if request.GET.date_filter == "this_year" %}selected{% endif %}>This Year</option>
             <option value="this_month" {% if request.GET.date_filter == "this_month" or not request.GET.date_filter %}selected{% endif %}>This Month</option>
         </select>
     </div>
+    
     <!-- Toggle Buttons for Team and Individual Leaderboards -->
     <div class="mx-auto flex flex-row flex-nowrap space-x-0">
         <input type="radio" id="individual" name="leaderboard_mode" value="individual" {% if leaderboard_mode == "individual" %}checked{% endif %} class="hidden">

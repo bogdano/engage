@@ -1,6 +1,16 @@
 {% load static %}
 <div id="activity-header">
-    <div class="flex md:flex-row flex-col flex-wrap space-y-2 justify-center items-center md:space-x-4 pt-12 mb-5 px-2">
+    <div class="flex md:flex-row flex-col flex-wrap justify-center items-center md:gap-3 pt-12 mb-5 px-2">
+        <a href="javascript:history.back()" class="p-2 border rounded-xl border-amber-400 hover:bg-amber-50 shadow">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-amber-400 h-6 w-6 align-middle">
+                <title>Back to Home</title>
+                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="SVGRepo_iconCarrier"></g>
+                    <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" />
+                </g>
+            </svg>
+        </a>
         <h1 class="font-extrabold text-4xl md:text-5xl mb-4 md:mb-0 text-center {% if not activity.is_active %} text-stone-400{% endif %}">{{ activity.title }}</h1>
         <div class="flex flex-row space-x-2">
             {% include 'partials/bookmark_button.html' %}
@@ -14,14 +24,14 @@
             {% endif %}
         </div>
     </div>
-    
+
     {% if not activity.is_approved %}
         <div class="flex flex-row justify-center items-center mb-6 space-x-2">
-            <span class="px-4 py-1 bg-rose-300 font-extrabold text-sm text-white rounded-2xl">PENDING APPROVAL</span>
+            <span class="px-4 py-1 bg-amber-300 font-extrabold text-sm text-white rounded-2xl">PENDING APPROVAL</span>
             {% if request.user.is_staff %}
                 <div class="flex justify-center items-center">
                     <button hx-post="{% url 'approve_activity' activity.pk %}" hx-swap="outerHTML" hx-target=".htmx-body" class="py-1 px-4 border rounded-full border-lime-400 hover:bg-amber-50 shadow text-sm font-bold text-lime-600" aria-label="Approve activity">
-                        approve 
+                        approve
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="inline h-4 w-4">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
                             <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
@@ -32,15 +42,15 @@
             {% endif %}
         </div>
     {% endif %}
-    
+
     {% if request.user in activity.interested_users.all and not activity.user_has_participated and not activity.is_active %}
         <div id="points-button-container" class="flex justify-center items-center mb-5">
             <button class="group/button flex flex-row justify-center items-center mt-1"
                     name="award_points_from_activity_page"
                     type="button"
-                    hx-post="{% url 'award_participation_points' activity.pk %}?from_activity_page=true" 
-                    hx-swap="outerHTML transition:true" 
-                    hx-target="#activity-header" 
+                    hx-post="{% url 'award_participation_points' activity.pk %}?from_activity_page=true"
+                    hx-swap="outerHTML transition:true"
+                    hx-target="#activity-header"
                     onclick="awardPoints()">
                     <div class="flex flex-col border border-amber-300 group-hover/button:border-lime-500 shadow-md rounded-2xl bg-white  text-amber-500 ">
                         <div class="text-center w-full font-extrabold text-xs rounded-t-2xl py-1 bg-amber-200 text-amber-700 group-hover/button:bg-lime-500 group-hover/button:text-white">CLAIM</div>
@@ -59,7 +69,7 @@
                     <div class="flex px-4 py-2 items-center space-x-2">
                         <img src="{% static 'icons/coin.svg' %}" alt="Icon" class="w-7 h-7 {% if not activity.is_active %}grayscale{% endif %}">
                         <p class="text-2xl font-extrabold {% if activity.is_active %}text-yello-500{% else %}text-stone-400{% endif %}">{{ activity.points }}</p>
-                        {% if activity.user_has_participated %} 
+                        {% if activity.user_has_participated %}
                             <img src="{% static 'icons/checked.svg' %}" alt="Icon" class="w-7 h-7">
                         {% endif %}
                     </div>

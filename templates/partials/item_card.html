@@ -76,8 +76,8 @@
             <button type="button" 
                     hx-get="{% url 'add_to_cart' item.id %}" 
                     hx-target="#menu-cart-button" 
-                    hx-swap="outerHTML transition:true"
-                    class="kebab-button h-10 w-10 p-2 filter align-middle text-white font-extrabold" 
+                    hx-swap="outerHTML"
+                    class="kebab-button h-10 w-10 text-white text-2xl font-extrabold flex items-center justify-center" 
                     aria-expanded="true"
                     aria-haspopup="true" 
                     aria-label="Activity kebab menu">

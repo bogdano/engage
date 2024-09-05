@@ -1,20 +1,75 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Notifications{% endblock %}
 {% block content %}
 <h1 class="text-4xl md:text-5xl font-extrabold mb-10 pt-12 text-center">Notifications</h1>
 <div class="space-y-4 mx-3 md:mx-auto md:max-w-4xl">
     {% for notification in notifications %}
-        <div class="pl-8 pr-16 py-4 rounded-2xl border-2 border-violet-200 group hover:bg-violet-200 relative">
-            <button hx-delete="{% url 'dismiss_notification' notification.id %}"
-                    hx-target=".htmx-body"
-                    class="absolute top-6 right-6 text-red-400 group-hover:text-white font-extrabold rounded-full h-8 w-8 border-2 border-red-300 group-hover:bg-red-600 group-hover:border-red-600">✕</button>
+    <div class="px-6 py-4 rounded-2xl border-2 border-violet-200 group hover:bg-violet-200 flex justify-between items-center">
+        <div>
             <div class="font-bold">{{ notification.title }}</div>
             <p>{{ notification.body }}</p>
             <small>{{ notification.created_at }}</small>
         </div>
+        <button hx-delete="{% url 'dismiss_notification' notification.id %}"
+                hx-target=".htmx-body"
+                class="text-red-400 group-hover:text-white font-extrabold rounded-full min-h-8 min-w-8 border-2 border-red-300 group-hover:bg-red-600 group-hover:border-red-600 flex justify-center items-center">
+                ✕</button>
+    </div>
     {% empty %}
     <p class="text-center font-extrabold text-stone-400">No notifications. Yay!</p>
     {% endfor %}
+    <!-- confetti button, remove later -->
+    <style>
+        #graduateBtn {
+            background-color: #70002e;
+            transition: opacity 0.5s;
+            color: #EFE8D4;
+        }
+    </style>
+    <div class="flex justify-center pt-96">
+        <button onclick="graduate();" id="graduateBtn" class="text-white text-2xl font-extrabold rounded-xl px-6 py-4">GRADUATE</button>
+    </div>
+    <div class="flex justify-center pt-12">
+        <figure>
+            <a href="https://htmx.org/" target="_blank" rel="noopener">
+            <img src="{% static 'htmx.png' %}" alt="HTMX" width="100" height="100" class="mr-5">
+            </a>
+            <figcaption class="text-stone-400 font-extrabold text-xs mt-2 ml-4">
+            made with htmx
+            </figcaption>
+        </figure>  
+    </div>
 </div>
 {% endblock %}
 
+{% block scripts %}
+<script>
+function graduate() {
+    let graduateBtn = document.getElementById('graduateBtn');
+    graduateBtn.style.opacity = 0;
+    var end = Date.now() + (20 * 1000);
+    // go Griz!
+    var colors = ['#70002e', '#EFE8D4'];
+    (function frame() {
+    confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors
+    });
+    confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors
+    });
+    if (Date.now() < end) {
+        requestAnimationFrame(frame);
+    }
+    }());
+}
+</script>
+{% endblock %}

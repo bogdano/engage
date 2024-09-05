@@ -5,7 +5,7 @@
 
 {% block content %}
     <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css' type='text/css' />
 
     <div class="flex flex-row space-x-3 mx-3 justify-center pt-12 mb-4">
@@ -58,20 +58,20 @@
         
         <textarea name="description" placeholder="Description" required class="px-4 py-2 my-2 border border-gray-300 rounded-2xl w-full h-28 md:h-20 focus:border-amber-400 focus:outline-none focus:ring-0"></textarea>     
         
-        <label class="drag-drop flex justify-center h-auto px-4 py-8 my-2 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
+        <label class="drag-drop flex justify-center h-auto px-4 py-8 mb-8 border border-dashed border-gray-500 rounded-2xl cursor-pointer text-gray-500 bg-white hover:bg-gray-50">
             <input type="file" name="photo" id="fileInput" class="hidden" accept="image/x-png,image/jpeg,image/gif,image/jpg,image/heic,image/heif,image/webp">
             <span id="imageDropped" class="inline-flex">Upload image for activity</span>
         </label>
 
         {% if request.user.is_staff %}
-        <div class="flex my-6 bg-rose-100 rounded-2xl p-4 w-fit mx-auto">
+        <div class="flex mb-12 bg-rose-100 rounded-2xl p-4 w-fit mx-auto">
             <label class="cursor-pointer text-rose-700">
                 <input type="checkbox" name="alert" class="before:checked:bg-rose-700">
                 Email all users about this activity?
             </label>
         </div>
         {% endif %}
-        <div class="flex justify-center">
+        <div class="flex justify-center my-6">
             <button type="submit" class="w-full md:w-80 px-4 py-4 bg-amber-300 text-white font-bold rounded-2xl shadow-lg hover:bg-amber-400">Add activity</button>
         </div>
     </form>
@@ -116,7 +116,7 @@ if (typeof TomSelect === 'undefined') {
             }
         });
     };
-    tomSelectScript.src = 'https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js';
+    tomSelectScript.src = 'https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js';
     document.head.appendChild(tomSelectScript);
 } else {
     var tomSelectInstance = new TomSelect('#select-leaderboard', {

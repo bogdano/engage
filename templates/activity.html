@@ -45,7 +45,7 @@
 </div>
 
 <a href="https://www.google.com/maps/search/?api=1&query={{ activity.latitude }},{{ activity.longitude }}" class="relative flex justify-center items-center bg-stone-100 mt-8 md:rounded-2xl h-72">
-    <img 
+    <img
         src="https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-l+e85151({{ activity.longitude }},{{ activity.latitude }})/{{ activity.longitude }},{{ activity.latitude }},15.2,0/1152x288@2x?access_token=pk.eyJ1IjoiYm9nenoiLCJhIjoiY2x0MHB3MWF6MTJhZzJqbnVmaHo0Zm02dyJ9.oLRkcd4glERtMB4NMudd7w"
         class="w-full h-full mx-0 md:mx-2 md:rounded-2xl object-cover object-center"
         loading="lazy"
@@ -60,7 +60,7 @@
 {% if other_interested_users.all %}
 <div class="{% if activity.photo %}mb-10{% else %}mb-16{% endif %} p-3 bg-amber-100 border border-amber-200 md:rounded-2xl md:w-fit max-w-full md:min-w-96 mx-auto">
     <p class="font-semibold text-amber-700 text-sm mb-3 text-center">{% if activity.is_active %}Also participating:{% else %}Also participated:{% endif %}</p>
-    <div id="users-list" class="flex flex-wrap md:space-x-3 text-sm px-2 md:text-md">
+    <div id="users-list" class="flex flex-wrap md:gap-2 justify-center text-sm px-2 md:text-md">
         {% with users=other_interested_users.all|slice:":8" %}
             {% include 'partials/additional_users.html' %}
         {% endwith %}
@@ -108,17 +108,16 @@ function awardPoints() {
     function shoot() {
         confetti({
             ...defaults,
-            particleCount: 10
+            particleCount: 20
         });
 
         confetti({
             ...defaults,
-            particleCount: 10,
+            particleCount: 20,
             flat: true
         });
     }
-    setTimeout(shoot, 0);
-    setTimeout(shoot, 50);  
-}   
-</script>  
+    setTimeout(shoot, 50);
+}
+</script>
 {% endblock %}

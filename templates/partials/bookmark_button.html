@@ -2,7 +2,7 @@
 <button id="activity-bookmark-button"
         type="button" 
         hx-post="{% url 'bookmark_activity' activity.pk %}?from_activity_page=true" 
-        hx-swap="outerHTML transition:true" 
+        hx-swap="outerHTML" 
         hx-target="#activity-header"
         {% if not activity.is_active and not request.user in activity.interested_users.all %}
             disabled

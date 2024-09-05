@@ -61,7 +61,7 @@ module.exports = {
     ],
     theme: {
         fontFamily: {
-            sans: ['Lato', 'sans-serif'],
+            'sans': ['Lato', 'sans-serif'],
         },
         extend: {},
     },
