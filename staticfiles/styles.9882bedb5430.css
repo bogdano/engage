@@ -1,0 +1,151 @@
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+/* define animations for the old and new content */
+::view-transition-old(smooth-fade) {
+  animation: 100ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
+}
+::view-transition-new(smooth-fade) {
+  animation: 200ms cubic-bezier(0, 0, 0.2, 1) 30ms both fade-in;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* for IE and Edge */
+  scrollbar-width: none;  /* for Firefox */
+}
+
+/* tie the view transition to a given CSS class */
+.htmx-body {
+    view-transition-name: smooth-fade;
+}
+
+.drag-over {
+  background-color: #ecfce7; 
+  border-color: #2a4800; 
+}
+
+.loading-bar {
+  z-index: 100;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0.75rem;
+  background: linear-gradient(90deg, transparent,
+  #f59e0b, transparent,
+  #fc810f, transparent
+  );
+}
+.htmx-request.loading-bar {
+  opacity: 1;
+  animation: fadeIn 0.2s linear forwards, slide 1.75s ease-in-out infinite;
+}
+@keyframes slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX( 100%); }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  50%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  opacity: 0;
+  visibility: hidden;
+  text-align: center;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  width: 100px;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -50px;
+  transition: opacity 0.3s;
+  transition-delay: 0.05s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.loading-blob {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+
+.htmx-request .loading-blob {
+  visibility: visible;
+  opacity: 1;
+}
+
+.htmx-request.loading-blob {
+  opacity: 1;
+}
+
+
+
+.ts-control {
+  padding: 0 !important;
+  border: none !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+} .ts-control input {
+  font-size: 1rem !important;
+} .ts-control .item {
+  background-color: #f59e0b !important;
+  color: white !important;
+  font-weight: bold !important;
+  border-radius: 0.25rem !important;
+}
+.focus {
+  border-color: #fbbf24;
+}
+.ts-dropdown {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.375rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  margin-top: 0.5rem !important;
+}
+
+button:disabled {
+  background-color: #fafaf9;
+}
+
+.team-action-btn:disabled {
+  background-color: #ccc; /* Light grey to indicate disabled, adjust as needed */
+  color: #666; /* Darker text to ensure readability */
+  cursor: not-allowed; /* Cursor to indicate action is not allowed */
+}
+
+.join-btn {
+  background-color: green;
+}
+
+.join-btn:hover {
+  background-color: darkgreen;
+}
+
+.leave-btn {
+  background-color: red;
+}
+
+.leave-btn:hover {
+  background-color: darkred;
+}
